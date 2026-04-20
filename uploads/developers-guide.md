@@ -1,0 +1,595 @@
+# Developer's guide
+
+This guide is for maintainers working on Stilyagi itself. It documents the
+current development environment, the Rust and Python split, the build and
+verification workflow, and the boundaries that keep the implementation aligned
+with the normative design.
+
+The primary design reference is [Stilyagi design](stilyagi-design.md). The
+narrower contracts live in:
+
+- [ADR 002](adr-002-packaging-boundary.md) for the accepted build and runtime
+  boundary between the Python package and the embedded Rust engine
+- [ADR 003](adr-003-v1-contract-scope.md) for the accepted v1 syntax scope, IR
+  transport policy, and locale support boundary
+- [RFC 0001](rfcs/0001-stilyagi-intermediate-representation.md) for the
+  intermediate representation (IR)
+- [RFC 0002](rfcs/0002-stilyagi-python-rule-api.md) for the Python rule API
+- [RFC 0003](rfcs/0003-stilyagi-cli-contract.md) for the command-line
+  interface (CLI)
+- [RFC 0004](rfcs/0004-stilyagi-rule-testing-framework.md) for the
+  rule-testing framework
+- [RFC 0005](rfcs/0005-grammar-capability-and-syntactic-api-extensions.md) for
+  the grammar layer, grammar-node model, and syntax-aware rule extensions
+- [Roadmap](roadmap.md) for the ordered implementation sequence across the six
+  phases, including which architectural questions should be settled before
+  later slices are expanded
+
+Documentation changes in this repository must also follow the
+[documentation style guide](documentation-style-guide.md).
+
+## 1. Environment setup
+
+The repository targets Python 3.14 and Rust 2024. The development toolchain is
+centred on `uv` for Python environments and dependency management, `maturin`
+for building the PyO3 extension, and Cargo for Rust formatting, linting, and
+tests.
+
+The minimum local setup is:
+
+- Python 3.14 available to `uv`
+- Rust toolchain with `cargo`, `rustfmt`, and `clippy`
+- `uv`
+- `whitaker`
+- `markdownlint-cli2`
+- `nixie`
+
+The repository-local virtual environment and dev dependencies are created by
+the standard build target:
+
+```bash
+make build
+```
+
+That target performs three steps:
+
+1. Recreate `.venv`
+2. Sync the `dev` dependency group with `uv`
+3. Run `maturin develop` against `rust_extension/Cargo.toml`
+
+Developers should prefer the Makefile targets over ad hoc command sequences so
+the PyO3 build flags and tool invocation paths stay consistent across local
+development and continuous integration (CI).
+
+## 2. Repository responsibilities and boundaries
+
+Stilyagi is a mixed Rust and Python codebase with a strict boundary between
+extraction and analysis.
+
+The accepted packaging boundary is a Python-distributed application with an
+embedded PyO3 extension built through `maturin`. Stilyagi does not use a
+separate helper binary for normal v1 execution; the Rust extractor lives inside
+the Python runtime as `_stilyagi_rs`.[^1]
+
+The accepted v1 contract scope is narrower than the architecture's long-term
+extension points. Stable v1 syntax support covers Markdown, Python docstrings,
+and Rust documentation comments. Markdown with JSX (MDX) remains preview-only,
+canonical JSON remains required for `dump-ir`, fixtures, and compatibility
+review, and English is the only formally supported v1 locale.[^2]
+
+- Rust owns source-oriented work:
+  - file-format-aware parsing
+  - Markdown and host-language extraction
+  - byte spans, line mapping, and source fidelity
+  - construction of the IR passed into Python
+  - the PyO3 bridge surface exported to Python
+- Python owns analysis-oriented work:
+  - configuration discovery and override handling
+  - rule registration and plugin loading
+  - capability planning
+  - optional spaCy-backed enrichment
+  - diagnostics, fixes, and output rendering
+
+This boundary is deliberate. Rules should never parse source files for
+themselves, and the Rust layer should not absorb policy decisions that belong
+in the rule engine.
+
+## 3. Roadmap-aligned implementation boundaries
+
+The [roadmap](roadmap.md) is the maintainer view of build order. It is not just
+a delivery checklist. It records the architectural questions that each phase is
+supposed to settle before the later ones rely on them.
+
+The six phases currently break down into:
+
+- Phase 1: ratify v1 contracts, packaging, repository layout, and shared test
+  scaffolding
+- Phase 2: deliver the first Markdown slice with real spans, suppression
+  handling, and conservative fixes
+- Phase 3: extend the same loop into Python docstrings and Rust documentation
+  comments
+- Phase 4: add capability-planned language-aware enrichment without breaking
+  the structural fast path
+- Phase 5: stabilize extension, testing, CI, and release-facing surfaces for
+  team adoption
+- Phase 6: evaluate Markdown with JSX (MDX), semantic, and editor-facing
+  extensions only after the core v1 promise is already stable
+
+For the near-term phases, developers should preserve four boundaries in
+particular.
+
+- Syntax and locale scope
+  - Stable v1 syntax support covers Markdown, Python docstrings, and Rust
+    documentation comments.
+  - MDX remains preview-only until later evidence upgrades it into the stable
+    support matrix.
+  - English is the only formally supported locale in v1. Architecture may stay
+    locale-aware, but maintainers must not imply broader support before the
+    product earns it through later slices and tests.
+
+- IR structure
+  - The near-term extractor contract is a stable, region-oriented IR with
+    canonical JSON debug output, `line_index`, `content_hash`, `segments`,
+    owner metadata, and explicit extraction errors or suppressions where they
+    exist.
+  - The in-process Rust to Python boundary may become more efficient than JSON,
+    but JSON remains the canonical debug and test form for `dump-ir`, golden
+    fixtures, and contract review.
+  - RFC 0001 still needs explicit wording alignment in roadmap item 1.1.3, so
+    maintainers should treat ADR 003 plus the design document as the current
+    source of truth for transport policy until that amendment lands.
+- Suppression semantics
+  - Suppression state is extracted once and carried in the IR rather than
+    inferred ad hoc by individual rules.
+  - V1 suppression remains syntax-native and deliberately narrow: configuration
+    ignores, file-level directives, and named inline or range directives in
+    host-language comments. Blanket inline suppression remains out of scope.
+- Safe-fix planning
+  - Fix planning stays source-faithful and conservative. Safe fixes may target
+    only source-backed spans, must reject overlapping non-identical edits, and
+    must not mutate synthetic spans introduced during flattening.
+  - The CLI surfaces for this work are `check --fix`, `check --diff`, and
+    `dump-ir`, because maintainers need both mutation and inspection paths
+    while the core slices are still settling.
+- Capability planning
+  - Language-aware rules declare capabilities up front, and the runtime plans
+    the cheapest provider set that satisfies the active rules.
+  - Structural-only runs must continue to avoid natural language processing
+    (NLP) startup entirely. Sentence and token enrichment should land before
+    heavier part-of-speech, lemma, or dependency features, and backend escape
+    hatches remain explicitly unstable.
+
+When implementation work crosses one of those boundaries, update the design,
+the relevant RFC, and the roadmap together. The roadmap is part of the current
+maintainer contract, not a disposable planning artefact.
+
+## 4. Rust and PyO3 integration
+
+The Rust extension crate lives under `rust_extension/` and is built as the
+`_stilyagi_rs` Python extension module. PyO3 provides the binding layer, while
+`maturin` handles development installs and wheel builds.
+
+The current integration contract is intentionally small:
+
+- Rust exports Python-callable functions through the `_stilyagi_rs` module.
+- Python package code imports and orchestrates the extension rather than
+  duplicating Rust-owned logic.
+- Rust tests cover Rust-only behaviour, while Python tests cover package-level
+  integration and user-facing behaviour.
+
+Changes to the FFI boundary should stay narrow. A good boundary exports
+source-fidelity primitives, extraction results, and other stable engine
+building blocks. A bad boundary exports policy-heavy convenience wrappers that
+would force rule-engine churn into the extension crate.
+
+The repository should also resist any drift toward a subprocess helper model
+unless a later ADR explicitly reopens that question. The accepted v1 boundary
+is in-process, and later roadmap steps may assume that constraint.[^1]
+
+## 5. Build workflow
+
+The standard development and release workflows are:
+
+```bash
+make build
+make release
+```
+
+`make build` is the development path. It recreates the virtual environment,
+installs the editable Python package plus the compiled extension, and leaves
+the repository ready for local linting and tests.
+
+`make release` is the release artefact path. It runs:
+
+```bash
+uv run --group dev maturin build --release --manifest-path rust_extension/Cargo.toml
+```
+
+That command produces Python wheel artefacts under the Rust target wheels
+output, which is the expected distribution surface for the mixed package.
+
+The `build-release` target exists as a compatibility alias and should remain
+behaviourally identical to `release`.
+
+## 6. Lint, typecheck, and test workflow
+
+The Makefile is the canonical workflow entrypoint. The current checks are:
+
+- `make fmt`
+- `make check-fmt`
+- `make markdownlint`
+- `make nixie`
+- `make lint`
+- `make typecheck`
+- `make test`
+
+Their responsibilities are:
+
+- `make fmt`
+  - format Python with Ruff
+  - fix import ordering with Ruff
+  - format Markdown with `mdformat-all`
+  - format Rust with `cargo fmt`
+- `make check-fmt`
+  - verify Python formatting with Ruff
+  - verify Rust formatting with `cargo fmt --check`
+- `make markdownlint`
+  - lint all Markdown files in the repository
+- `make nixie`
+  - validate Mermaid diagrams in Markdown files
+- `make lint`
+  - run Ruff checks through `uv`
+  - run `cargo clippy` with warnings denied
+  - run Whitaker from `rust_extension/`
+- `make typecheck`
+  - rebuilds the editable environment if needed
+  - runs `ty check` through `uv`
+- `make test`
+  - verify Rust formatting
+  - rerun `cargo clippy`
+  - run Rust tests with `cargo-nextest` when available, otherwise `cargo test`
+  - run Python tests through `.venv/bin/python -m pytest -v`
+
+The Python tools are intentionally run through `uv run --group dev` so the
+repository uses the locked dev toolchain instead of whatever happens to be on
+the host `PATH`.
+
+## 7. Development responsibilities
+
+Maintainer responsibilities in this repository are stricter than a normal
+single-language package.
+
+- Keep the Rust and Python boundary narrow and explicit.
+- Preserve source-fidelity guarantees when changing extraction or span logic.
+- Update the design or RFC documents when implementation decisions materially
+  change the architecture or public contracts.
+- Keep Makefile targets honest; do not let local convenience diverge from
+  documented or CI behaviour.
+- Treat third-party plugins as trusted code. The repository should never imply
+  sandboxing that does not exist.
+- Keep documentation current when toolchain, workflow, or ownership boundaries
+  change.
+
+## References
+
+[^1]: [ADR 002: Ratify the packaging boundary](adr-002-packaging-boundary.md)
+[^2]: [ADR 003: Ratify the v1 contract scope](adr-003-v1-contract-scope.md)
+
+Substantial architecture changes should update both the code and the documents
+that define the current contracts. Stale documentation is treated as a defect,
+not as optional follow-up work.
+
+## 8. API boundaries
+
+The most important API boundaries are:
+
+- Rust extractor API
+  - should expose stable primitives for extraction, spans, and source mapping
+  - should avoid embedding lint-policy decisions
+- Python runtime API
+  - should expose rule-facing objects and orchestration surfaces
+  - should not bypass the Rust extractor for source parsing
+- Rule and plugin API
+  - should remain stable enough for third-party rule packs
+  - should make required capabilities explicit
+- CLI and output contracts
+  - should remain aligned with the CLI RFC and machine-readable output
+    guarantees
+
+When a change crosses one of these boundaries, the change should be treated as
+contract work rather than a local refactor. That usually means tests,
+documentation, and compatibility review all need to move together.
+
+## 9. Grammar layer and capability planning
+
+RFC 0005 extends the narrower rule API contract with a grammar layer for
+sentence-aware and syntax-aware rules. Maintainers should treat this as an
+analysis-layer extension, not as an extractor-level replacement for the
+region-oriented IR.
+
+The grammar layer has six maintainer-facing pieces that should move together:
+the `GrammarNode` hierarchy, normalized enums, morphology access, pattern
+objects, capability planning, and visitor hooks.
+
+### 9.1 GrammarNode hierarchy
+
+`GrammarNode` is the shared source-backed base for derived grammar objects:
+
+```python
+class GrammarNode:
+    span: SourceSpan
+    text: str
+    region: RegionNode
+    document: DocumentNode
+
+    def walk(self) -> Iterable["GrammarNode"]: ...
+    def nearest(self, kind: type[T]) -> T | None: ...
+```
+
+`TokenNode` and `SentenceNode` are the first compatibility wave and should land
+before higher-order helpers such as `NounPhraseNode`, `ClauseNode`, and
+`CoordinationNode`.
+
+```python
+class TokenNode(GrammarNode):
+    index: int
+
+    lemma: str | None
+    pos: UPos | None
+    fine_pos: str | None
+    morph: MorphFeatures
+
+    dep: Dep | None
+    raw_dep: str | None
+
+    head: TokenNode | None
+    children: tuple[TokenNode, ...]
+
+    prev: TokenNode | None
+    next: TokenNode | None
+
+    confidence: float | None
+    provider: str
+
+    def ancestors(self) -> tuple[TokenNode, ...]: ...
+    def descendants(self) -> tuple[TokenNode, ...]: ...
+    def subtree(self) -> SpanNode: ...
+    def next_content(self) -> TokenNode | None: ...
+    def prev_content(self) -> TokenNode | None: ...
+    def children_with_dep(self, *deps: Dep) -> tuple[TokenNode, ...]: ...
+    def has_child(
+        self,
+        *,
+        dep: Dep | None = None,
+        pos: UPos | None = None,
+    ) -> bool: ...
+    def subject(self) -> TokenNode | None: ...
+    def object(self) -> TokenNode | None: ...
+    def governing_verb(self) -> TokenNode | None: ...
+    def is_finite_verb(self) -> bool: ...
+    def is_content(self) -> bool: ...
+    def is_coordinated(self) -> bool: ...
+
+
+class SentenceNode(GrammarNode):
+    tokens: tuple[TokenNode, ...]
+
+    def content_tokens(self) -> tuple[TokenNode, ...]: ...
+    def first_content_token(self) -> TokenNode | None: ...
+    def roots(self) -> tuple[TokenNode, ...]: ...
+    def verbs(self) -> tuple[TokenNode, ...]: ...
+    def finite_verbs(self) -> tuple[TokenNode, ...]: ...
+    def noun_phrases(self) -> tuple[NounPhraseNode, ...]: ...
+    def clauses(self) -> tuple[ClauseNode, ...]: ...
+    def coordinations(self) -> tuple[CoordinationNode, ...]: ...
+    def main_clause(self) -> ClauseNode | None: ...
+    def leading_modifier_clause(self) -> ClauseNode | None: ...
+    def fronted_subordinate_clauses(self) -> tuple[ClauseNode, ...]: ...
+```
+
+Maintainers should preserve three behavioural points from RFC 0005:
+
+- `next_content()` and `prev_content()` skip non-content tokens according to
+  `is_content()` and must not cross sentence boundaries.
+- `is_coordinated()` is the published guard for tokens participating in
+  coordination structures that agreement-sensitive rules should treat as
+  syntactically plural or multi-headed.
+- Higher-order nodes are analysis-layer views derived from token and dependency
+  data, not extractor-owned base facts persisted into the IR by default.
+
+### 9.2 Canonical enums and morphology
+
+`UPos` and `Dep` are the normalized enums that make the public grammar API
+backend-neutral. `UPos` represents canonical universal part-of-speech tags,
+while `Dep` represents normalized dependency relations. Rules should match on
+these enums rather than on backend-owned labels. Raw backend labels still
+matter, but they stay in `fine_pos` and `raw_dep` for debugging and provider
+escape hatches.
+
+`MorphFeatures` is the normalized morphology wrapper that preserves raw feature
+data while exposing typed accessors for common cases:
+
+```python
+class MorphFeatures:
+    raw: Mapping[str, tuple[str, ...]]
+
+    @property
+    def number(self) -> str | None: ...
+
+    @property
+    def person(self) -> str | None: ...
+
+    @property
+    def tense(self) -> str | None: ...
+
+    @property
+    def verb_form(self) -> str | None: ...
+
+    @property
+    def voice(self) -> str | None: ...
+
+    def has(self, feature: str, value: str) -> bool: ...
+    def has_any(self, feature: str, values: set[str]) -> bool: ...
+```
+
+When maintainers add provider support, they should normalize onto these fields
+instead of re-exporting backend morphology objects directly.
+
+### 9.3 Pattern APIs
+
+RFC 0005 defines two Stilyagi-owned pattern layers:
+
+- `TokenPattern`
+  - matches linear token sequences against normalized token fields
+  - example shape:
+
+    ```python
+    TokenPattern([
+        {"POS": UPos.ADV, "LEMMA": {"IN": {"very", "really"}}},
+        {"POS": UPos.ADJ},
+    ])
+    ```
+
+- `DependencyPattern`
+  - matches syntactic relations anchored on normalized dependency data
+  - example shape:
+
+    ```python
+    DependencyPattern(
+        anchor={"POS": UPos.VERB},
+        children=[
+            {"DEP": Dep.NSUBJ_PASS},
+            {"DEP": Dep.AUX_PASS, "OPTIONAL": True},
+        ],
+    )
+    ```
+
+Providers may compile these patterns into backend matchers internally, but the
+rule-facing contract stays Stilyagi-owned.
+
+### 9.4 Capability enum and provider protocol
+
+RFC 0005's grammar capability model currently defines the following public
+names:
+
+```python
+class Capability(Enum):
+    SENTENCES = "sentences"
+    TOKENS = "tokens"
+    POS = "pos"
+    FINE_POS = "fine_pos"
+    LEMMA = "lemma"
+    MORPH = "morph"
+    DEPENDENCY = "dependency"
+    NOUN_PHRASES = "noun_phrases"
+    CLAUSES = "clauses"
+    COORDINATION = "coordination"
+    COREFERENCE = "coreference"  # reserved, not v1
+    SEMANTIC_LEXICON = "semantic_lexicon"
+```
+
+The normative planner relationships are:
+
+- `POS` implies `TOKENS`.
+- `FINE_POS` implies `POS`.
+- `DEPENDENCY` implies `TOKENS` and `SENTENCES`.
+- `NOUN_PHRASES`, `CLAUSES`, and `COORDINATION` require `DEPENDENCY` or a
+  provider-specific equivalent.
+- `MORPH` may imply `POS` for some providers, but rules must still declare both
+  when they need both.
+
+The planner must reject a rule when the configured provider cannot satisfy its
+declared capabilities. RFC 0002 remains the current canonical planner
+vocabulary until implementation and RFC wording converge, so maintainers should
+avoid shipping parallel public constant sets.
+
+The `GrammarProvider` protocol should remain narrow:
+
+```python
+class GrammarProvider(Protocol):
+    name: str
+    capabilities: frozenset[Capability]
+
+    def annotate(
+        self,
+        regions: Sequence[RegionNode],
+        required: set[Capability],
+    ) -> GrammarDocument:
+        ...
+```
+
+Providers annotate extracted regions after capability planning has decided what
+enrichment is required. Backend-owned objects such as spaCy tokens may exist
+behind explicit unstable escape hatches, but they are not the public maintainer
+contract.
+
+### 9.5 Visitor hook signatures
+
+Rules may implement the following grammar-aware hooks:
+
+```python
+def visit_token(self, ctx, token: TokenNode): ...
+def visit_sentence(self, ctx, sentence: SentenceNode): ...
+def visit_noun_phrase(self, ctx, noun_phrase: NounPhraseNode): ...
+def visit_clause(self, ctx, clause: ClauseNode): ...
+def visit_coordination(self, ctx, coordination: CoordinationNode): ...
+```
+
+These hooks extend, rather than replace, the base visitor surface from RFC 0002:
+
+- `prepare(ctx, document)`
+- `visit_document(ctx, document)`
+- `visit_region(ctx, region)`
+- `visit_node(ctx, node)`
+- `visit_sentence(ctx, sentence)`
+- `visit_token(ctx, token)`
+- `finalize(ctx, document)`
+
+The runtime should only invoke hooks whose required capabilities were
+materialized for the current run. New hook types should be treated as public
+rule-API work and reviewed with the same care as new CLI or IR fields.
+
+### 9.6 Debug surfaces and maintainer rule
+
+`dump-ir` remains the canonical extractor debug view. Grammar-aware debugging
+should be additive, for example `dump-ir --include-grammar`, rather than by
+baking provider-owned grammar objects into the base IR schema.
+
+The practical rule for maintainers is simple: extracted regions and source
+spans come first, provider-backed grammar objects come second, and rule hooks
+sit on top of both. If a change tries to invert that order, it is almost
+certainly crossing the wrong boundary.
+
+## 10. Debugging and verification workflow
+
+When behaviour looks wrong, debugging should start at the boundary most likely
+to be at fault.
+
+- Suspected span or extraction bug:
+  - inspect the Rust extractor and its tests first
+  - confirm the source offsets before touching rule logic
+- Suspected rule or capability-planning bug:
+  - inspect the Python runtime and rule-selection flow
+  - verify whether the required enrichment was actually requested
+- Suspected packaging or import bug:
+  - rerun `make build`
+  - verify that the editable install still points at the `maturin develop`
+    extension rather than a stale wheel
+
+For verification, prefer the Makefile targets over ad hoc tool runs. The
+targets encode the repository's intended order of operations and catch
+cross-language regressions that isolated commands can miss.
+
+## 11. Release expectations
+
+Release work should assume wheel artefacts are the primary distributable output
+of the mixed package.
+
+- Use `make release` for release builds.
+- Keep the Python package metadata and the Rust extension build path in sync.
+- Treat release-affecting changes to the Makefile, `pyproject.toml`, or
+  `rust_extension/Cargo.toml` as coupled changes that need end-to-end
+  verification.
+
+If release packaging changes, this guide, the design document, and the relevant
+RFCs should be reviewed together so the documented contract remains accurate.

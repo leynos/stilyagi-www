@@ -1,0 +1,1477 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The Stilyagi Design Language — a df12 reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+/* -----------------------------------------------------------------
+   STILYAGI DESIGN LANGUAGE · tokens
+   agitprop rigour · jazz-age swagger · university-press authority
+   ----------------------------------------------------------------- */
+:root {
+  /* Surface */
+  --paper:          #EFE4CE;       /* warm newsprint cream */
+  --paper-shade:   #E4D7B9;       /* recessed panel */
+  --paper-deep:    #D8C9A4;       /* heavier recess / samizdat */
+  --ink:           #0F0F0F;       /* lamp-black */
+  --ink-soft:      #2A2A2A;       /* rule & secondary type */
+  --rule-faint:    #9B8F79;       /* grid-paper line */
+  --rule-strong:   #1A1A1A;       /* structural divider */
+
+  /* Agitprop */
+  --press-red:     #C2272E;       /* poster-red; stamps, rules, verdicts */
+  --press-red-deep:#992024;       /* pressure-printed shadow */
+  --press-red-ink: #7A1A1F;       /* terminal red for footnote-grade accents */
+
+  /* Stilyagi — apply sparingly, as splashes */
+  --jazz-magenta:  #D81E79;
+  --jazz-cyan:     #29B4C4;
+  --jazz-ochre:    #D69F2E;
+
+  /* Signal */
+  --signal-sage:   #6B7145;       /* ok / grounded */
+  --signal-rust:   #A4522A;       /* warning, subordinate to press-red */
+
+  /* Geometry */
+  --unit:          8px;           /* all spacing is a multiple of this */
+  --col:           72ch;          /* editorial measure */
+  --rule-weight:   2px;
+  --rule-weight-2: 4px;
+  --rule-weight-3: 8px;
+
+  /* Type scale — modular, double-stranded (display / editorial) */
+  --t-caption:     0.78rem;
+  --t-body:        1.0625rem;     /* 17px at 16px root — reading-book scale */
+  --t-lede:        1.25rem;
+  --t-h4:          1.15rem;
+  --t-h3:          1.5rem;
+  --t-h2:          2.25rem;
+  --t-h1:          clamp(2.6rem, 5vw + 1rem, 5.5rem);
+
+  /* Motion — restrained; this is print masquerading as screen */
+  --ease:          cubic-bezier(.2,.7,.1,1);
+  --tempo-fast:    140ms;
+  --tempo:         260ms;
+}
+
+/* -----------------------------------------------------------------
+   Base
+   ----------------------------------------------------------------- */
+*,*::before,*::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: var(--t-body);
+  line-height: 1.55;
+  font-feature-settings: "onum", "liga", "kern";
+  -webkit-font-smoothing: antialiased;
+
+  /* Graph-paper substrate — the Chicago Press quietness */
+  background-image:
+    linear-gradient(to right, rgba(155,143,121,.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(155,143,121,.22) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px;
+  background-position: 0 0;
+}
+
+::selection { background: var(--press-red); color: var(--paper); }
+
+a { color: var(--press-red-ink); text-underline-offset: 3px; }
+a:hover { color: var(--press-red); }
+
+img, svg { max-width: 100%; display: block; }
+
+/* -----------------------------------------------------------------
+   Typography
+   ----------------------------------------------------------------- */
+.display, h1, h2 {
+  font-family: "Big Shoulders Display", Impact, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+h1 { font-size: var(--t-h1); margin: 0 0 .3em; }
+h2 { font-size: var(--t-h2); margin: 0 0 .4em; letter-spacing: 0.015em; }
+
+h3, h4 {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 .5em;
+  color: var(--ink);
+}
+h3 { font-size: var(--t-h3); }
+h4 { font-size: var(--t-h4); }
+
+.editorial {
+  font-family: "EB Garamond", Georgia, serif;
+}
+.mono, code, kbd, pre {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-feature-settings: "ss02";
+}
+.sans { font-family: "IBM Plex Sans", sans-serif; }
+
+p { margin: 0 0 1em; }
+p + p { text-indent: 1.8em; } /* trade-book continuation */
+p.lede { font-size: var(--t-lede); text-indent: 0; }
+p.lede::first-line { font-variant: small-caps; letter-spacing: .04em; }
+
+.caption {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+blockquote {
+  margin: 2em 0;
+  padding: 0 0 0 2em;
+  border-left: var(--rule-weight-3) solid var(--press-red);
+  font-style: italic;
+  font-size: var(--t-lede);
+}
+blockquote footer {
+  margin-top: .5em;
+  font-style: normal;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+hr.scholar {
+  border: 0;
+  border-top: var(--rule-weight) solid var(--ink);
+  margin: 2.5em auto;
+  width: 8ch;
+}
+
+/* -----------------------------------------------------------------
+   Layout primitives
+   ----------------------------------------------------------------- */
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: calc(var(--unit) * 6) calc(var(--unit) * 4);
+}
+section.chapter {
+  padding: calc(var(--unit) * 8) 0 calc(var(--unit) * 6);
+  border-top: var(--rule-weight) solid var(--ink);
+}
+section.chapter > .chapter-label {
+  display: inline-block;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 700;
+  font-size: var(--t-caption);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 4px 10px 3px;
+  margin-bottom: calc(var(--unit) * 2);
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--unit) * 4); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: calc(var(--unit) * 3); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: calc(var(--unit) * 3); }
+@media (max-width: 800px){
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.measure { max-width: var(--col); }
+
+/* -----------------------------------------------------------------
+   Motif: manicule (pointing hand)
+   A typographic bullet with real character. Use only on list items
+   that deserve emphasis. Do not use for nav or metadata.
+   ----------------------------------------------------------------- */
+.manicule-list { list-style: none; padding-left: 0; margin: 1em 0; }
+.manicule-list > li {
+  position: relative;
+  padding: .15em 0 .8em 2.2em;
+  border-bottom: 1px solid rgba(15,15,15,.08);
+}
+.manicule-list > li:last-child { border-bottom: 0; }
+.manicule-list > li::before {
+  content: "☞";
+  position: absolute;
+  left: 0; top: .15em;
+  font-size: 1.35em;
+  line-height: 1;
+  color: var(--ink);
+  transform: translateY(.05em);
+}
+.manicule-list.red > li::before    { color: var(--press-red); }
+.manicule-list.magenta > li::before{ color: var(--jazz-magenta); }
+.manicule-list.cyan > li::before   { color: var(--jazz-cyan); }
+.manicule-list.ochre > li::before  { color: var(--jazz-ochre); }
+
+/* -----------------------------------------------------------------
+   Motif: halftone dot wash
+   ----------------------------------------------------------------- */
+.halftone {
+  background-image: radial-gradient(rgba(15,15,15,.85) 1px, transparent 1.4px);
+  background-size: 6px 6px;
+}
+.halftone-red    { background-image: radial-gradient(rgba(194,39,46,.85) 1px, transparent 1.4px); background-size: 6px 6px; }
+.halftone-cyan   { background-image: radial-gradient(rgba(41,180,196,.85) 1px, transparent 1.4px); background-size: 6px 6px; }
+.halftone-ochre  { background-image: radial-gradient(rgba(214,159,46,.85) 1px, transparent 1.4px); background-size: 6px 6px; }
+.halftone-magenta{ background-image: radial-gradient(rgba(216,30,121,.85) 1px, transparent 1.4px); background-size: 6px 6px; }
+
+/* -----------------------------------------------------------------
+   Motif: cross-hatch engraving (for frames & plates)
+   ----------------------------------------------------------------- */
+.hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(15,15,15,.65) 0 1px,
+    transparent 1px 5px
+  );
+}
+.hatch-red {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(194,39,46,.75) 0 1px,
+    transparent 1px 5px
+  );
+}
+
+/* -----------------------------------------------------------------
+   Motif: hazard stripe (corner / edge)
+   ----------------------------------------------------------------- */
+.hazard-corner {
+  position: absolute;
+  width: 60px; height: 60px;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--ink) 0 10px,
+    var(--press-red) 10px 20px
+  );
+}
+.hazard-corner.tl { top: 0; left: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
+.hazard-corner.tr { top: 0; right: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }
+.hazard-corner.bl { bottom: 0; left: 0; clip-path: polygon(0 0, 0 100%, 100% 100%); }
+.hazard-corner.br { bottom: 0; right: 0; clip-path: polygon(100% 0, 0 100%, 100% 100%); }
+
+.hazard-rule {
+  height: 14px;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--ink) 0 10px,
+    var(--press-red) 10px 20px
+  );
+}
+
+/* -----------------------------------------------------------------
+   Motif: rubber stamp
+   A verdict, not a decoration. One per page, maximum.
+   ----------------------------------------------------------------- */
+.stamp {
+  display: inline-block;
+  position: relative;
+  padding: 6px 18px 4px;
+  font-family: "Big Shoulders Display", Impact, sans-serif;
+  font-weight: 900;
+  font-size: 2rem;
+  letter-spacing: 0.06em;
+  color: var(--press-red);
+  border: 4px solid var(--press-red);
+  text-transform: uppercase;
+  transform: rotate(-8deg);
+  /* texture: noisy, slightly broken ink */
+  background:
+    radial-gradient(circle at 10% 30%, rgba(255,255,255,.25) 0 2px, transparent 3px),
+    radial-gradient(circle at 60% 70%, rgba(255,255,255,.25) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 85% 20%, rgba(255,255,255,.25) 0 2px, transparent 3px),
+    radial-gradient(circle at 35% 85%, rgba(255,255,255,.25) 0 1px, transparent 3px);
+  background-color: transparent;
+  mix-blend-mode: multiply;
+  filter: contrast(1.05);
+}
+.stamp.small { font-size: 1.1rem; padding: 3px 10px 2px; border-width: 3px; }
+.stamp.ink { color: var(--ink); border-color: var(--ink); }
+
+/* -----------------------------------------------------------------
+   Motif: the splatter (cover / poster only)
+   Built with radial gradients — no external assets.
+   ----------------------------------------------------------------- */
+.splatter {
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+  opacity: .9;
+  background-image:
+    radial-gradient(ellipse 90px 40px at 12% 18%, var(--jazz-magenta) 0 55%, transparent 70%),
+    radial-gradient(ellipse 60px 25px at 10% 28%, var(--jazz-magenta) 0 55%, transparent 70%),
+    radial-gradient(ellipse 80px 35px at 88% 22%, var(--jazz-ochre) 0 55%, transparent 70%),
+    radial-gradient(ellipse 50px 20px at 92% 31%, var(--jazz-ochre) 0 55%, transparent 70%),
+    radial-gradient(ellipse 100px 42px at 82% 78%, var(--jazz-cyan) 0 55%, transparent 70%),
+    radial-gradient(ellipse 55px 22px at 75% 84%, var(--jazz-cyan) 0 55%, transparent 70%),
+    radial-gradient(ellipse 70px 30px at 18% 82%, var(--jazz-magenta) 0 55%, transparent 70%);
+  filter: blur(.4px);
+  mask-image:
+    radial-gradient(circle at center, black 40%, transparent 78%);
+}
+
+/* -----------------------------------------------------------------
+   Components
+   ----------------------------------------------------------------- */
+
+/* Panel — the workhorse frame. Academic, bordered, restrained. */
+.panel {
+  position: relative;
+  background: var(--paper);
+  border: var(--rule-weight) solid var(--ink);
+  padding: calc(var(--unit) * 3) calc(var(--unit) * 3);
+}
+.panel > .panel-label {
+  position: absolute;
+  top: calc(var(--unit) * -1.5);
+  left: calc(var(--unit) * 2);
+  background: var(--paper);
+  padding: 0 calc(var(--unit) * 1);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.panel.heavy { border-width: var(--rule-weight-2); }
+.panel.red   { border-color: var(--press-red); }
+.panel.red > .panel-label { color: var(--press-red); }
+
+/* Agitprop panel — for verdicts, diagnoses, posters */
+.agitprop {
+  background: var(--ink);
+  color: var(--paper);
+  padding: calc(var(--unit) * 4);
+  position: relative;
+  border-left: var(--rule-weight-3) solid var(--press-red);
+}
+.agitprop h2, .agitprop h3 { color: var(--paper); }
+.agitprop .accent { color: var(--press-red); }
+
+/* Punch-card panel — lifted from Corbusier vocabulary. Meaningful
+   corner-cut: top-right = standard, top-left = reversed (blocked). */
+.punchcard {
+  position: relative;
+  background: var(--paper-shade);
+  border: var(--rule-weight) solid var(--ink);
+  padding: calc(var(--unit) * 3);
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+.punchcard.blocked {
+  clip-path: polygon(18px 0, 100% 0, 100% 100%, 0 100%, 0 18px);
+  border-color: var(--press-red);
+}
+
+/* Pull-quote — editorial restraint, press-red rule only */
+.pullquote {
+  border-top: var(--rule-weight) solid var(--press-red);
+  border-bottom: var(--rule-weight) solid var(--press-red);
+  padding: calc(var(--unit) * 3) 0;
+  margin: calc(var(--unit) * 4) 0;
+  font-family: "EB Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: 1.7rem;
+  line-height: 1.25;
+  text-align: center;
+}
+.pullquote cite {
+  display: block;
+  margin-top: 1em;
+  font-style: normal;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Code / IR block — monospace slab, crisp */
+pre.code {
+  background: var(--ink);
+  color: var(--paper);
+  padding: calc(var(--unit) * 2.5) calc(var(--unit) * 3);
+  border-left: var(--rule-weight-3) solid var(--press-red);
+  overflow-x: auto;
+  font-size: .95rem;
+  line-height: 1.55;
+}
+pre.code .tok-kw  { color: var(--jazz-cyan); }
+pre.code .tok-str { color: var(--jazz-ochre); }
+pre.code .tok-com { color: #7A7464; font-style: italic; }
+pre.code .tok-nm  { color: var(--jazz-magenta); }
+
+kbd {
+  background: var(--paper-shade);
+  border: 1px solid var(--ink);
+  border-bottom-width: 2px;
+  border-radius: 2px;
+  padding: 1px 6px;
+  font-size: .85em;
+}
+
+/* Button — agitprop block or editorial rule */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 700;
+  font-size: .92rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform var(--tempo-fast) var(--ease), background var(--tempo-fast) var(--ease);
+}
+.btn:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--press-red); background: var(--ink); color: var(--paper); }
+.btn.red { background: var(--press-red); }
+.btn.red:hover { box-shadow: 4px 4px 0 var(--ink); }
+.btn.ghost { background: transparent; color: var(--ink); border: var(--rule-weight) solid var(--ink); }
+.btn.ghost:hover { background: var(--ink); color: var(--paper); box-shadow: none; transform: translate(-2px,-2px); }
+
+/* Tag / chip — sparingly, for classification not decoration */
+.chip {
+  display: inline-block;
+  padding: 3px 10px 2px;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  background: var(--paper-shade);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+}
+.chip.red    { background: var(--press-red); color: var(--paper); border-color: var(--press-red); }
+.chip.cyan   { background: var(--jazz-cyan); color: var(--ink); border-color: var(--ink); }
+.chip.ochre  { background: var(--jazz-ochre); color: var(--ink); border-color: var(--ink); }
+.chip.magenta{ background: var(--jazz-magenta); color: var(--paper); border-color: var(--jazz-magenta); }
+
+/* Data table — scholarly: thin rules, no zebra, caption top */
+table.scholar {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+  font-family: "EB Garamond", Georgia, serif;
+}
+table.scholar caption {
+  text-align: left;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding-bottom: 8px;
+  color: var(--ink-soft);
+}
+table.scholar th, table.scholar td {
+  padding: 10px 14px;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(15,15,15,.25);
+}
+table.scholar thead th {
+  border-top: var(--rule-weight) solid var(--ink);
+  border-bottom: var(--rule-weight) solid var(--ink);
+  background: transparent;
+  font-family: "IBM Plex Sans", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .85rem;
+}
+table.scholar tbody tr:last-child td { border-bottom: var(--rule-weight) solid var(--ink); }
+
+/* Footnote — because this system takes citation seriously */
+.footnotes {
+  border-top: var(--rule-weight) solid var(--ink);
+  margin-top: calc(var(--unit) * 4);
+  padding-top: calc(var(--unit) * 2);
+  font-size: .9rem;
+  color: var(--ink-soft);
+}
+.footnotes ol { padding-left: 1.6em; }
+.footnotes sup { color: var(--press-red-ink); }
+
+/* Callout — restrained by default; agitprop only on escalation */
+.callout {
+  border: var(--rule-weight) solid var(--ink);
+  padding: calc(var(--unit) * 2) calc(var(--unit) * 3);
+  background: var(--paper);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: calc(var(--unit) * 2);
+  align-items: start;
+}
+.callout .callout-mark {
+  font-family: "Big Shoulders Display", Impact, sans-serif;
+  font-weight: 900;
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--press-red);
+}
+.callout.warning { border-color: var(--press-red); border-left-width: var(--rule-weight-3); }
+.callout.note    { border-color: var(--ink); border-left-width: var(--rule-weight-3); }
+.callout.ok      { border-color: var(--signal-sage); border-left-width: var(--rule-weight-3); }
+
+/* -----------------------------------------------------------------
+   Navigation — hand-set contents
+   ----------------------------------------------------------------- */
+.contents {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--paper);
+  border-bottom: var(--rule-weight-2) solid var(--ink);
+}
+.contents .inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px calc(var(--unit) * 4);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: calc(var(--unit) * 2);
+  flex-wrap: wrap;
+}
+.contents .mark {
+  font-family: "Big Shoulders Display", Impact, sans-serif;
+  font-weight: 900;
+  font-size: 1.3rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.contents .mark .red { color: var(--press-red); }
+.contents ol {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; gap: 14px;
+  flex-wrap: wrap;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: .82rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.contents ol a { color: var(--ink); text-decoration: none; border-bottom: 1px dotted var(--ink-soft); padding-bottom: 1px; }
+.contents ol a:hover { color: var(--press-red); border-color: var(--press-red); }
+
+/* -----------------------------------------------------------------
+   Page header — the manifesto cover
+   ----------------------------------------------------------------- */
+.cover {
+  position: relative;
+  padding: calc(var(--unit) * 14) 0 calc(var(--unit) * 10);
+  overflow: hidden;
+}
+.cover .swash {
+  position: absolute;
+  inset: auto 0 auto 0;
+  top: 12%;
+  height: 120px;
+  background: var(--press-red);
+  transform: rotate(-7deg) scaleX(1.1);
+  transform-origin: center;
+  opacity: .92;
+  mix-blend-mode: multiply;
+  mask-image: linear-gradient(90deg, transparent 0, black 8%, black 92%, transparent 100%);
+}
+.cover .splatter { opacity: .35; }
+.cover .eyebrow {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 600;
+  font-size: var(--t-caption);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: calc(var(--unit) * 2);
+  display: inline-block;
+  background: var(--paper);
+  padding: 2px 10px;
+  border: 1px solid var(--ink);
+}
+.cover h1 {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(3.5rem, 8vw + 1rem, 8rem);
+  letter-spacing: 0;
+}
+.cover h1 .accent { color: var(--press-red); }
+.cover .subtitle {
+  position: relative;
+  z-index: 2;
+  font-family: "EB Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.2rem, 1.4vw + .8rem, 1.7rem);
+  max-width: 48ch;
+  margin-top: calc(var(--unit) * 2);
+}
+.cover .colophon {
+  position: relative;
+  z-index: 2;
+  margin-top: calc(var(--unit) * 4);
+  display: flex; gap: calc(var(--unit) * 3);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.cover .colophon span::before { content: "§ "; color: var(--press-red); }
+
+/* -----------------------------------------------------------------
+   Palette swatch
+   ----------------------------------------------------------------- */
+.swatch {
+  border: var(--rule-weight) solid var(--ink);
+  background: var(--paper);
+  display: grid;
+  grid-template-rows: 110px auto;
+}
+.swatch .chip-col {
+  border-bottom: var(--rule-weight) solid var(--ink);
+}
+.swatch .meta {
+  padding: 10px 12px 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: .88rem;
+  display: grid; gap: 2px;
+}
+.swatch .meta .name {
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-size: .82rem;
+}
+.swatch .meta .hex  { font-family: "JetBrains Mono", monospace; color: var(--ink-soft); font-size: .82rem; }
+.swatch .meta .use  { color: var(--ink-soft); font-size: .82rem; }
+
+/* -----------------------------------------------------------------
+   Type specimen
+   ----------------------------------------------------------------- */
+.specimen {
+  border: var(--rule-weight) solid var(--ink);
+  padding: calc(var(--unit) * 3);
+  background: var(--paper);
+  display: grid;
+  gap: calc(var(--unit) * 1.5);
+}
+.specimen .demo { line-height: 1; }
+.specimen .label {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.specimen .big { font-family: "Big Shoulders Display", Impact, sans-serif; font-weight: 900; font-size: 4rem; text-transform: uppercase; }
+.specimen .eb  { font-family: "EB Garamond", Georgia, serif; font-size: 2rem; }
+.specimen .ps  { font-family: "IBM Plex Sans", sans-serif; font-weight: 600; font-size: 1.5rem; letter-spacing: .04em; }
+.specimen .jm  { font-family: "JetBrains Mono", monospace; font-size: 1.3rem; }
+
+/* -----------------------------------------------------------------
+   Utility
+   ----------------------------------------------------------------- */
+.stack > * + * { margin-top: calc(var(--unit) * 2); }
+.stack-lg > * + * { margin-top: calc(var(--unit) * 4); }
+.centered { display: grid; place-items: center; text-align: center; }
+.relative { position: relative; }
+
+/* do / don't */
+.dodont { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--unit) * 3); margin-top: calc(var(--unit) * 2); }
+.dodont > .card { border: var(--rule-weight) solid var(--ink); padding: calc(var(--unit) * 2.5); background: var(--paper); position: relative; }
+.dodont .tag {
+  position: absolute; top: -10px; left: 12px;
+  font-family: "Big Shoulders Display", Impact, sans-serif;
+  font-weight: 900; font-size: 1rem;
+  padding: 2px 10px 1px;
+  background: var(--ink); color: var(--paper);
+  letter-spacing: .08em;
+}
+.dodont .card.bad .tag { background: var(--press-red); }
+
+/* sample page mock */
+.mock-page {
+  border: var(--rule-weight-2) solid var(--ink);
+  background: var(--paper);
+  padding: calc(var(--unit) * 5) calc(var(--unit) * 6);
+  position: relative;
+}
+.mock-page .mock-mast {
+  border-bottom: var(--rule-weight-2) solid var(--ink);
+  padding-bottom: calc(var(--unit) * 2);
+  margin-bottom: calc(var(--unit) * 3);
+  display: flex; align-items: baseline; justify-content: space-between; gap: calc(var(--unit) * 3);
+}
+.mock-page .mock-mast .title {
+  font-family: "Big Shoulders Display", Impact, sans-serif;
+  font-weight: 900; font-size: 3rem; line-height: .95; text-transform: uppercase;
+}
+.mock-page .mock-mast .title .r { color: var(--press-red); }
+.mock-page .mock-mast .meta {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-align: right;
+}
+
+.columns-2 { column-count: 2; column-gap: calc(var(--unit) * 5); column-rule: 1px solid rgba(15,15,15,.25); }
+.columns-2 > * { break-inside: avoid; }
+
+/* -----------------------------------------------------------------
+   Footer
+   ----------------------------------------------------------------- */
+footer.colophon-foot {
+  margin-top: calc(var(--unit) * 10);
+  border-top: var(--rule-weight-2) solid var(--ink);
+  padding-top: calc(var(--unit) * 3);
+  padding-bottom: calc(var(--unit) * 6);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: var(--t-caption);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: flex; justify-content: space-between; gap: calc(var(--unit) * 3); flex-wrap: wrap;
+}
+footer .mark {
+  font-family: "Big Shoulders Display", Impact, sans-serif;
+  font-weight: 900; font-size: 1.2rem; color: var(--ink); letter-spacing: .04em;
+}
+footer .mark .r { color: var(--press-red); }
+
+/* Reveal on scroll — minimal, restrained */
+.reveal { opacity: 0; transform: translateY(12px); transition: opacity var(--tempo) var(--ease), transform var(--tempo) var(--ease); }
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* -----------------------------------------------------------------
+   Embedded SVG decoration helpers (inline, so no external assets)
+   ----------------------------------------------------------------- */
+.gear-cluster { opacity: .55; }
+</style>
+</head>
+<body>
+
+<!-- =================================================================
+     Sticky contents
+     ================================================================= -->
+<nav class="contents" aria-label="Contents">
+  <div class="inner">
+    <span class="mark">Stilyagi · <span class="red">Design Language</span></span>
+    <ol>
+      <li><a href="#manifesto">Manifesto</a></li>
+      <li><a href="#principles">Principles</a></li>
+      <li><a href="#palette">Palette</a></li>
+      <li><a href="#type">Type</a></li>
+      <li><a href="#grid">Grid</a></li>
+      <li><a href="#motifs">Motifs</a></li>
+      <li><a href="#components">Components</a></li>
+      <li><a href="#restraint">Restraint</a></li>
+      <li><a href="#sample">Sample</a></li>
+      <li><a href="#tokens">Tokens</a></li>
+    </ol>
+  </div>
+</nav>
+
+<div class="page">
+
+<!-- =================================================================
+     §1 · Manifesto / Cover
+     ================================================================= -->
+<section id="manifesto" class="cover relative" aria-labelledby="manifesto-title">
+  <div class="splatter" aria-hidden="true"></div>
+  <div class="swash" aria-hidden="true"></div>
+
+  <span class="eyebrow">df12 · Design System · v0.1</span>
+  <h1 id="manifesto-title">The <span class="accent">Stilyagi</span> Design Language</h1>
+  <p class="subtitle editorial">
+    Agitprop rigour. Jazz-age swagger. University-press authority. A rebellion conducted
+    in grid-ruled margins, under a red pencil, with a saxophone in the next room.
+  </p>
+  <div class="colophon">
+    <span>No. 001</span>
+    <span>Edinburgh</span>
+    <span>Stilyagi · Corbusier · Netsuke · mxd</span>
+    <span>Oxford spelling throughout</span>
+  </div>
+</section>
+
+<!-- =================================================================
+     §2 · Principles
+     ================================================================= -->
+<section id="principles" class="chapter">
+  <span class="chapter-label">§ 02 · Principles</span>
+  <h2>Seven tenets, and the tension that holds them up</h2>
+  <p class="lede measure editorial">
+    The aesthetic fails as pastiche and succeeds as argument. Agitprop supplies the
+    force; jazz supplies the colour; the Chicago Press supplies the silence between
+    them. No tenet stands alone. Removing any one tips the whole into kitsch.
+  </p>
+
+  <div class="grid-2" style="margin-top: calc(var(--unit) * 4);">
+    <div class="stack">
+      <div class="callout note">
+        <div class="callout-mark">§</div>
+        <div>
+          <h4>1 · Paper first</h4>
+          <p class="editorial">Work on a surface, not a screen. Warm cream, graph rules, real margins. The substrate sets the register before a single word lands.</p>
+        </div>
+      </div>
+      <div class="callout note">
+        <div class="callout-mark">§</div>
+        <div>
+          <h4>2 · Black type, red verdicts</h4>
+          <p class="editorial">Black carries the argument; red carries the judgement. Use magenta, cyan, and ochre only where music belongs.</p>
+        </div>
+      </div>
+      <div class="callout note">
+        <div class="callout-mark">§</div>
+        <div>
+          <h4>3 · Two fonts do the work</h4>
+          <p class="editorial">A condensed display cuts the headline. A classical serif carries the paragraph. A utility sans handles metadata. A monospace speaks for the machine.</p>
+        </div>
+      </div>
+      <div class="callout note">
+        <div class="callout-mark">§</div>
+        <div>
+          <h4>4 · Evidence before commentary</h4>
+          <p class="editorial">Show the table, the figure, the span, the byte. Put the claim next to the citation and shut up.</p>
+        </div>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="callout note">
+        <div class="callout-mark">§</div>
+        <div>
+          <h4>5 · Texture, not gradient</h4>
+          <p class="editorial">Halftone dots, cross-hatch, hazard stripes, rubber-stamp noise. No soft shadow; no plastic glow; no Material elevation.</p>
+        </div>
+      </div>
+      <div class="callout note">
+        <div class="callout-mark">§</div>
+        <div>
+          <h4>6 · Manicule, not emoji</h4>
+          <p class="editorial">The pointing hand is the house bullet. It is typographic, not decorative, and it earns its space by pointing at something that matters.</p>
+        </div>
+      </div>
+      <div class="callout note">
+        <div class="callout-mark">§</div>
+        <div>
+          <h4>7 · Jazz is the accent, not the key</h4>
+          <p class="editorial">Splatter, sax, music notation, checkerboard — reserved for covers, posters, and the rare celebratory moment. The daily surface is quiet.</p>
+        </div>
+      </div>
+      <div class="callout warning">
+        <div class="callout-mark">!</div>
+        <div>
+          <h4>The tension</h4>
+          <p class="editorial">Remove the Chicago Press and you get T-shirt design. Remove the agitprop and you get a wedding invitation. Remove the jazz and you get a lint report. Hold all three.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     §3 · Palette
+     ================================================================= -->
+<section id="palette" class="chapter">
+  <span class="chapter-label">§ 03 · Palette</span>
+  <h2>Four inks, three splashes, one substrate</h2>
+  <p class="measure editorial">
+    The palette divides into three registers. <strong>Surface</strong> sets the stage:
+    warm newsprint cream, lamp-black type, a heavier recess for samizdat. <strong>Agitprop</strong>
+    carries judgement: poster-red and its darker sibling. <strong>Jazz</strong>
+    — magenta, cyan, ochre — appears only where music is welcome.
+  </p>
+
+  <h3 style="margin-top: calc(var(--unit) * 4);">Surface &amp; ink</h3>
+  <div class="grid-4">
+    <article class="swatch"><div class="chip-col" style="background: var(--paper);"></div><div class="meta"><span class="name">Paper</span><span class="hex">#EFE4CE</span><span class="use">Primary surface</span></div></article>
+    <article class="swatch"><div class="chip-col" style="background: var(--paper-shade);"></div><div class="meta"><span class="name">Paper · shade</span><span class="hex">#E4D7B9</span><span class="use">Recessed panel</span></div></article>
+    <article class="swatch"><div class="chip-col" style="background: var(--paper-deep);"></div><div class="meta"><span class="name">Paper · deep</span><span class="hex">#D8C9A4</span><span class="use">Samizdat ground</span></div></article>
+    <article class="swatch"><div class="chip-col" style="background: var(--ink);"></div><div class="meta"><span class="name">Ink</span><span class="hex">#0F0F0F</span><span class="use">Display &amp; body</span></div></article>
+  </div>
+
+  <h3 style="margin-top: calc(var(--unit) * 4);">Agitprop</h3>
+  <div class="grid-4">
+    <article class="swatch"><div class="chip-col" style="background: var(--press-red);"></div><div class="meta"><span class="name">Press-red</span><span class="hex">#C2272E</span><span class="use">Verdicts, rules, stamps</span></div></article>
+    <article class="swatch"><div class="chip-col" style="background: var(--press-red-deep);"></div><div class="meta"><span class="name">Press-red · deep</span><span class="hex">#992024</span><span class="use">Printed shadow</span></div></article>
+    <article class="swatch"><div class="chip-col" style="background: var(--press-red-ink);"></div><div class="meta"><span class="name">Press-red · ink</span><span class="hex">#7A1A1F</span><span class="use">Editorial accent, links</span></div></article>
+    <article class="swatch"><div class="chip-col" style="background: var(--ink-soft);"></div><div class="meta"><span class="name">Ink · soft</span><span class="hex">#2A2A2A</span><span class="use">Secondary text, rules</span></div></article>
+  </div>
+
+  <h3 style="margin-top: calc(var(--unit) * 4);">Jazz — handle with care</h3>
+  <div class="grid-4">
+    <article class="swatch"><div class="chip-col" style="background: var(--jazz-magenta);"></div><div class="meta"><span class="name">Magenta</span><span class="hex">#D81E79</span><span class="use">Splash, chip, cover</span></div></article>
+    <article class="swatch"><div class="chip-col" style="background: var(--jazz-cyan);"></div><div class="meta"><span class="name">Cyan</span><span class="hex">#29B4C4</span><span class="use">Splash, code highlight</span></div></article>
+    <article class="swatch"><div class="chip-col" style="background: var(--jazz-ochre);"></div><div class="meta"><span class="name">Ochre</span><span class="hex">#D69F2E</span><span class="use">Splash, brass, warnings-soft</span></div></article>
+    <article class="swatch"><div class="chip-col" style="background: var(--signal-sage);"></div><div class="meta"><span class="name">Sage</span><span class="hex">#6B7145</span><span class="use">Quiet affirmation</span></div></article>
+  </div>
+
+  <div class="footnotes" style="margin-top: calc(var(--unit) * 5);">
+    <ol>
+      <li>Jazz colours must never exceed ~12&nbsp;% of any single view. If the page
+        feels celebratory, cut one.</li>
+      <li>Press-red is a verdict, not a wall colour. Use it on rules, stamps,
+        border-accents, and short type. Never behind a paragraph of body text.</li>
+      <li>The paper tone is deliberately warm. A clinical white surface destroys
+        the register and should be considered a bug.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- =================================================================
+     §4 · Typography
+     ================================================================= -->
+<section id="type" class="chapter">
+  <span class="chapter-label">§ 04 · Type</span>
+  <h2>A four-voice system</h2>
+  <p class="measure editorial">
+    Display shouts. Editorial argues. Sans labels. Mono testifies. Use each for
+    what it is, and never ask one voice to do another's job.
+  </p>
+
+  <div class="grid-2" style="margin-top: calc(var(--unit) * 4);">
+    <div class="specimen">
+      <span class="label">Display · Big Shoulders Display · 900</span>
+      <div class="big">Compiler for Prose</div>
+      <p class="editorial" style="margin: 0;">Headlines, posters, mastheads, stamps. Heavy, condensed, uppercase. Never in body. Never below 1.6 rem.</p>
+    </div>
+    <div class="specimen">
+      <span class="label">Editorial · EB Garamond · 400 / italic</span>
+      <div class="eb">Regions govern bytes, not the other way round.</div>
+      <p class="editorial" style="margin: 0;">Paragraphs, pull-quotes, footnotes. Old-style figures on. Trade-book indent on paragraph continuation.</p>
+    </div>
+    <div class="specimen">
+      <span class="label">Sans · IBM Plex Sans · 600</span>
+      <div class="ps">SCHEMA · VERSION · STATUS · LINE INDEX</div>
+      <p class="editorial" style="margin: 0;">Metadata, tags, labels, nav, captions. Uppercase with generous tracking. Never more than a sentence long.</p>
+    </div>
+    <div class="specimen">
+      <span class="label">Mono · JetBrains Mono · 400 / 600</span>
+      <div class="jm">stilyagi check --dump-ir src/</div>
+      <p class="editorial" style="margin: 0;">Code, IR fragments, shell examples, identifiers. Inline in body prose only for identifiers; block for anything longer.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top: calc(var(--unit) * 4);">Scale &amp; rhythm</h3>
+  <table class="scholar">
+    <caption>Type scale · root 16 px · line-height 1.55 for body</caption>
+    <thead>
+      <tr><th>Role</th><th>Family</th><th>Size</th><th>Weight</th><th>Treatment</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>H1 · display</td><td>Big Shoulders Display</td><td>clamp 2.6 / 5.5 rem</td><td>900</td><td>Uppercase · LH 0.92</td></tr>
+      <tr><td>H2 · display</td><td>Big Shoulders Display</td><td>2.25 rem</td><td>900</td><td>Uppercase · LH 0.95</td></tr>
+      <tr><td>H3 · section</td><td>IBM Plex Sans</td><td>1.5 rem</td><td>700</td><td>Uppercase · tracking 0.04 em</td></tr>
+      <tr><td>Lede</td><td>EB Garamond</td><td>1.25 rem</td><td>400</td><td>First-line small caps</td></tr>
+      <tr><td>Body</td><td>EB Garamond</td><td>1.0625 rem</td><td>400</td><td>Indent on continuation</td></tr>
+      <tr><td>Caption / tag</td><td>IBM Plex Sans</td><td>0.78 rem</td><td>600</td><td>Uppercase · tracking 0.08–0.14 em</td></tr>
+      <tr><td>Code</td><td>JetBrains Mono</td><td>0.95 rem</td><td>400 / 600</td><td>ss02 on</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =================================================================
+     §5 · Grid &amp; surfaces
+     ================================================================= -->
+<section id="grid" class="chapter">
+  <span class="chapter-label">§ 05 · Grid</span>
+  <h2>A ruled surface, not a frame</h2>
+  <p class="measure editorial">
+    Every surface is graph paper. The rule lines at 24 px provide a visible scaffold;
+    all spacing is a multiple of the 8 px unit. The editorial measure caps at 72 ch
+    so paragraphs do not swim. Panels sit inside the grid, not on top of it.
+  </p>
+
+  <div class="grid-3" style="margin-top: calc(var(--unit) * 4);">
+    <div class="panel">
+      <span class="panel-label">Panel · default</span>
+      <p class="editorial" style="margin: 0;">Thin ink border, paper ground, recessed label. The workhorse container for editorial content.</p>
+    </div>
+    <div class="panel heavy red">
+      <span class="panel-label">Panel · agitprop</span>
+      <p class="editorial" style="margin: 0;">Heavy red border signals judgement. Use for verdicts, diagnostics, failure reports.</p>
+    </div>
+    <div class="punchcard">
+      <h4>Punch-card · standard</h4>
+      <p class="editorial" style="margin: 0;">Top-right corner cut. Semantic: task in motion. Lifted from Corbusier's vocabulary, retained here for continuity.</p>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top: calc(var(--unit) * 3);">
+    <div class="punchcard blocked">
+      <h4>Punch-card · blocked</h4>
+      <p class="editorial" style="margin: 0;">Top-<em>left</em> corner cut and red border. Semantic: blocked, quarantined, obsolete.</p>
+    </div>
+    <div class="agitprop">
+      <h4 class="accent">AGITPROP</h4>
+      <p class="editorial" style="margin: 0; color: var(--paper);">Ink ground, red gutter, paper type. Reserved for posters, verdict blocks, chapter openers.</p>
+    </div>
+    <div class="panel" style="background: var(--paper-shade);">
+      <span class="panel-label">Panel · recessed</span>
+      <p class="editorial" style="margin: 0;">Paper-shade ground for asides, sidebars, and metadata blocks that must read as subordinate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     §6 · Motifs
+     ================================================================= -->
+<section id="motifs" class="chapter">
+  <span class="chapter-label">§ 06 · Motifs</span>
+  <h2>The decoration has a job</h2>
+  <p class="measure editorial">
+    Every motif in this system points at something, marks something, or testifies
+    to a printing method. Ornament-for-its-own-sake is not available here.
+  </p>
+
+  <!-- Manicules -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Manicule — the house bullet</h3>
+  <div class="grid-2">
+    <ul class="manicule-list">
+      <li>Black manicule — the default. Works for any scholarly or structural list.</li>
+      <li>Use when each item is a stand-alone claim earning its own line.</li>
+      <li>Do not use for fewer than two items, or for short sub-items within prose.</li>
+    </ul>
+    <ul class="manicule-list red">
+      <li>Red manicule — emphasis within a list, or a verdict list.</li>
+      <li>One colour per list. Mixing manicule colours within a single list is banned.</li>
+      <li>Magenta, cyan, ochre variants exist for cover and poster use only.</li>
+    </ul>
+  </div>
+
+  <!-- Halftone -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Halftone</h3>
+  <div class="grid-4">
+    <div style="height: 140px; border: 1px solid var(--ink);" class="halftone-red"></div>
+    <div style="height: 140px; border: 1px solid var(--ink);" class="halftone-magenta"></div>
+    <div style="height: 140px; border: 1px solid var(--ink);" class="halftone-cyan"></div>
+    <div style="height: 140px; border: 1px solid var(--ink);" class="halftone-ochre"></div>
+  </div>
+  <p class="caption" style="margin-top: 8px;">Halftone at 6 px pitch. Use as ground for posters, diagrams, and icon fills — never behind body text.</p>
+
+  <!-- Cross-hatch -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Cross-hatch engraving</h3>
+  <div class="grid-2">
+    <div style="height: 120px; border: 1px solid var(--ink);" class="hatch"></div>
+    <div style="height: 120px; border: 1px solid var(--ink);" class="hatch-red"></div>
+  </div>
+  <p class="caption" style="margin-top: 8px;">Parallel-line engraving at 135°. Evokes Chicago-Press plate engraving. Suitable for frames, figure borders, samizdat backgrounds.</p>
+
+  <!-- Hazard -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Hazard stripe</h3>
+  <div class="relative" style="height: 140px; border: var(--rule-weight) solid var(--ink); background: var(--paper);">
+    <div class="hazard-corner tl" aria-hidden="true"></div>
+    <div class="hazard-corner tr" aria-hidden="true"></div>
+    <div class="hazard-corner bl" aria-hidden="true"></div>
+    <div class="hazard-corner br" aria-hidden="true"></div>
+    <div style="position:absolute; inset:0; display:grid; place-items:center;">
+      <span class="caption">Corners mark a zone as fragile, deprecated, or pre-release.</span>
+    </div>
+  </div>
+  <div class="hazard-rule" style="margin-top: var(--unit);"></div>
+  <p class="caption" style="margin-top: 8px;">Full-width hazard rule, used above warning banners or ship-date markers. One per page maximum.</p>
+
+  <!-- Stamp -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Rubber-stamp verdict</h3>
+  <div class="grid-3" style="align-items: center;">
+    <div class="centered" style="padding: 24px;"><span class="stamp">Obsolete</span></div>
+    <div class="centered" style="padding: 24px;"><span class="stamp">Shipped</span></div>
+    <div class="centered" style="padding: 24px;"><span class="stamp ink small">Draft · do not quote</span></div>
+  </div>
+  <p class="caption" style="margin-top: 8px;">A stamp is a judgement. One per artefact, over existing content, rotated −8° by default. Never use as decoration.</p>
+
+  <!-- Splatter -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Splatter — cover only</h3>
+  <div class="relative" style="height: 220px; border: var(--rule-weight) solid var(--ink); background: var(--paper); overflow: hidden;">
+    <div class="splatter" aria-hidden="true"></div>
+    <div style="position: absolute; inset: 0; display: grid; place-items: center;">
+      <span class="display" style="font-size: 3rem;">Jazz is the accent</span>
+    </div>
+  </div>
+  <p class="caption" style="margin-top: 8px;">Permitted on covers, section openers, and posters. Forbidden behind tables, code, navigation, or forms.</p>
+</section>
+
+<!-- =================================================================
+     §7 · Components
+     ================================================================= -->
+<section id="components" class="chapter">
+  <span class="chapter-label">§ 07 · Components</span>
+  <h2>A working vocabulary</h2>
+  <p class="measure editorial">
+    The components below form a minimum sufficient set. Extend by composition, not
+    by invention. A new component earns its place only when no combination of these
+    can serve.
+  </p>
+
+  <!-- Buttons -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Buttons</h3>
+  <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+    <button class="btn">Run check</button>
+    <button class="btn red">Ship it</button>
+    <button class="btn ghost">Cancel</button>
+  </div>
+
+  <!-- Chips -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Chips &amp; tags</h3>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+    <span class="chip">Default</span>
+    <span class="chip red">Error</span>
+    <span class="chip ochre">Warning</span>
+    <span class="chip cyan">Info</span>
+    <span class="chip magenta">Beta</span>
+  </div>
+
+  <!-- Callouts -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Callouts</h3>
+  <div class="stack">
+    <div class="callout note">
+      <div class="callout-mark">§</div>
+      <div>
+        <h4>Note</h4>
+        <p class="editorial" style="margin:0;">An aside that earns the reader's attention without demanding action.</p>
+      </div>
+    </div>
+    <div class="callout warning">
+      <div class="callout-mark">!</div>
+      <div>
+        <h4>Warning</h4>
+        <p class="editorial" style="margin:0;">Press-red left rule. The reader must notice. Use sparingly; overuse destroys the verdict.</p>
+      </div>
+    </div>
+    <div class="callout ok">
+      <div class="callout-mark">✓</div>
+      <div>
+        <h4>Grounded</h4>
+        <p class="editorial" style="margin:0;">Quiet affirmation. Sage-green left rule. Use when confirming a stable contract.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pullquote -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Pull-quote</h3>
+  <div class="pullquote">
+    Stilyagi is not a grammar checker. It is a deterministic, highly programmable
+    static-analysis pipeline for human text embedded in source repositories.
+    <cite>— The Stilyagi Manifesto, § i</cite>
+  </div>
+
+  <!-- Table -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Diagnostic matrix — scholarly table</h3>
+  <table class="scholar">
+    <caption>Table I · prior art, with a red stamp where warranted</caption>
+    <thead>
+      <tr><th>Axis</th><th>Vale (prior)</th><th>Stilyagi (current)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Architecture</td><td>Monolithic pipeline</td><td>Strict Rust / Python split</td></tr>
+      <tr><td>Rule engine</td><td>YAML &amp; regex</td><td>Typed Python objects over stable nodes</td></tr>
+      <tr><td>Targeting</td><td>Ad-hoc string scopes</td><td>AST / tree-sitter region descriptors</td></tr>
+      <tr><td>Fidelity</td><td>Implicit text flattening</td><td>Byte-segment mapping invariant</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Code -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Code block</h3>
+<pre class="code"><span class="tok-com"># A Stilyagi rule declares capabilities and targets.</span>
+<span class="tok-kw">class</span> <span class="tok-nm">PassiveVoiceRule</span>(Rule):
+    <span class="tok-nm">capabilities</span> = {<span class="tok-str">"POS"</span>, <span class="tok-str">"DEPENDENCIES"</span>}
+    <span class="tok-nm">target</span>       = RegionTarget(kind=<span class="tok-str">"paragraph"</span>)
+
+    <span class="tok-kw">def</span> <span class="tok-nm">visit</span>(self, node: SentenceNode) -> <span class="tok-kw">Iterator</span>[Diagnostic]:
+        <span class="tok-kw">if</span> is_passive(node):
+            <span class="tok-kw">yield</span> self.diagnose(node.main_verb, <span class="tok-str">"avoid passive voice"</span>)</pre>
+
+  <!-- Panels with punch-card semantics -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Panels in concert</h3>
+  <div class="grid-2">
+    <div class="panel heavy">
+      <span class="panel-label">Hermetic sandbox</span>
+      <p class="editorial">The <code>stilyagi_path</code> pytest fixture wraps <code>tmp_path</code> for isolated, per-test temporary directories. Tests run via subprocess execution against the real engine, yielding a typed <code>StilyagiRunResult</code>.</p>
+    </div>
+    <div class="punchcard blocked">
+      <h4>Obsolete</h4>
+      <p class="editorial" style="margin-bottom: 0;">Regex-based rules become a Victorian medical event when document syntax grows complex or spans multiple lines.</p>
+      <div style="margin-top: 12px;"><span class="stamp small">Retired</span></div>
+    </div>
+  </div>
+
+  <!-- Agitprop block -->
+  <h3 style="margin-top: calc(var(--unit) * 4);">Agitprop block</h3>
+  <div class="agitprop">
+    <span class="chip red" style="background: var(--press-red);">§ Thesis</span>
+    <h2 style="margin-top: 12px;">Separate the <span class="accent">Iron</span> from the <span style="color: var(--jazz-magenta);">Jazz</span></h2>
+    <p class="editorial" style="max-width: 60ch; color: var(--paper);">
+      Do not let every rule parse Markdown. Rules govern regions, not raw bytes.
+      Rust owns file discovery, extraction, structural byte-accounting, and the
+      intermediate representation. Python owns policy, configuration, NLP
+      capabilities, rule execution, and diagnostic rendering.
+    </p>
+  </div>
+</section>
+
+<!-- =================================================================
+     §8 · Restraint — do / don't
+     ================================================================= -->
+<section id="restraint" class="chapter">
+  <span class="chapter-label">§ 08 · Restraint</span>
+  <h2>The failure modes of this aesthetic</h2>
+  <p class="measure editorial">
+    An aesthetic this loaded breaks in predictable ways. The rules below are
+    observed failure modes, not matters of taste.
+  </p>
+
+  <div class="dodont">
+    <div class="card">
+      <span class="tag">Do</span>
+      <p class="editorial"><strong>One jazz colour per view.</strong> Pick magenta, cyan, or ochre, and commit. Two is a carnival; three is a cry for help.</p>
+    </div>
+    <div class="card bad">
+      <span class="tag">Don't</span>
+      <p class="editorial"><strong>Never load magenta, cyan and ochre together</strong> into the same chart, dashboard, or dense UI.</p>
+    </div>
+  </div>
+  <div class="dodont">
+    <div class="card">
+      <span class="tag">Do</span>
+      <p class="editorial"><strong>Stamp a verdict.</strong> <span class="stamp small">Obsolete</span> earns its place on a retired spec.</p>
+    </div>
+    <div class="card bad">
+      <span class="tag">Don't</span>
+      <p class="editorial"><strong>Never scatter stamps as decoration.</strong> A page with three rubber stamps has none.</p>
+    </div>
+  </div>
+  <div class="dodont">
+    <div class="card">
+      <span class="tag">Do</span>
+      <p class="editorial"><strong>Reserve splatter for covers.</strong> Section openers, posters, launch pages.</p>
+    </div>
+    <div class="card bad">
+      <span class="tag">Don't</span>
+      <p class="editorial"><strong>Never put splatter behind body text, tables, code, or forms.</strong> The reader's eye cannot work in a paint booth.</p>
+    </div>
+  </div>
+  <div class="dodont">
+    <div class="card">
+      <span class="tag">Do</span>
+      <p class="editorial"><strong>Set body in EB Garamond.</strong> The serif slows the reader enough to consider the claim.</p>
+    </div>
+    <div class="card bad">
+      <span class="tag">Don't</span>
+      <p class="editorial"><strong>Never set body in Big Shoulders.</strong> Display type in running text is shouting a paragraph.</p>
+    </div>
+  </div>
+  <div class="dodont">
+    <div class="card">
+      <span class="tag">Do</span>
+      <p class="editorial"><strong>Let the grid show.</strong> The ruled paper is the system's signature — it reads as scholarly, not decorative.</p>
+    </div>
+    <div class="card bad">
+      <span class="tag">Don't</span>
+      <p class="editorial"><strong>Never replace the warm cream substrate with clinical white.</strong> The register collapses to generic SaaS on the first stroke.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================
+     §9 · Sample page
+     ================================================================= -->
+<section id="sample" class="chapter">
+  <span class="chapter-label">§ 09 · Sample</span>
+  <h2>The whole thing, working</h2>
+  <p class="measure editorial">
+    One page in the idiom, with every vocabulary item doing its job.
+  </p>
+
+  <article class="mock-page" style="margin-top: calc(var(--unit) * 3);">
+    <header class="mock-mast">
+      <div>
+        <div class="caption">df12 · dispatch no. 017</div>
+        <div class="title">From Tokens to <span class="r">Clauses</span></div>
+      </div>
+      <div class="meta">
+        Edinburgh · 20 Apr 2026<br>
+        Filed under: grammar nodes
+      </div>
+    </header>
+
+    <div class="columns-2">
+      <p class="lede">The Stilyagi grammar layer is a deliberately thin
+        translation of a noisy spaCy <code>Doc</code> into a small set of stable,
+        typed nodes on which Python rules may rely without breakage. The design
+        inverts the usual dependency.</p>
+
+      <p>Canonical <code>UPos</code> enums are drawn from Universal Dependencies.
+        Four derived syntactic nodes — <code>TokenNode</code>, <code>SentenceNode</code>,
+        <code>NounPhraseNode</code>, and <code>CoordinationNode</code> — are exposed
+        to rule authors. The Embassy Rule admits of no exception: Python rules talk
+        only to stable grammar nodes, never to raw spaCy classes.</p>
+
+      <blockquote>
+        A rule that imports spaCy is a rule that will break on the next minor
+        bump. That is not a cost the engine bears.
+        <footer>— Stilyagi grammar brief, § 3</footer>
+      </blockquote>
+
+      <p>The Embassy Rule simplifies migration, testing, and vendoring. It also
+        makes rule authorship legible to contributors who do not know, and need
+        not know, how the underlying tagger represents morphology.</p>
+    </div>
+
+    <hr class="scholar">
+
+    <div class="grid-2" style="margin-top: calc(var(--unit) * 3);">
+      <div class="panel">
+        <span class="panel-label">§ Capability declaration</span>
+        <ul class="manicule-list red">
+          <li>Rules explicitly declare required capabilities: <code>STRUCTURE</code>, <code>POS</code>, <code>DEPENDENCIES</code>.</li>
+          <li>The engine computes the union of requirements and plans the cheapest viable annotation.</li>
+          <li>A purely structural CI run completely bypasses NLP initialization.</li>
+        </ul>
+      </div>
+      <div class="callout warning">
+        <div class="callout-mark">!</div>
+        <div>
+          <h4>Breaking change · v0.8 → v0.9</h4>
+          <p class="editorial" style="margin:0;">The <code>UPos</code> enum gains three values to cover Universal Dependencies v2.12. Rules that pattern-match on the enum must extend their match arms.</p>
+        </div>
+      </div>
+    </div>
+
+    <table class="scholar" style="margin-top: calc(var(--unit) * 3);">
+      <caption>Table II · Capability cost at typical document sizes</caption>
+      <thead>
+        <tr><th>Capability</th><th>Init cost</th><th>Per-doc cost</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>STRUCTURE</td><td>&lt; 10 ms</td><td>~ 1 ms / kb</td><td>Rust tree-sitter, no NLP</td></tr>
+        <tr><td>POS</td><td>~ 1.2 s</td><td>~ 18 ms / kb</td><td>spaCy small model</td></tr>
+        <tr><td>DEPENDENCIES</td><td>~ 2.1 s</td><td>~ 34 ms / kb</td><td>Parser &amp; tagger</td></tr>
+      </tbody>
+    </table>
+
+    <div class="footnotes">
+      <ol>
+        <li>Measurements on a 2024 M-series laptop; repository of 412 Markdown files, median 3.1 kb.</li>
+        <li>Cold-path init excludes model download. Warm runs amortise init across <code>--watch</code> sessions.</li>
+      </ol>
+    </div>
+  </article>
+</section>
+
+<!-- =================================================================
+     §10 · Tokens
+     ================================================================= -->
+<section id="tokens" class="chapter">
+  <span class="chapter-label">§ 10 · Tokens</span>
+  <h2>Copy-and-paste</h2>
+  <p class="measure editorial">
+    The full token block, for drop-in use in any CSS-based artefact. Pair with
+    Big Shoulders Display, EB Garamond, IBM Plex Sans, and JetBrains Mono via
+    Google Fonts.
+  </p>
+
+<pre class="code"><span class="tok-com">/* Stilyagi design tokens — drop into any CSS file */</span>
+<span class="tok-nm">:root</span> {
+  <span class="tok-kw">--paper</span>:           <span class="tok-str">#EFE4CE</span>;
+  <span class="tok-kw">--paper-shade</span>:    <span class="tok-str">#E4D7B9</span>;
+  <span class="tok-kw">--paper-deep</span>:     <span class="tok-str">#D8C9A4</span>;
+  <span class="tok-kw">--ink</span>:             <span class="tok-str">#0F0F0F</span>;
+  <span class="tok-kw">--ink-soft</span>:        <span class="tok-str">#2A2A2A</span>;
+  <span class="tok-kw">--rule-faint</span>:      <span class="tok-str">#9B8F79</span>;
+
+  <span class="tok-kw">--press-red</span>:       <span class="tok-str">#C2272E</span>;
+  <span class="tok-kw">--press-red-deep</span>:  <span class="tok-str">#992024</span>;
+  <span class="tok-kw">--press-red-ink</span>:   <span class="tok-str">#7A1A1F</span>;
+
+  <span class="tok-kw">--jazz-magenta</span>:    <span class="tok-str">#D81E79</span>;
+  <span class="tok-kw">--jazz-cyan</span>:       <span class="tok-str">#29B4C4</span>;
+  <span class="tok-kw">--jazz-ochre</span>:      <span class="tok-str">#D69F2E</span>;
+
+  <span class="tok-kw">--signal-sage</span>:     <span class="tok-str">#6B7145</span>;
+
+  <span class="tok-kw">--unit</span>:            <span class="tok-str">8px</span>;
+  <span class="tok-kw">--col</span>:             <span class="tok-str">72ch</span>;
+  <span class="tok-kw">--rule-weight</span>:     <span class="tok-str">2px</span>;
+  <span class="tok-kw">--rule-weight-2</span>:   <span class="tok-str">4px</span>;
+  <span class="tok-kw">--rule-weight-3</span>:   <span class="tok-str">8px</span>;
+}
+
+<span class="tok-nm">body</span> {
+  <span class="tok-kw">background</span>: <span class="tok-kw">var</span>(--paper);
+  <span class="tok-kw">color</span>: <span class="tok-kw">var</span>(--ink);
+  <span class="tok-kw">font-family</span>: <span class="tok-str">"EB Garamond"</span>, <span class="tok-kw">Georgia</span>, <span class="tok-kw">serif</span>;
+  <span class="tok-com">/* graph-paper substrate */</span>
+  <span class="tok-kw">background-image</span>:
+    <span class="tok-kw">linear-gradient</span>(to right,  <span class="tok-kw">rgba</span>(155,143,121,.22) 1px, transparent 1px),
+    <span class="tok-kw">linear-gradient</span>(to bottom, <span class="tok-kw">rgba</span>(155,143,121,.22) 1px, transparent 1px);
+  <span class="tok-kw">background-size</span>: 24px 24px;
+}</pre>
+
+  <h3 style="margin-top: calc(var(--unit) * 4);">Font stack — one &lt;link&gt;</h3>
+<pre class="code">&lt;<span class="tok-kw">link</span> <span class="tok-nm">rel</span>=<span class="tok-str">"stylesheet"</span>
+  <span class="tok-nm">href</span>=<span class="tok-str">"https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&amp;family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap"</span>&gt;</pre>
+
+  <h3 style="margin-top: calc(var(--unit) * 4);">Brief for another Claude instance</h3>
+  <div class="panel heavy">
+    <span class="panel-label">Prompt stub</span>
+    <p class="editorial" style="margin:0;">
+      <em>"Build the page in the Stilyagi design language: warm cream paper with a
+      24 px graph-paper grid; EB Garamond body; Big Shoulders Display for headlines,
+      upper-case and heavy; IBM Plex Sans for metadata and tags, upper-case with
+      generous tracking; JetBrains Mono for code; press-red (#C2272E) for verdicts,
+      rules, and stamps only; magenta/cyan/ochre as sparing jazz accents on covers
+      and posters; manicule (☞) as the house bullet; halftone, cross-hatch, and
+      hazard stripes as textures in place of shadows and gradients. No clinical
+      white. No soft elevation. Evidence before commentary."</em>
+    </p>
+  </div>
+</section>
+
+<footer class="colophon-foot">
+  <div class="mark">Stilyagi · <span class="r">Design Language</span> · v0.1</div>
+  <div>df12 productions · Edinburgh · Oxford spelling · evidence before commentary</div>
+</footer>
+
+</div><!-- /.page -->
+
+<script>
+/* Minimal reveal-on-scroll — intentionally understated.
+   The design does not need motion to do its work. */
+(function(){
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-visible');
+        io.unobserve(e.target);
+      }
+    }
+  }, { threshold: .08 });
+
+  document.querySelectorAll('.chapter, .cover').forEach((el) => {
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>

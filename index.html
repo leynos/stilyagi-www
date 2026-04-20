@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stilyagi · a deterministic prose linter</title>
+<link rel="stylesheet" href="assets/colors_and_type.css">
+<link rel="stylesheet" href="assets/motifs_and_components.css">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+/* ---- Home-specific ---- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: var(--rule-weight-3) solid var(--ink);
+  min-height: 88vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+}
+.hero-left {
+  position: relative;
+  padding: calc(var(--unit) * 8) calc(var(--unit) * 6) calc(var(--unit) * 6);
+  background: var(--paper);
+  border-right: var(--rule-weight-3) solid var(--ink);
+  display: flex; flex-direction: column; justify-content: space-between;
+  min-height: 100%;
+}
+.hero-left::before {
+  content: "";
+  position: absolute; right: -6px; top: 0; bottom: 0;
+  width: 14px;
+  background: repeating-linear-gradient(135deg,
+    var(--ink) 0 10px, var(--press-red) 10px 20px);
+  opacity: .9;
+}
+.folio-top {
+  display: flex; justify-content: space-between;
+  align-items: center; gap: 20px;
+  border-bottom: var(--rule-weight) solid var(--ink);
+  padding-bottom: 14px;
+  margin-bottom: calc(var(--unit) * 5);
+  font-family: var(--font-sans);
+  font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.folio-top .red { color: var(--press-red); font-weight: 700; }
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(5rem, 14vw, 14rem);
+  line-height: 0.82;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+}
+.wordmark .a { color: var(--press-red); }
+.wordmark .suffix {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: .18em;
+  letter-spacing: .16em;
+  color: var(--press-red);
+  margin-top: 18px;
+}
+
+.hero-dek {
+  margin-top: calc(var(--unit) * 5);
+  max-width: 36ch;
+  font-family: var(--font-editorial);
+  font-size: 1.35rem;
+  line-height: 1.45;
+  font-style: italic;
+}
+.hero-dek::first-line {
+  font-variant: small-caps;
+  letter-spacing: .06em;
+  font-style: normal;
+}
+.hero-dek .red { color: var(--press-red); font-style: normal; }
+
+.hero-verdicts {
+  margin-top: calc(var(--unit) * 4);
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+
+.hero-bottom {
+  margin-top: calc(var(--unit) * 5);
+  display: flex; align-items: center; gap: calc(var(--unit) * 3);
+  font-family: var(--font-sans);
+  font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink);
+}
+.hero-bottom .pointer {
+  font-size: 1.8rem; color: var(--press-red); line-height: 1;
+}
+
+/* Right column — poster ornament stack */
+.hero-right {
+  position: relative;
+  background: var(--paper-shade);
+  padding: calc(var(--unit) * 6);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: calc(var(--unit) * 4);
+  overflow: hidden;
+}
+.hero-right::before {
+  content: "";
+  position: absolute; inset: calc(var(--unit) * 3);
+  border: var(--rule-weight) solid var(--ink);
+  pointer-events: none;
+}
+.poster-head {
+  position: relative; z-index: 2;
+  padding: calc(var(--unit) * 2) 0 0;
+  text-align: center;
+}
+.poster-head .kicker {
+  font-family: var(--font-sans);
+  font-size: .72rem; letter-spacing: .24em;
+  text-transform: uppercase; color: var(--press-red);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.poster-head h2 {
+  font-size: 2.4rem; line-height: .95;
+  margin: 0 auto 0;
+  max-width: 16ch;
+}
+.poster-head h2 .red { color: var(--press-red); }
+.poster-head .sub {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 1.05rem;
+  margin-top: 10px;
+  color: var(--ink-soft);
+}
+
+.poster-center {
+  position: relative; z-index: 2;
+  display: grid; place-items: center;
+  padding: 0 calc(var(--unit) * 3);
+}
+.stamp-frame {
+  position: relative;
+  width: min(100%, 340px);
+  aspect-ratio: 1 / 1;
+  border: var(--rule-weight-2) solid var(--ink);
+  background: var(--paper);
+  display: grid; place-items: center;
+  background-image: radial-gradient(rgba(15,15,15,.3) 1px, transparent 1.4px);
+  background-size: 6px 6px;
+}
+.stamp-frame::before {
+  content: "";
+  position: absolute; inset: 10px;
+  border: 1px solid var(--press-red);
+}
+.stamp-frame .big-pointer {
+  font-family: var(--font-editorial);
+  font-size: 10rem;
+  line-height: 1;
+  color: var(--press-red);
+  text-shadow: 4px 4px 0 rgba(15,15,15,.06);
+}
+.stamp-frame .corner {
+  position: absolute;
+  font-family: var(--font-sans);
+  font-size: .68rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink);
+  font-weight: 700;
+}
+.stamp-frame .corner.tl { top: 16px; left: 18px; }
+.stamp-frame .corner.tr { top: 16px; right: 18px; color: var(--press-red); }
+.stamp-frame .corner.bl { bottom: 16px; left: 18px; color: var(--press-red); }
+.stamp-frame .corner.br { bottom: 16px; right: 18px; }
+
+.stamp-floater {
+  position: absolute;
+  top: 22px; right: -24px;
+  z-index: 3;
+}
+
+.poster-foot {
+  position: relative; z-index: 2;
+  border-top: var(--rule-weight) solid var(--ink);
+  padding-top: calc(var(--unit) * 2);
+  font-family: var(--font-sans);
+  font-size: .72rem; letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-align: center;
+  line-height: 1.6;
+}
+.poster-foot .red { color: var(--press-red); font-weight: 700; }
+
+/* ---- Below-the-fold ---- */
+.thesis-strip {
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom: var(--rule-weight-3) solid var(--press-red);
+}
+.thesis-strip-inner {
+  max-width: 1240px; margin: 0 auto;
+  padding: calc(var(--unit) * 7) calc(var(--unit) * 4);
+  display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--unit) * 6);
+  align-items: start;
+}
+.thesis-strip h2 {
+  color: var(--paper);
+  font-size: clamp(2rem, 3vw + 1rem, 3.5rem);
+  line-height: .95;
+  margin: 0;
+}
+.thesis-strip h2 .red { color: var(--press-red); }
+.thesis-strip p {
+  font-family: var(--font-editorial);
+  font-size: 1.2rem;
+  line-height: 1.55;
+  color: var(--paper);
+}
+.thesis-strip p + p { text-indent: 1.8em; }
+
+.three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: calc(var(--unit) * 4);
+}
+.three-col .col h3 {
+  font-family: var(--font-sans);
+  font-size: .9rem;
+  letter-spacing: .14em;
+  color: var(--press-red);
+  margin-bottom: 10px;
+}
+.three-col .col p {
+  font-family: var(--font-editorial);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.pull-home {
+  max-width: 1240px; margin: 0 auto;
+  padding: calc(var(--unit) * 8) calc(var(--unit) * 4);
+}
+.pull-home .pullquote {
+  font-size: 2.2rem;
+  font-style: italic;
+  max-width: 28ch;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* not/is cards */
+.isnot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: var(--rule-weight-2) solid var(--ink);
+  background: var(--paper);
+}
+.isnot-grid > div {
+  padding: calc(var(--unit) * 4);
+}
+.isnot-grid .col-is {
+  border-right: var(--rule-weight) solid var(--ink);
+}
+.isnot-grid .col-isnot {
+  background: var(--paper-shade);
+}
+.isnot-grid h3 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+  letter-spacing: .02em;
+}
+.isnot-grid .col-is h3 { color: var(--ink); }
+.isnot-grid .col-isnot h3 { color: var(--press-red); }
+.isnot-grid ul { list-style: none; padding: 0; margin: 0; }
+.isnot-grid li {
+  padding: 10px 0 10px 1.8em;
+  border-bottom: 1px dashed rgba(15,15,15,.2);
+  font-family: var(--font-editorial);
+  font-size: 1.08rem;
+  position: relative;
+  line-height: 1.4;
+}
+.isnot-grid li:last-child { border-bottom: 0; }
+.isnot-grid .col-is li::before {
+  content: "✓"; position: absolute; left: 0; top: 10px;
+  color: var(--signal-sage); font-family: var(--font-sans); font-weight: 700;
+}
+.isnot-grid .col-isnot li::before {
+  content: "✗"; position: absolute; left: 0; top: 10px;
+  color: var(--press-red); font-family: var(--font-sans); font-weight: 700;
+}
+
+.contd {
+  max-width: 1240px; margin: 0 auto;
+  padding: calc(var(--unit) * 6) calc(var(--unit) * 4) calc(var(--unit) * 10);
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: calc(var(--unit) * 4);
+  align-items: start;
+}
+.contd h3 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  margin: 0 0 .3em;
+}
+.contd h3 .red { color: var(--press-red); }
+.contd .row p { font-family: var(--font-editorial); font-size: 1.05rem; line-height: 1.5; }
+.contd .row .tag {
+  font-family: var(--font-sans);
+  font-size: .72rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--press-red);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.contd .row a.go {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 2px solid var(--press-red);
+  padding-bottom: 2px;
+}
+.contd .row a.go:hover { color: var(--press-red); }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-left { border-right: 0; border-bottom: var(--rule-weight-3) solid var(--ink); }
+  .hero-left::before { display: none; }
+  .thesis-strip-inner, .three-col, .contd, .isnot-grid { grid-template-columns: 1fr; }
+  .isnot-grid .col-is { border-right: 0; border-bottom: var(--rule-weight) solid var(--ink); }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="assets/Primitives.jsx"></script>
+<script type="text/babel" src="assets/Chrome.jsx"></script>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+function Hero() {
+  const [stamp, setStamp] = useState((window.__stilyagiTweaks?.stamp) || "Draft");
+  useEffect(() => {
+    const h = (e) => setStamp(e.detail.stamp || "Draft");
+    window.addEventListener("stilyagi:tweaks", h);
+    return () => window.removeEventListener("stilyagi:tweaks", h);
+  }, []);
+
+  return (
+    <section className="hero">
+      <div className="hero-left">
+        <div>
+          <div className="folio-top">
+            <span>№ 001 · Edition of Record</span>
+            <span className="red">☞ A deterministic prose linter</span>
+            <span>April 26 · Draft</span>
+          </div>
+          <h1 className="wordmark">
+            Stil<span className="a">y</span>agi
+            <span className="suffix">§ a df12 project · rust + python · offline · deterministic</span>
+          </h1>
+          <p className="hero-dek">
+            A programmable static-analysis tool for the human-facing text
+            embedded in source repositories. <span className="red">Rust
+            extracts. Python rules.</span> No LLM, no sandbox, no sermon.
+          </p>
+          <div className="hero-verdicts">
+            <span className="verdict red">Press-red verdicts</span>
+            <span className="verdict ink">Safe fixes only</span>
+            <span className="verdict sage">Offline CI</span>
+            <span className="verdict ochre">Preview · MDX</span>
+          </div>
+        </div>
+
+        <div className="hero-bottom">
+          <span className="pointer">☞</span>
+          <span>Read the case <span style={{color:"var(--press-red)"}}>·</span> <a href="why.html" style={{color:"var(--ink)",textDecoration:"none",borderBottom:"2px solid var(--press-red)"}}>Why Stilyagi</a></span>
+          <span style={{color:"var(--ink-soft)"}}>— or skip to</span>
+          <a href="how.html" style={{color:"var(--ink)",textDecoration:"none",borderBottom:"2px solid var(--ink)"}}>The mechanism</a>
+        </div>
+      </div>
+
+      <div className="hero-right">
+        <div className="poster-head">
+          <div className="kicker">An Agitprop Pamphlet · Edition № 001</div>
+          <h2>Prose, under the <span className="red">red pencil</span>.</h2>
+          <div className="sub">A linter for documentation policy, not for English.</div>
+        </div>
+        <div className="poster-center">
+          <div className="stamp-frame">
+            <span className="corner tl">§ 001</span>
+            <span className="corner tr">Deter­minate</span>
+            <span className="corner bl">Source-faithful</span>
+            <span className="corner br">April 26</span>
+            <span className="big-pointer">☞</span>
+            <span className="stamp-floater">
+              <Stamp>{stamp}</Stamp>
+            </span>
+          </div>
+        </div>
+        <div className="poster-foot">
+          <span className="red">Warning.</span> Rules govern regions, not raw bytes. ·
+          Text is structured. Files are structured. CI should know.
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ThesisStrip() {
+  return (
+    <section className="thesis-strip">
+      <div className="thesis-strip-inner">
+        <div>
+          <h2>Separate the <span className="red">iron</span> from the ink.</h2>
+          <div style={{marginTop: 20, display:"flex",gap:10,flexWrap:"wrap"}}>
+            <span className="chip red">§ Thesis</span>
+            <span className="chip" style={{background:"var(--paper)",color:"var(--ink)"}}>v1 architecture</span>
+          </div>
+        </div>
+        <div>
+          <p className="editorial">
+            The key design decision is to separate <em>extraction</em> from
+            <em> analysis</em>. Rules must not parse Markdown, walk tree-sitter
+            nodes, or boot spaCy independently.
+          </p>
+          <p className="editorial">
+            They must receive a stable region-oriented model plus selectively
+            materialised linguistic annotations. That gives Stilyagi Vale's
+            structural awareness without Vale's YAML rule ceiling, and keeps
+            the tool deterministic enough for CI, editors, and agentic
+            workflows.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ThreeColumns() {
+  return (
+    <section className="stack-section">
+      <div className="section-head">
+        <div className="num">01</div>
+        <div>
+          <div className="tag">§ The shape of the problem</div>
+          <h2>Three audiences, one tool.</h2>
+        </div>
+      </div>
+      <div className="three-col">
+        <div className="col">
+          <h3>☞ The Skeptic</h3>
+          <p className="editorial">
+            "Why not just Vale?" Because Vale's rules live inside declarative
+            YAML, canned check families, and a deliberately limited extension
+            surface. Stilyagi lets you author rules in real Python against a
+            typed runtime model. <a href="why.html">Read the case →</a>
+          </p>
+        </div>
+        <div className="col">
+          <h3>☞ The Doc Engineer</h3>
+          <p className="editorial">
+            Stable spans, deterministic CI, rule packs, SARIF, suppressions
+            that survive Markdown flattening. Docstrings extracted with owner
+            metadata. <a href="how.html">See the mechanism →</a>
+          </p>
+        </div>
+        <div className="col">
+          <h3>☞ The Compiler Nerd</h3>
+          <p className="editorial">
+            A region-oriented IR with <code>line_index</code>,
+            <code> content_hash</code>, <code>segments</code>, and explicit
+            synthetic spans. A capability planner. A narrow FFI boundary.
+            <a href="design.html"> Open the hood →</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function IsIsNot() {
+  return (
+    <section className="stack-section">
+      <div className="section-head">
+        <div className="num">02</div>
+        <div>
+          <div className="tag">§ Verdicts</div>
+          <h2>What Stilyagi is, and is not.</h2>
+        </div>
+      </div>
+
+      <div className="isnot-grid">
+        <div className="col-is">
+          <h3>Stilyagi <span style={{color:"var(--press-red)"}}>is</span></h3>
+          <ul>
+            <li>A programmable static-analysis tool for human-facing text.</li>
+            <li>A Python-distributed package with an embedded Rust extractor.</li>
+            <li>Region-oriented, source-faithful, byte-accurate.</li>
+            <li>Deterministic by default; sorted, ordered, reproducible.</li>
+            <li>Offline after install — no network, no model downloads.</li>
+            <li>Honest about trust: plugins are code you invited in.</li>
+          </ul>
+        </div>
+        <div className="col-isnot">
+          <h3>Stilyagi <span style={{color:"var(--press-red)"}}>is not</span></h3>
+          <ul>
+            <li>A Vale wrapper, and does not preserve Vale packaging.</li>
+            <li>A general-purpose grammar checker.</li>
+            <li>An LLM writing assistant. No model calls in the core.</li>
+            <li>A sandbox for untrusted plugins. Plugins are trusted code.</li>
+            <li>A cross-file semantic engine. Not yet — maybe never.</li>
+            <li>A SaaS. It runs on your laptop, your CI, your terms.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PullHome() {
+  return (
+    <section className="pull-home">
+      <div className="pullquote">
+        "Their pain is not that English is hard. Their pain is that
+        documentation policy is real."
+        <cite>— From the design document, § 2</cite>
+      </div>
+    </section>
+  );
+}
+
+function ContinueReading() {
+  return (
+    <section className="contd">
+      <div className="row" style={{gridColumn:"span 1"}}>
+        <div className="tag">☞ Continue reading</div>
+        <h3>The <span className="red">dossier</span>.</h3>
+        <p>The rest of this edition is organised by concern. Start with
+           the motivation; drop into the mechanism; inspect the design; check
+           the roadmap. The docs index ships whatever the first release gets.
+        </p>
+      </div>
+      <div className="row">
+        <div className="tag">§ Why · How</div>
+        <p><strong>Why.</strong> The four weak camps of the prose-linter world
+           and where Stilyagi fits between them.</p>
+        <a className="go" href="why.html">Read Why →</a>
+        <p style={{marginTop:18}}><strong>How.</strong> Architecture, a live
+           rule example, CLI contract, and the capability planner.</p>
+        <a className="go" href="how.html">Read How →</a>
+      </div>
+      <div className="row">
+        <div className="tag">§ Design · Roadmap · Docs</div>
+        <p><strong>Design.</strong> IR inspector, grammar layer, and the
+           engineering trade-offs behind v1.</p>
+        <a className="go" href="design.html">Open design →</a>
+        <p style={{marginTop:18}}><strong>Roadmap.</strong> Six phases, each
+           leaving a usable product behind.</p>
+        <a className="go" href="roadmap.html">See the plan →</a>
+        <p style={{marginTop:18}}><strong>Docs.</strong> Rules, config, ADRs.</p>
+        <a className="go" href="docs.html">Open the manual →</a>
+      </div>
+    </section>
+  );
+}
+
+function App() {
+  return (
+    <>
+      <SiteMast current="home" />
+      <Hero />
+      <ThesisStrip />
+      <ThreeColumns />
+      <IsIsNot />
+      <PullHome />
+      <ContinueReading />
+      <Colophon />
+      <TweaksDock />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

@@ -51,6 +51,17 @@
 .risks .body h3 { font-family: var(--font-display); font-size: 2rem; text-transform: uppercase; margin: 0 0 calc(var(--unit)*2); line-height: .95; }
 .risks .body p { font-family: var(--font-editorial); font-size: 1.08rem; line-height: 1.55; max-width: 64ch; }
 .risks .body p + p { text-indent: 1.8em; margin-top: 10px; }
+.roadmap-illo {
+  max-width: 1240px; margin: 0 auto;
+  padding: 0 calc(var(--unit) * 4) calc(var(--unit) * 4);
+}
+.roadmap-illo img {
+  width: 100%;
+  height: auto;
+  border: var(--rule-weight-2) solid var(--ink);
+  display: block;
+  mix-blend-mode: multiply;
+}
 .pacing { margin-top: 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .pacing .card { border: 1px solid var(--ink); padding: 14px 16px; background: var(--paper); }
 .pacing .card .tt { font-family: var(--font-sans); font-size: .7rem; letter-spacing: .16em; color: var(--press-red); font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
@@ -157,6 +168,10 @@ function Roadmap() {
         lede="Each phase ships a thin strip through the whole system — extraction, IR, rule, output, cache, docs. We do not build the entire extractor and then the entire rule catalogue. We build one rule working end-to-end, then another, then another."
         stamp="GROUNDED"
       />
+
+      <section className="roadmap-illo">
+        <img src="assets/images/graph.png" alt="The Vertical Slices — phases building upward from foundations to 1.0" />
+      </section>
 
       <section className="roadmap-wrap">
         <div className="legend-bar">

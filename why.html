@@ -249,10 +249,54 @@
 }
 .closing .next a:hover { color: var(--press-red); }
 
+/* Style-hunter illustration */
+.style-hunter-panel {
+  max-width: 1240px; margin: 0 auto;
+  padding: 0 calc(var(--unit) * 4) calc(var(--unit) * 4);
+}
+.style-hunter-panel .inner {
+  border: var(--rule-weight-2) solid var(--ink);
+  background: var(--paper);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  overflow: hidden;
+}
+.style-hunter-panel .inner img {
+  width: 320px;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-right: var(--rule-weight-2) solid var(--ink);
+  mix-blend-mode: multiply;
+}
+.style-hunter-panel .inner .text {
+  padding: calc(var(--unit) * 4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.style-hunter-panel .inner .text h3 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 2rem;
+  margin: 0 0 calc(var(--unit) * 2);
+  line-height: .95;
+}
+.style-hunter-panel .inner .text h3 .red { color: var(--press-red); }
+.style-hunter-panel .inner .text p {
+  font-family: var(--font-editorial);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  max-width: 48ch;
+}
+
 @media (max-width: 900px) {
   .camps, .valueset, .weaknesses, .argument { grid-template-columns: 1fr; }
   .camps .camp { border-right: 0; border-bottom: var(--rule-weight) solid var(--ink); }
   .argument .margin-note { position: relative; top: 0; }
+  .style-hunter-panel .inner { grid-template-columns: 1fr; }
+  .style-hunter-panel .inner img { width: 100%; height: 200px; border-right: 0; border-bottom: var(--rule-weight-2) solid var(--ink); }
 }
 </style>
 </head>
@@ -310,6 +354,26 @@ function FourCamps() {
             <span className={`verdict-tag ${c.red ? "red" : ""}`}>{c.verdict}</span>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function StyleHunter() {
+  return (
+    <section className="style-hunter-panel">
+      <div className="inner">
+        <img src="assets/images/style-hunter.png" alt="The Style Hunter — a suited figure with magnifying glass inspects prose" />
+        <div className="text">
+          <h3>The <span className="red">style hunters</span>.</h3>
+          <p>
+            Rules are written in expressive Python, operating on typed wrappers,
+            not raw JSON dictionaries. Inspired by astroid for node navigability,
+            enabling parent/child traversal and stable properties. Target explicit
+            descriptors like <code>RegionTarget(kind="heading")</code> rather
+            than relying on abstract string matching.
+          </p>
+        </div>
       </div>
     </section>
   );
@@ -521,6 +585,7 @@ function App() {
       <SiteMast current="why" />
       <PageIntro />
       <FourCamps />
+      <StyleHunter />
       <TheArgument />
       <Personas />
       <Values />

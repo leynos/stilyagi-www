@@ -263,11 +263,54 @@
 }
 .flowtext .body p + p { text-indent: 1.8em; }
 
+/* Layer illustrations */
+.layer-illo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--unit) * 3);
+  margin-top: calc(var(--unit) * 4);
+}
+.layer-illo figure {
+  margin: 0;
+  border: var(--rule-weight) solid var(--ink);
+  overflow: hidden;
+  position: relative;
+}
+.layer-illo figure img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+}
+.layer-illo figcaption {
+  padding: 8px 12px;
+  background: var(--paper);
+  font-family: var(--font-sans);
+  font-size: .72rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-top: var(--rule-weight) solid var(--ink);
+}
+
+/* CLI frame image */
+.cli-frame-img {
+  margin-top: calc(var(--unit) * 4);
+  border: var(--rule-weight-2) solid var(--ink);
+  overflow: hidden;
+}
+.cli-frame-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 @media (max-width: 900px) {
   .pipeline, .boundary, .ex-wrap, .cli-row, .flowtext { grid-template-columns: 1fr; }
   .stage { border-right: 0; border-bottom: var(--rule-weight) solid var(--ink); min-height: auto; }
   .arrow-row { display: none; }
   .cli-row .cmd, .cli-row .sum { border-right: 0; border-bottom: var(--rule-weight) solid var(--ink); }
+  .layer-illo { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -359,6 +402,17 @@ function Architecture() {
               <li>Emits text, JSON, and SARIF with stable ordering.</li>
             </ul>
           </div>
+        </div>
+
+        <div className="layer-illo">
+          <figure>
+            <img src="assets/images/iron.png" alt="The Iron — Rust extraction, gears, structural machinery" />
+            <figcaption>☞ The Iron · Rust · extraction only</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/images/jazz.png" alt="The Jazz — Python analysis, instruments, colourful expression" />
+            <figcaption>☞ The Jazz · Python · analysis &amp; policy</figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -498,7 +552,11 @@ function CLIContract() {
         </div>
       </div>
 
-      <div className="cli-table">
+      <div className="cli-frame-img">
+        <img src="assets/images/frame.png" alt="The Ruff-inspired UX — compact command surface, legible configuration, fix safety" />
+      </div>
+
+      <div className="cli-table" style={{marginTop:"calc(var(--unit) * 4)"}}>
         {rows.map((r, i) => (
           <div className="cli-row" key={i}>
             <div className="cmd">

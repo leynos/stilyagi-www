@@ -293,10 +293,53 @@
   margin: 0;
 }
 
+.grammar-illo {
+  max-width: 1240px; margin: 0 auto;
+  padding: 0 calc(var(--unit) * 4) calc(var(--unit) * 6);
+}
+.grammar-illo .inner {
+  border: var(--rule-weight-2) solid var(--ink);
+  background: var(--paper);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+.grammar-illo .inner .text-side {
+  padding: calc(var(--unit) * 5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.grammar-illo .inner .text-side h3 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 2rem;
+  margin: 0 0 calc(var(--unit) * 2);
+  line-height: .95;
+  color: var(--ink);
+}
+.grammar-illo .inner .text-side h3 .red { color: var(--press-red); }
+.grammar-illo .inner .text-side p {
+  font-family: var(--font-editorial);
+  font-size: 1.08rem;
+  line-height: 1.5;
+  max-width: 48ch;
+}
+.grammar-illo .inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: var(--paper);
+  padding: calc(var(--unit) * 2);
+}
+
 @media (max-width: 900px) {
   .ir-frame, .plan-frame, .adr-grid { grid-template-columns: 1fr; }
   .ir-frame .pane + .pane { border-left: 0; border-top: var(--rule-weight) solid var(--ink); }
   .plan-left { border-right: 0; border-bottom: var(--rule-weight) solid var(--ink); }
+  .grammar-illo .inner { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -598,6 +641,26 @@ function PageIntro() {
   );
 }
 
+function GrammarLayer() {
+  return (
+    <section className="grammar-illo">
+      <div className="inner">
+        <div className="text-side">
+          <h3>From <span className="red">tokens</span> to clauses</h3>
+          <p>
+            Canonical UPos enums based on Universal Dependencies. Four derived
+            syntactic nodes — TokenNode, SentenceNode, NounPhraseNode, and
+            CoordinationNode — are exposed to rule authors. The Embassy Rule:
+            Python rules talk only to stable Stilyagi grammar nodes, not raw,
+            unstable spaCy classes.
+          </p>
+        </div>
+        <img src="assets/images/pyramid.jpeg" alt="Grammar layer pyramid — tokens, POS/morphology, clauses/coordinations" />
+      </div>
+    </section>
+  );
+}
+
 function ADRs() {
   const adrs = [
     { n: "ADR-001", title: "Python package, Rust extractor", status: "Accepted", body: "Ship one wheel per platform. PyO3 bindings. Pre-built wheels for Linux, macOS, Windows; sdist only if requested." },
@@ -655,6 +718,7 @@ function App() {
       <PageIntro />
       <IRInspector />
       <Planner />
+      <GrammarLayer />
       <ADRs />
       <NextLinks />
       <Colophon />

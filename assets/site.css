@@ -16,8 +16,9 @@
   margin: 0 auto;
   padding: 14px calc(var(--unit) * 4) 12px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   align-items: center;
+  justify-items: end;
   gap: calc(var(--unit) * 4);
 }
 .brand-lockup {
@@ -29,6 +30,7 @@
   row-gap: 2px;
   color: var(--ink);
   text-decoration: none;
+  justify-self: start;
 }
 .brand-lockup .brand-stripe {
   grid-row: 1 / span 2;
@@ -54,8 +56,11 @@
   font-weight: 700;
   font-size: 0.66rem;
   letter-spacing: 0.18em;
-  color: var(--ink-soft);
+  color: var(--fg-muted);
   text-transform: uppercase;
+}
+.site-mast nav {
+  justify-self: end;
 }
 .site-mast nav ol {
   list-style: none;
@@ -64,7 +69,7 @@
   display: flex;
   gap: 26px;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-end;
   font-family: var(--font-sans);
   font-size: 0.82rem;
   letter-spacing: 0.12em;
@@ -100,34 +105,6 @@
 .site-mast nav a:hover::after,
 .site-mast nav a.active::after {
   transform: scaleX(1);
-}
-
-.manifesto-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  justify-self: end;
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--press-red);
-  text-decoration: none;
-  padding: 12px 18px;
-  border: 2px solid var(--press-red);
-  box-shadow:
-    inset 0 0 0 2px var(--paper),
-    0 0 0 1px var(--ink);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.38),
-    rgba(255, 255, 255, 0)
-  );
-}
-.manifesto-link:hover {
-  background: var(--press-red);
-  color: var(--paper);
 }
 
 /* ---------- Page intro (non-home pages) ---------------------------- */
@@ -357,7 +334,7 @@
     grid-template-columns: 1fr;
     justify-items: start;
   }
-  .manifesto-link {
+  .site-mast nav {
     justify-self: start;
   }
 }
@@ -373,10 +350,6 @@
   .site-mast nav ol {
     gap: 14px 18px;
     justify-content: flex-start;
-  }
-  .manifesto-link {
-    width: 100%;
-    justify-content: center;
   }
   .colophon-footer .wrap {
     grid-template-columns: 1fr;

@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Stilyagi · a deterministic prose linter</title>
-    <link rel="stylesheet" href="assets/colors_and_type.css?v=20260423a" />
+    <link rel="stylesheet" href="assets/colors_and_type.css?v=20260423c" />
     <link
       rel="stylesheet"
-      href="assets/motifs_and_components.css?v=20260423a"
+      href="assets/motifs_and_components.css?v=20260423c"
     />
-    <link rel="stylesheet" href="assets/site.css?v=20260423a" />
+    <link rel="stylesheet" href="assets/site.css?v=20260423c" />
     <style>
       .home-shell {
         max-width: 1320px;
@@ -54,253 +54,97 @@
         left: 34px;
       }
 
-      .poster-grid {
+      .poster-showcase {
+        position: relative;
+        overflow: hidden;
+        border: var(--rule-weight) solid var(--ink);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent),
+          var(--paper);
+        padding: 20px 24px 24px;
         display: grid;
-        grid-template-columns: minmax(0, 0.92fr) minmax(340px, 0.72fr);
-        gap: calc(var(--unit) * 3);
+        grid-template-rows: 1fr auto;
+        gap: 18px;
       }
 
-      .poster-copy,
-      .poster-brief,
-      .poster-showcase {
-        border: var(--rule-weight) solid var(--ink);
-        background: rgba(255, 255, 255, 0.12);
+      .poster-showcase::before {
+        display: none;
+      }
+
+      .poster-art-frame {
         position: relative;
+        isolation: isolate;
+        border: var(--rule-weight-2) solid var(--ink);
+        background: var(--paper);
+        padding: 0;
         overflow: hidden;
       }
 
-      .poster-copy {
-        min-height: 520px;
-        padding: calc(var(--unit) * 5);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        background:
-          linear-gradient(145deg, rgba(194, 39, 46, 0.12), transparent 34%),
-          linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.26),
-            rgba(255, 255, 255, 0)
-          ),
-          var(--paper);
+      .poster-art-frame img {
+        position: relative;
+        z-index: 0;
+        width: 100%;
+        display: block;
+        object-fit: cover;
+        aspect-ratio: 1672 / 941;
       }
 
-      .poster-copy::after {
-        content: "";
+      .poster-hero-copy {
         position: absolute;
-        right: -6%;
-        top: 10%;
-        width: 58%;
-        height: 60%;
-        pointer-events: none;
-        opacity: 0.18;
-        background:
-          linear-gradient(
-            120deg,
-            transparent 0 30%,
-            rgba(194, 39, 46, 0.9) 30% 36%,
-            transparent 36% 100%
-          ),
-          radial-gradient(
-            circle at 18% 88%,
-            rgba(194, 39, 46, 0.35) 0 6px,
-            transparent 7px
-          ),
-          radial-gradient(
-            circle at 70% 14%,
-            rgba(214, 159, 46, 0.38) 0 10px,
-            transparent 11px
-          );
-        transform: rotate(-7deg);
-      }
-
-      .poster-kicker {
+        left: clamp(18px, 3vw, 36px);
+        top: clamp(16px, 2vw, 24px);
+        z-index: 2;
         display: flex;
         justify-content: space-between;
         gap: 12px 20px;
-        flex-wrap: wrap;
-        padding-bottom: 16px;
-        border-bottom: 1px dotted rgba(15, 15, 15, 0.32);
+        width: calc(100% - clamp(36px, 6vw, 72px));
         font-family: var(--font-sans);
         font-size: 0.72rem;
         letter-spacing: 0.18em;
         text-transform: uppercase;
         color: var(--ink-soft);
+        pointer-events: none;
       }
 
-      .poster-kicker .accent {
+      .poster-hero-copy .accent {
         color: var(--press-red);
         font-weight: 700;
       }
 
       .poster-title {
-        margin: calc(var(--unit) * 3) 0 calc(var(--unit) * 2);
+        position: absolute;
+        left: clamp(26px, 4vw, 72px);
+        top: clamp(34px, 5vw, 76px);
+        z-index: 2;
+        margin: 0;
         font-family: var(--font-display);
-        font-size: clamp(5rem, 9vw, 8.8rem);
+        font-size: clamp(5rem, 9vw, 7rem);
         line-height: 0.83;
-        max-width: 5.6ch;
+        max-width: 4.8ch;
+        pointer-events: none;
       }
 
       .poster-title .red {
         color: var(--press-red);
       }
 
-      .poster-dek {
-        margin: 0;
-        max-width: 14ch;
-        font-family: var(--font-editorial);
-        font-size: clamp(1.6rem, 1.3vw + 1rem, 2.2rem);
-        line-height: 1.18;
-      }
-
-      .poster-dek .red {
-        color: var(--press-red);
-      }
-
-      .poster-lede {
-        max-width: 34ch;
-        margin-top: calc(var(--unit) * 3);
-        font-family: var(--font-editorial);
-        font-size: 1.14rem;
-        line-height: 1.55;
-      }
-
-      .poster-actions {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: calc(var(--unit) * 4);
-      }
-
-      .cli-ribbon {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: calc(var(--unit) * 2);
-        align-items: center;
-        margin-top: calc(var(--unit) * 4);
-      }
-
-      .cli-pointer {
-        font-size: 3rem;
-        line-height: 1;
-        color: var(--ink);
-      }
-
-      .cli-card {
-        border: var(--rule-weight) solid var(--ink);
-        background: rgba(255, 255, 255, 0.46);
-        padding: 14px 18px;
-        font-family: var(--font-mono);
-        font-size: 1.15rem;
-        letter-spacing: 0.01em;
-      }
-
-      .cli-card .prompt {
-        color: var(--press-red);
-      }
-
-      .poster-note {
-        margin-top: 12px;
-        font-family: var(--font-sans);
-        font-size: 0.72rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: var(--ink-soft);
-      }
-
-      .poster-brief {
-        min-height: 250px;
-        padding: calc(var(--unit) * 3);
-        background:
-          linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.24),
-            rgba(255, 255, 255, 0)
-          ),
-          var(--paper-shade);
-      }
-
-      .poster-brief::before,
-      .poster-showcase::before {
-        content: "";
+      .poster-annotation {
         position: absolute;
-        inset: 18px;
-        border: var(--rule-weight) solid rgba(15, 15, 15, 0.3);
+        top: 36px;
+        right: 295px;
+        z-index: 2;
+        width: 8em;
+        text-align: center;
+        transform: rotate(4deg);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.6;
+        color: var(--ink);
         pointer-events: none;
       }
 
-      .poster-art-header {
-        position: relative;
-        z-index: 1;
-        text-align: center;
-        padding: calc(var(--unit) * 3) calc(var(--unit) * 4);
-        min-height: 100%;
-        display: grid;
-        align-content: center;
-        justify-items: center;
-      }
-
-      .poster-art-header .eyebrow {
-        font-family: var(--font-sans);
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--press-red);
-      }
-
-      .poster-art-header h2 {
-        margin: 10px auto 0;
-        max-width: 14ch;
-        font-size: clamp(2.4rem, 2vw + 1.4rem, 3.4rem);
-        line-height: 0.9;
-      }
-
-      .poster-art-header p {
-        margin: 14px auto 0;
-        max-width: 30ch;
-        font-family: var(--font-editorial);
-        font-size: 1rem;
-        font-style: italic;
-        color: var(--ink-soft);
-      }
-
-      .poster-showcase {
-        grid-column: 1 / -1;
-        position: relative;
-        min-height: 470px;
-        padding: calc(var(--unit) * 2);
-        display: grid;
-        grid-template-rows: 1fr auto;
-        gap: 12px;
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent),
-          var(--paper-shade);
-      }
-
-      .poster-art-frame {
-        position: relative;
-        z-index: 1;
-        min-height: 0;
-        border: var(--rule-weight-2) solid var(--ink);
-        background: var(--paper);
-        padding: 12px;
-        overflow: hidden;
-      }
-
-      .poster-art-frame img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center center;
-        display: block;
-      }
-
       .stamp-pocket {
-        position: absolute;
-        top: 18px;
-        right: 18px;
-        z-index: 2;
+        display: none;
       }
 
       .poster-tiles {
@@ -308,12 +152,12 @@
         z-index: 1;
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 12px;
+        gap: 16px;
       }
 
       .poster-tile {
         border: var(--rule-weight) solid var(--ink);
-        padding: 12px 10px;
+        padding: 18px 10px;
         text-align: center;
         font-family: var(--font-sans);
         font-size: 0.74rem;
@@ -663,16 +507,6 @@
           grid-template-columns: 1fr;
         }
 
-        .poster-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .poster-copy,
-        .poster-brief,
-        .poster-showcase {
-          min-height: auto;
-        }
-
         .value-grid {
           grid-template-columns: 1fr;
           gap: 0;
@@ -693,18 +527,48 @@
           padding-inline: calc(var(--unit) * 2);
         }
 
-        .poster-title {
-          max-width: none;
-          font-size: clamp(4rem, 16vw, 6.2rem);
-        }
-
-        .poster-copy,
-        .poster-brief,
         .poster-showcase {
-          padding: calc(var(--unit) * 3);
+          padding: 14px;
         }
 
-        .poster-tiles,
+        .poster-art-frame img {
+          aspect-ratio: 4 / 5;
+          object-position: 60% center;
+        }
+
+        .poster-title {
+          left: 16px;
+          top: 48px;
+          max-width: 3.8ch;
+          font-size: clamp(3rem, 14vw, 4.8rem);
+        }
+
+        .poster-annotation {
+          top: 16px;
+          right: 22px;
+          width: 7em;
+          font-size: 0.62rem;
+          line-height: 1.45;
+        }
+
+        .poster-hero-copy {
+          left: 18px;
+          top: 12px;
+          width: calc(100% - 36px);
+          font-size: 0.62rem;
+          gap: 10px;
+        }
+
+        .poster-tiles {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .poster-tile {
+          padding: 14px 8px;
+          font-size: 0.68rem;
+        }
+
         .command-steps,
         .explore-grid,
         .reading-grid {
@@ -741,11 +605,9 @@
       crossorigin="anonymous"
     ></script>
 
-    <script type="text/babel" src="assets/Primitives.jsx?v=20260423a"></script>
-    <script type="text/babel" src="assets/Chrome.jsx?v=20260423a"></script>
+    <script type="text/babel" src="assets/Primitives.jsx?v=20260423c"></script>
+    <script type="text/babel" src="assets/Chrome.jsx?v=20260423c"></script>
     <script type="text/babel">
-      const { useState, useEffect } = React;
-
       const toolCards = [
         {
           eyebrow: "Foundation",
@@ -905,94 +767,34 @@
       }
 
       function HeroPoster() {
-        const [stamp, setStamp] = useState(
-          window.__stilyagiTweaks?.stamp || "Draft",
-        );
-
-        useEffect(() => {
-          const handleTweaks = (event) =>
-            setStamp(event.detail.stamp || "Draft");
-          window.addEventListener("stilyagi:tweaks", handleTweaks);
-          return () =>
-            window.removeEventListener("stilyagi:tweaks", handleTweaks);
-        }, []);
-
         return (
           <section className="poster-board" aria-labelledby="home-title">
-            <div className="poster-grid">
-              <div className="poster-copy">
-                <div>
-                  <div className="poster-kicker">
-                    <span>Overview</span>
-                    <span className="accent">Edition № 001</span>
-                    <span>Rust + Python static analysis</span>
-                  </div>
-                  <h1 id="home-title" className="poster-title">
-                    A Compiler
-                    <br />
-                    for <span className="red">Prose</span>
-                  </h1>
-                  <p className="poster-dek">
-                    Deterministic documentation linting with{" "}
-                    <span className="red">absolute source fidelity</span>.
-                  </p>
-                  <p className="poster-lede">
-                    Stilyagi parses repository text, applies typed policies, and
-                    reports precise findings down to exact byte segments.
-                  </p>
-                  <div className="poster-actions">
-                    <a className="btn red" href="docs.html">
-                      Get Started
-                    </a>
-                    <a className="btn ghost" href="design.html">
-                      View Architecture
-                    </a>
-                  </div>
+            <div className="poster-showcase">
+              <div className="poster-art-frame">
+                <div className="poster-hero-copy" aria-hidden="true">
+                  <span>Overview</span>
+                  <span className="accent">Edition № 001</span>
+                  <span>Rust + Python static analysis</span>
                 </div>
-
-                <div>
-                  <div className="cli-ribbon">
-                    <div className="cli-pointer" aria-hidden="true">
-                      ☞
-                    </div>
-                    <div className="cli-card">
-                      <span className="prompt">$</span> stilyagi check
-                    </div>
-                  </div>
-                  <div className="poster-note">
-                    Parse · analyse · diagnose · fix
-                  </div>
-                </div>
+                <img
+                  src="assets/images/hero-collage-generated.png?v=20260423b"
+                  alt="Poster collage of a typewriter, gears, and a saxophonist beside a conveyor of analysis tiles"
+                />
+                <h1 id="home-title" className="poster-title">
+                  A Compiler
+                  <br />
+                  for <span className="red">Prose</span>
+                </h1>
+                <code className="poster-annotation">
+                  Industrial parsing meets jazz-age rulecraft.
+                </code>
               </div>
 
-              <div className="poster-brief">
-                <div className="poster-art-header">
-                  <div className="eyebrow">Press Room · Poster Plate</div>
-                  <h2>Industrial parsing meets jazz-age rulecraft.</h2>
-                  <p>
-                    The visual language stays bold, printed, and slightly unruly
-                    while the analysis stays deterministic.
-                  </p>
-                </div>
-              </div>
-
-              <div className="poster-showcase">
-                <div className="poster-art-frame">
-                  <img
-                    src="assets/images/hero-collage-generated.png?v=20260423b"
-                    alt="Poster collage of a typewriter, gears, and a saxophonist beside a conveyor of analysis tiles"
-                  />
-                  <div className="stamp-pocket">
-                    <Stamp>{stamp}</Stamp>
-                  </div>
-                </div>
-
-                <div className="poster-tiles" aria-hidden="true">
-                  <div className="poster-tile red">Parse</div>
-                  <div className="poster-tile cyan">Analyse</div>
-                  <div className="poster-tile ochre">Diagnose</div>
-                  <div className="poster-tile magenta">Fix</div>
-                </div>
+              <div className="poster-tiles" aria-hidden="true">
+                <div className="poster-tile red">Parse</div>
+                <div className="poster-tile cyan">Analyse</div>
+                <div className="poster-tile ochre">Diagnose</div>
+                <div className="poster-tile magenta">Fix</div>
               </div>
             </div>
           </section>

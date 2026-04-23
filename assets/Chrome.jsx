@@ -38,10 +38,6 @@ function SiteMast({ current = "home" }) {
             ))}
           </ol>
         </nav>
-        <a className="manifesto-link" href="why.html">
-          <span>Read the manifesto</span>
-          <span aria-hidden="true">→</span>
-        </a>
       </div>
     </header>
   );

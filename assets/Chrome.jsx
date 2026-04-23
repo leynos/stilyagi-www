@@ -56,10 +56,7 @@ function Colophon() {
           Python rules, source-faithful regions, and diagnostics that stay
           anchored to the bytes they describe.
           <div className="sig">
-            Edition № 001 · Warm cream stock · Press-red verdicts
-          </div>
-          <div className="sig" style={{ marginTop: 4 }}>
-            Set in Big Shoulders Display, IBM Plex Sans, and EB Garamond
+            Serious tools, playful <span className="r">worlds.</span>
           </div>
         </div>
         <div>
@@ -93,23 +90,6 @@ function Colophon() {
             </li>
             <li>
               <a href="docs.html#suppress">Suppressions</a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h4>Verdicts</h4>
-          <ul>
-            <li>
-              <span className="verdict red">Absolute fidelity</span>
-            </li>
-            <li>
-              <span className="verdict ink">Typed rules</span>
-            </li>
-            <li>
-              <span className="verdict sage">Offline by default</span>
-            </li>
-            <li>
-              <span className="verdict ochre">CLI-first</span>
             </li>
           </ul>
         </div>

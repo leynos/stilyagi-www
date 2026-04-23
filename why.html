@@ -201,6 +201,19 @@
         background: var(--paper);
         position: relative;
         min-height: 180px;
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        gap: calc(var(--unit) * 2);
+        align-items: start;
+      }
+      .valueset .card img {
+        width: 72px;
+        height: 72px;
+        object-fit: cover;
+        border: var(--rule-weight) solid var(--ink);
+        background: var(--paper-shade);
+        mix-blend-mode: multiply;
+        filter: contrast(1.08) saturate(0.86);
       }
       .valueset .card .vs-num {
         font-family: var(--font-sans);
@@ -337,6 +350,161 @@
         max-width: 48ch;
       }
 
+      .why-intro {
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        background:
+          linear-gradient(90deg, rgba(239, 228, 206, 0.2), var(--paper) 58%),
+          radial-gradient(
+            circle at 84% 50%,
+            rgba(15, 15, 15, 0.06) 0 58px,
+            transparent 59px
+          ),
+          repeating-linear-gradient(
+            135deg,
+            transparent 0 10px,
+            rgba(15, 15, 15, 0.08) 10px 12px,
+            transparent 12px 18px
+          );
+      }
+      .why-intro .wrap {
+        align-items: center;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+      }
+      .why-intro .folio {
+        max-width: 560px;
+      }
+      .why-intro h1 {
+        font-size: clamp(5rem, 11vw, 10rem);
+        letter-spacing: -0.03em;
+        line-height: 0.78;
+        max-width: 5.5ch;
+      }
+      .why-intro .lede {
+        font-size: clamp(1.18rem, 1.2vw, 1.42rem);
+        max-width: 36ch;
+        padding: calc(var(--unit) * 3) 0;
+      }
+      .why-intro .lede strong {
+        color: var(--press-red);
+        font-family: var(--font-sans);
+        font-size: 0.82em;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .camps {
+        box-shadow: 0 6px 0 rgba(15, 15, 15, 0.08);
+      }
+      .camps .camp::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.18),
+          transparent 42%
+        );
+      }
+      .camps .camp .numeral {
+        font-size: 3.4rem;
+      }
+      .camps .camp h3 {
+        font-size: 1.85rem;
+      }
+
+      .style-hunter-panel .inner {
+        box-shadow: 7px 7px 0 rgba(15, 15, 15, 0.08);
+      }
+      .style-hunter-panel .inner .text h3 {
+        font-size: clamp(2.4rem, 4vw, 4rem);
+      }
+      .style-hunter-panel .inner .text p {
+        font-size: 1.18rem;
+      }
+
+      .argument {
+        padding-top: calc(var(--unit) * 7);
+      }
+      .argument .margin-note {
+        border-right: 1px dotted var(--rule-faint);
+        padding-right: calc(var(--unit) * 4);
+      }
+      .argument .body h3 {
+        border-bottom: 1px dotted var(--rule-faint);
+        padding-bottom: calc(var(--unit) * 1.5);
+      }
+
+      .personas {
+        background:
+          linear-gradient(180deg, rgba(194, 39, 46, 0.12), transparent 20%),
+          var(--ink);
+      }
+      .personas .wrap {
+        position: relative;
+      }
+      .personas .wrap::before,
+      .personas .wrap::after {
+        content: "★";
+        position: absolute;
+        top: 4px;
+        color: var(--press-red);
+        font-size: 1.6rem;
+      }
+      .personas .wrap::before {
+        left: calc(var(--unit) * 4);
+      }
+      .personas .wrap::after {
+        right: calc(var(--unit) * 4);
+      }
+      .personas h2,
+      .personas .intro {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .personas table tbody th {
+        border-right: 1px dotted rgba(239, 228, 206, 0.28);
+      }
+      .personas table td.fit {
+        width: 34%;
+      }
+
+      .valuesbox {
+        padding-top: calc(var(--unit) * 6);
+      }
+      .valueset .card {
+        min-height: 190px;
+      }
+      .valueset .card::after {
+        content: "";
+        position: absolute;
+        left: calc(var(--unit) * 3);
+        right: calc(var(--unit) * 3);
+        bottom: calc(var(--unit) * 2);
+        border-bottom: 1px dotted rgba(15, 15, 15, 0.22);
+      }
+      .valueset .card h4 {
+        font-size: 1.18rem;
+      }
+
+      .weaknesses {
+        border-top: var(--rule-weight) solid var(--ink);
+        padding-top: calc(var(--unit) * 5);
+      }
+      .weakness-panel {
+        box-shadow: 6px 6px 0 rgba(194, 39, 46, 0.16);
+      }
+      .closing {
+        border-top: var(--rule-weight-2) solid var(--ink);
+        border-bottom: var(--rule-weight-2) solid var(--ink);
+        padding-top: calc(var(--unit) * 3);
+        padding-bottom: calc(var(--unit) * 5);
+        background: rgba(239, 228, 206, 0.72);
+      }
+
       @media (max-width: 900px) {
         .camps,
         .valueset,
@@ -351,6 +519,10 @@
         .argument .margin-note {
           position: relative;
           top: 0;
+          border-right: 0;
+          border-bottom: 1px dotted var(--rule-faint);
+          padding-right: 0;
+          padding-bottom: calc(var(--unit) * 3);
         }
         .style-hunter-panel .inner {
           grid-template-columns: 1fr;
@@ -360,6 +532,39 @@
           height: 200px;
           border-right: 0;
           border-bottom: var(--rule-weight-2) solid var(--ink);
+        }
+        .why-intro .wrap {
+          grid-template-columns: 1fr;
+        }
+        .valueset .card {
+          grid-template-columns: 64px 1fr;
+        }
+        .valueset .card img {
+          width: 64px;
+          height: 64px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .why-intro h1 {
+          font-size: clamp(4.4rem, 23vw, 6rem);
+        }
+        .personas table,
+        .personas thead,
+        .personas tbody,
+        .personas tr,
+        .personas th,
+        .personas td {
+          display: block;
+          width: 100% !important;
+        }
+        .personas table tbody th {
+          border-right: 0;
+          border-bottom: 0;
+          padding-bottom: 2px;
+        }
+        .personas table td {
+          padding-top: 4px;
         }
       }
     </style>
@@ -388,20 +593,20 @@
     <script type="text/babel">
       function PageIntro() {
         return (
-          <section className="page-intro">
+          <section className="page-intro why-intro">
             <div className="wrap">
               <div>
-                <div className="folio">§ 01 · The case</div>
+                <div className="folio">Put the case</div>
                 <h1>
                   Why <span className="accent">Stilyagi</span>.
                 </h1>
               </div>
               <p className="lede">
-                Existing prose tools fall into four weak camps. Each solves part
-                of the problem by giving up on another. The document below is an
-                argument for a fifth camp — one that keeps structural awareness,
-                programmability, determinism, and source-fidelity without
-                cheating on any of them.
+                Existing prose linting tools often break when syntax gets real.
+                Stilyagi separates extraction from policy so rules operate on
+                stable structures, not brittle strings.{" "}
+                <strong>The result:</strong> precision that holds up, and
+                behaviour you can reason about.
               </p>
             </div>
           </section>
@@ -442,7 +647,7 @@
             <div className="section-head">
               <div className="num">I-IV</div>
               <div>
-                <div className="tag">§ The four weak camps</div>
+                <div className="tag">The four weak camps</div>
                 <h2>Everything almost works.</h2>
               </div>
             </div>
@@ -476,11 +681,16 @@
                 </h3>
                 <p>
                   Rules are written in expressive Python, operating on typed
-                  wrappers, not raw JSON dictionaries. Inspired by astroid for
-                  node navigability, enabling parent/child traversal and stable
-                  properties. Target explicit descriptors like{" "}
-                  <code>RegionTarget(kind="heading")</code> rather than relying
-                  on abstract string matching.
+                  wrappers over JSON dictionaries produced by a deterministic
+                  extraction engine.
+                </p>
+                <p>
+                  We target stable structures — not brittle strings — so rules
+                  hold through reflow, refactor, and real-world mess.
+                </p>
+                <p>
+                  Logic is simple, explicit, and local. No models. No magic.
+                  Just clear regions and precise matches.
                 </p>
               </div>
             </div>
@@ -554,28 +764,28 @@
         const rows = [
           [
             "Doc &amp; tooling engineers",
-            "Deterministic CI, rule packs, SARIF, stable spans, repo-wide policy.",
-            "Fancy linguistic research features that slow CI down.",
+            "Reliable lint in CI that never flakes and is easy to explain.",
+            "Deterministic diagnostics, stable spans, zero network.",
           ],
           [
             "API &amp; SDK docs teams",
-            "Markdown structure, terminology, heading policy, code-adjacent prose, per-file ignores.",
-            "Academic NLP purity.",
+            "Enforce consistency at scale across changing content.",
+            "Composable rules, shareable policies, fast runs.",
           ],
           [
             "Python &amp; Rust developers",
-            "Docstring summary rules, comment extraction, source-owner metadata, safe fixes.",
-            "Deep support for every markup dialect on day one.",
+            "Local development feedback without leaving the editor.",
+            "CLI, library, and LSP-friendly outputs.",
           ],
           [
             "Technically opinionated solo devs",
-            "Fast CLI, expressive Python rules, debug visibility, local configuration.",
-            "Enterprise plugin governance.",
+            "Deep control, minimal magic, readable configuration.",
+            "Python-first rules, small surface, big leverage.",
           ],
           [
             "Agentic &amp; CI environments",
-            "JSON output, stdin support, exit-code discipline, predictable cache and suppression behaviour.",
-            "Interactive UI affordances.",
+            "Non-interactive, reproducible, machine-readable signals.",
+            "JSON output, stable exit codes, safe by default.",
           ],
         ];
         return (
@@ -585,7 +795,7 @@
                 className="folio-sm"
                 style={{ color: "var(--press-red)", marginBottom: 18 }}
               >
-                § 03 · Who for
+                § 06 · Who for
               </div>
               <h2>
                 Five <span className="red">personas</span>, one product surface.
@@ -600,8 +810,8 @@
                 <thead>
                   <tr>
                     <th>Persona</th>
-                    <th>Cares about</th>
-                    <th>Ignores</th>
+                    <th>Core need</th>
+                    <th>Stilyagi fit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -610,7 +820,7 @@
                       <th dangerouslySetInnerHTML={{ __html: r[0] }} />
                       <td dangerouslySetInnerHTML={{ __html: r[1] }} />
                       <td
-                        className="ignore"
+                        className="fit"
                         dangerouslySetInnerHTML={{ __html: r[2] }}
                       />
                     </tr>
@@ -626,41 +836,57 @@
         const items = [
           {
             n: "§ 01",
+            icon: "assets/images/why-icons/commitment-01.png",
+            alt: "Generated icon of a target over a document",
             h: "Source-faithful",
             p: "Every diagnostic and every applied edit maps back to original bytes. Synthetic spans cannot be written to.",
           },
           {
             n: "§ 02",
+            icon: "assets/images/why-icons/commitment-02.png",
+            alt: "Generated icon of a gear, checklist, and stamp",
             h: "Deterministic",
             p: "Rules sort by pack then code. Files sort by normalised path. The same input yields the same diagnostics, always.",
           },
           {
             n: "§ 03",
+            icon: "assets/images/why-icons/commitment-03.png",
+            alt: "Generated icon of a crossed-out network plug",
             h: "Offline",
             p: "Core functionality never reaches the network. No model auto-downloads. No phone-home. CI works on isolated runners.",
           },
           {
             n: "§ 04",
+            icon: "assets/images/why-icons/commitment-04.png",
+            alt: "Generated icon of code brackets and a fountain pen nib",
             h: "Programmable",
             p: "Rules are real Python. Typed wrappers. Capability declarations. No YAML ceiling, no bespoke DSL, no recompile.",
           },
           {
             n: "§ 05",
+            icon: "assets/images/why-icons/commitment-05.png",
+            alt: "Generated icon of stacked structural blocks",
             h: "Structural",
             p: "Regions, not bytes. Owners, not guesses. Headings, tables, docstrings, and comments — each a first-class extraction target.",
           },
           {
             n: "§ 06",
+            icon: "assets/images/why-icons/commitment-06.png",
+            alt: "Generated icon of a wrench applying a patch to paper",
             h: "Conservative fixes",
             p: "Safe, unsafe, and manual are distinct classes. Safe fixes stay narrow. Overlapping non-identical edits fail loudly.",
           },
           {
             n: "§ 07",
+            icon: "assets/images/why-icons/commitment-07.png",
+            alt: "Generated icon of a shield with an eye",
             h: "Honest about trust",
             p: "Plugins are trusted code. The docs say so. The CLI help says so. No claims of sandboxing we cannot keep.",
           },
           {
             n: "§ 08",
+            icon: "assets/images/why-icons/commitment-08.png",
+            alt: "Generated icon of a magnifying glass over trace lines",
             h: "Debuggable",
             p: 'dump-ir is not an afterthought. Maintainers can always ask, "what did the extractor see, and what did the rule receive?"',
           },
@@ -668,18 +894,21 @@
         return (
           <section className="valuesbox">
             <div className="section-head">
-              <div className="num">04</div>
+              <div className="num">07</div>
               <div>
-                <div className="tag">§ Non-negotiables</div>
+                <div className="tag">Non-negotiables</div>
                 <h2>Eight commitments the engine holds.</h2>
               </div>
             </div>
             <div className="valueset">
               {items.map((v) => (
                 <div className="card" key={v.n}>
-                  <div className="vs-num">{v.n}</div>
-                  <h4>{v.h}</h4>
-                  <p>{v.p}</p>
+                  <img src={v.icon} alt={v.alt} />
+                  <div>
+                    <div className="vs-num">{v.n}</div>
+                    <h4>{v.h}</h4>
+                    <p>{v.p}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -692,7 +921,7 @@
           <section className="weaknesses">
             <div>
               <div className="folio-sm" style={{ marginBottom: 14 }}>
-                § 05 · Rejected alternatives
+                § 08 · Rejected alternatives
               </div>
               <h2 style={{ fontSize: "2.4rem", margin: 0, lineHeight: 0.95 }}>
                 What we considered, and{" "}

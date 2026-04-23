@@ -56,12 +56,13 @@
 
       .poster-grid {
         display: grid;
-        grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+        grid-template-columns: minmax(0, 0.92fr) minmax(340px, 0.72fr);
         gap: calc(var(--unit) * 3);
       }
 
       .poster-copy,
-      .poster-art {
+      .poster-brief,
+      .poster-showcase {
         border: var(--rule-weight) solid var(--ink);
         background: rgba(255, 255, 255, 0.12);
         position: relative;
@@ -69,7 +70,7 @@
       }
 
       .poster-copy {
-        min-height: 650px;
+        min-height: 520px;
         padding: calc(var(--unit) * 5);
         display: flex;
         flex-direction: column;
@@ -146,7 +147,7 @@
 
       .poster-dek {
         margin: 0;
-        max-width: 15ch;
+        max-width: 14ch;
         font-family: var(--font-editorial);
         font-size: clamp(1.6rem, 1.3vw + 1rem, 2.2rem);
         line-height: 1.18;
@@ -207,12 +208,9 @@
         color: var(--ink-soft);
       }
 
-      .poster-art {
-        min-height: 650px;
+      .poster-brief {
+        min-height: 250px;
         padding: calc(var(--unit) * 3);
-        display: grid;
-        grid-template-rows: auto 1fr auto;
-        gap: calc(var(--unit) * 2);
         background:
           linear-gradient(
             180deg,
@@ -222,7 +220,8 @@
           var(--paper-shade);
       }
 
-      .poster-art::before {
+      .poster-brief::before,
+      .poster-showcase::before {
         content: "";
         position: absolute;
         inset: 18px;
@@ -234,8 +233,11 @@
         position: relative;
         z-index: 1;
         text-align: center;
-        padding: 8px calc(var(--unit) * 3) 16px;
-        border-bottom: var(--rule-weight) solid var(--ink);
+        padding: calc(var(--unit) * 3) calc(var(--unit) * 4);
+        min-height: 100%;
+        display: grid;
+        align-content: center;
+        justify-items: center;
       }
 
       .poster-art-header .eyebrow {
@@ -255,12 +257,25 @@
       }
 
       .poster-art-header p {
-        margin: 10px auto 0;
+        margin: 14px auto 0;
         max-width: 30ch;
         font-family: var(--font-editorial);
         font-size: 1rem;
         font-style: italic;
         color: var(--ink-soft);
+      }
+
+      .poster-showcase {
+        grid-column: 1 / -1;
+        position: relative;
+        min-height: 470px;
+        padding: calc(var(--unit) * 2);
+        display: grid;
+        grid-template-rows: 1fr auto;
+        gap: 12px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent),
+          var(--paper-shade);
       }
 
       .poster-art-frame {
@@ -277,14 +292,14 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: center center;
         display: block;
-        mix-blend-mode: multiply;
       }
 
       .stamp-pocket {
         position: absolute;
-        top: 14px;
-        right: 16px;
+        top: 18px;
+        right: 18px;
         z-index: 2;
       }
 
@@ -293,7 +308,7 @@
         z-index: 1;
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
+        gap: 12px;
       }
 
       .poster-tile {
@@ -390,6 +405,7 @@
 
       .tool-art {
         min-height: 108px;
+        aspect-ratio: 1672 / 941;
         border: var(--rule-weight) solid var(--ink);
         background:
           linear-gradient(
@@ -407,7 +423,6 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        mix-blend-mode: multiply;
       }
 
       .tool-emblem {
@@ -644,13 +659,17 @@
       }
 
       @media (max-width: 980px) {
-        .poster-grid,
         .command-rail {
           grid-template-columns: 1fr;
         }
 
+        .poster-grid {
+          grid-template-columns: 1fr;
+        }
+
         .poster-copy,
-        .poster-art {
+        .poster-brief,
+        .poster-showcase {
           min-height: auto;
         }
 
@@ -680,7 +699,8 @@
         }
 
         .poster-copy,
-        .poster-art {
+        .poster-brief,
+        .poster-showcase {
           padding: calc(var(--unit) * 3);
         }
 
@@ -737,8 +757,8 @@
           accent: "var(--press-red)",
           art: {
             type: "image",
-            src: "assets/stilyagi-presentation-reduced/stilyagi-004.jpg",
-            alt: "Split between Rust extraction and Python rule execution",
+            src: "assets/images/tool-architecture-generated.png",
+            alt: "Poster-style architecture illustration showing industrial gears meeting expressive musical forms",
           },
         },
         {
@@ -751,8 +771,8 @@
           accent: "var(--signal-sage)",
           art: {
             type: "image",
-            src: "assets/images/graph.png",
-            alt: "Structured graph and intermediate representation visual",
+            src: "assets/images/tool-ir-contract-generated.png",
+            alt: "Poster-style intermediate representation contract illustration centred on a precise schema sheet",
           },
         },
         {
@@ -765,8 +785,8 @@
           accent: "var(--jazz-cyan)",
           art: {
             type: "image",
-            src: "assets/images/jazz.png",
-            alt: "Bright jazz-inspired poster art for the rule engine",
+            src: "assets/images/tool-rule-engine-generated.png",
+            alt: "Poster-style rule engine illustration combining a checklist, analysis symbols, and musical curves",
           },
         },
         {
@@ -778,9 +798,9 @@
           cta: "Read more →",
           accent: "var(--jazz-ochre)",
           art: {
-            type: "emblem",
-            lines: ["Tokens", "Clauses", "Coordination"],
-            note: "Only when asked",
+            type: "image",
+            src: "assets/images/tool-grammar-generated.png",
+            alt: "Poster-style grammar layer illustration showing stacked symbolic blocks and linking brackets",
           },
         },
         {
@@ -792,9 +812,9 @@
           cta: "Read more →",
           accent: "var(--ink)",
           art: {
-            type: "emblem",
-            lines: ["$", "check", "dump-ir"],
-            note: "Legible commands",
+            type: "image",
+            src: "assets/images/tool-cli-generated.png",
+            alt: "Poster-style command-line illustration with a terminal silhouette, a prompt marker, and careful controls",
           },
         },
         {
@@ -806,9 +826,9 @@
           cta: "Read more →",
           accent: "var(--jazz-magenta)",
           art: {
-            type: "emblem",
-            lines: ["Fixture", "Run", "Assert"],
-            note: "Hermetic by default",
+            type: "image",
+            src: "assets/images/tool-testing-generated.png",
+            alt: "Poster-style testing sandbox illustration with a sealed chamber containing a cube and a check token",
           },
         },
         {
@@ -821,8 +841,8 @@
           accent: "var(--press-red)",
           art: {
             type: "image",
-            src: "assets/stilyagi-presentation-reduced/stilyagi-018.jpg",
-            alt: "Diagnostic matrix poster comparing pipeline approaches",
+            src: "assets/images/tool-diagnostics-generated.png",
+            alt: "Poster-style diagnostics illustration with a magnifying glass over a structured evidence board",
           },
         },
         {
@@ -834,9 +854,9 @@
           cta: "Read more →",
           accent: "var(--jazz-ochre)",
           art: {
-            type: "emblem",
-            lines: ["Phase I", "Phase II", "Phase III"],
-            note: "Usable after every slice",
+            type: "image",
+            src: "assets/images/tool-roadmap-generated.png",
+            alt: "Poster-style roadmap illustration with a flag, milestones, and directional route markers",
           },
         },
       ];
@@ -876,25 +896,10 @@
         },
       ];
 
-      function ToolVisual({ art, title }) {
-        if (art.type === "image") {
-          return (
-            <div className="tool-art">
-              <img src={art.src} alt={art.alt} />
-            </div>
-          );
-        }
-
+      function ToolVisual({ art }) {
         return (
           <div className="tool-art">
-            <div className="tool-emblem" aria-hidden="true">
-              <div className="big">{art.lines[0]}</div>
-              <div className="rule" />
-              <div className="small">{art.lines.slice(1).join(" · ")}</div>
-              <div className="small" style={{ color: "var(--press-red)" }}>
-                {art.note}
-              </div>
-            </div>
+            <img src={art.src} alt={art.alt} />
           </div>
         );
       }
@@ -960,7 +965,7 @@
                 </div>
               </div>
 
-              <div className="poster-art">
+              <div className="poster-brief">
                 <div className="poster-art-header">
                   <div className="eyebrow">Press Room · Poster Plate</div>
                   <h2>Industrial parsing meets jazz-age rulecraft.</h2>
@@ -969,10 +974,12 @@
                     while the analysis stays deterministic.
                   </p>
                 </div>
+              </div>
 
+              <div className="poster-showcase">
                 <div className="poster-art-frame">
                   <img
-                    src="assets/images/hero-collage-generated.png"
+                    src="assets/images/hero-collage-generated.png?v=20260423b"
                     alt="Poster collage of a typewriter, gears, and a saxophonist beside a conveyor of analysis tiles"
                   />
                   <div className="stamp-pocket">
@@ -1008,7 +1015,7 @@
                   style={{ "--accent-color": card.accent }}
                 >
                   <div className="eyebrow">{card.eyebrow}</div>
-                  <ToolVisual art={card.art} title={card.title} />
+                  <ToolVisual art={card.art} />
                   <div>
                     <h3>{card.title}</h3>
                     <p>{card.description}</p>

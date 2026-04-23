@@ -1,603 +1,796 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stilyagi · Why — the case against the weak camps</title>
-<link rel="stylesheet" href="assets/colors_and_type.css">
-<link rel="stylesheet" href="assets/motifs_and_components.css">
-<link rel="stylesheet" href="assets/site.css">
-<style>
-.camps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  border: var(--rule-weight-2) solid var(--ink);
-  background: var(--paper);
-  margin: calc(var(--unit) * 2) 0 calc(var(--unit) * 6);
-}
-.camps .camp {
-  padding: calc(var(--unit) * 4) calc(var(--unit) * 3);
-  border-right: var(--rule-weight) solid var(--ink);
-  position: relative;
-}
-.camps .camp:last-child { border-right: 0; }
-.camps .camp .numeral {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 4.5rem;
-  line-height: 0.8;
-  color: var(--press-red);
-  margin-bottom: 8px;
-}
-.camps .camp h3 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 1.6rem;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  margin: 0 0 12px;
-  color: var(--ink);
-  line-height: 1;
-}
-.camps .camp p {
-  font-family: var(--font-editorial);
-  font-size: 1.02rem;
-  line-height: 1.5;
-  margin: 0 0 10px;
-}
-.camps .camp .verdict-tag {
-  display: inline-block;
-  margin-top: 12px;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: .7rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--paper);
-  background: var(--ink);
-  padding: 3px 8px 2px;
-}
-.camps .camp .verdict-tag.red { background: var(--press-red); }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Stilyagi · Why — the case against the weak camps</title>
+    <link rel="stylesheet" href="assets/colors_and_type.css?v=20260423a" />
+    <link
+      rel="stylesheet"
+      href="assets/motifs_and_components.css?v=20260423a"
+    />
+    <link rel="stylesheet" href="assets/site.css?v=20260423a" />
+    <style>
+      .camps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        border: var(--rule-weight-2) solid var(--ink);
+        background: var(--paper);
+        margin: calc(var(--unit) * 2) 0 calc(var(--unit) * 6);
+      }
+      .camps .camp {
+        padding: calc(var(--unit) * 4) calc(var(--unit) * 3);
+        border-right: var(--rule-weight) solid var(--ink);
+        position: relative;
+      }
+      .camps .camp:last-child {
+        border-right: 0;
+      }
+      .camps .camp .numeral {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 4.5rem;
+        line-height: 0.8;
+        color: var(--press-red);
+        margin-bottom: 8px;
+      }
+      .camps .camp h3 {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.6rem;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        margin: 0 0 12px;
+        color: var(--ink);
+        line-height: 1;
+      }
+      .camps .camp p {
+        font-family: var(--font-editorial);
+        font-size: 1.02rem;
+        line-height: 1.5;
+        margin: 0 0 10px;
+      }
+      .camps .camp .verdict-tag {
+        display: inline-block;
+        margin-top: 12px;
+        font-family: var(--font-sans);
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--paper);
+        background: var(--ink);
+        padding: 3px 8px 2px;
+      }
+      .camps .camp .verdict-tag.red {
+        background: var(--press-red);
+      }
 
-.argument {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 8) calc(var(--unit) * 4);
-  display: grid;
-  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
-  gap: calc(var(--unit) * 8);
-}
-.argument .margin-note {
-  position: sticky; top: 100px;
-  align-self: start;
-  font-family: var(--font-sans);
-  font-size: .72rem;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  line-height: 1.8;
-}
-.argument .margin-note .red { color: var(--press-red); font-weight: 700; display: block; margin-bottom: 8px; }
-.argument .body h3 {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  letter-spacing: .01em;
-  text-transform: uppercase;
-  line-height: .95;
-  margin: calc(var(--unit) * 4) 0 calc(var(--unit) * 2);
-  color: var(--ink);
-}
-.argument .body h3:first-child { margin-top: 0; }
-.argument .body h3 .red { color: var(--press-red); }
-.argument .body p {
-  font-family: var(--font-editorial);
-  font-size: 1.12rem;
-  line-height: 1.55;
-  max-width: 64ch;
-}
-.argument .body p + p { text-indent: 1.8em; }
+      .argument {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: calc(var(--unit) * 8) calc(var(--unit) * 4);
+        display: grid;
+        grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+        gap: calc(var(--unit) * 8);
+      }
+      .argument .margin-note {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        line-height: 1.8;
+      }
+      .argument .margin-note .red {
+        color: var(--press-red);
+        font-weight: 700;
+        display: block;
+        margin-bottom: 8px;
+      }
+      .argument .body h3 {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+        line-height: 0.95;
+        margin: calc(var(--unit) * 4) 0 calc(var(--unit) * 2);
+        color: var(--ink);
+      }
+      .argument .body h3:first-child {
+        margin-top: 0;
+      }
+      .argument .body h3 .red {
+        color: var(--press-red);
+      }
+      .argument .body p {
+        font-family: var(--font-editorial);
+        font-size: 1.12rem;
+        line-height: 1.55;
+        max-width: 64ch;
+      }
+      .argument .body p + p {
+        text-indent: 1.8em;
+      }
 
-.personas {
-  background: var(--ink);
-  color: var(--paper);
-  padding: calc(var(--unit) * 8) 0;
-  border-top: var(--rule-weight-3) solid var(--press-red);
-  border-bottom: var(--rule-weight-3) solid var(--press-red);
-}
-.personas .wrap {
-  max-width: 1240px; margin: 0 auto;
-  padding: 0 calc(var(--unit) * 4);
-}
-.personas h2 {
-  color: var(--paper);
-  font-size: 3rem;
-  line-height: .95;
-  margin: 0 0 calc(var(--unit) * 2);
-}
-.personas h2 .red { color: var(--press-red); }
-.personas .intro {
-  font-family: var(--font-editorial);
-  font-size: 1.15rem;
-  color: var(--paper);
-  max-width: 60ch;
-  margin-bottom: calc(var(--unit) * 5);
-}
-.personas table {
-  width: 100%;
-  border-collapse: collapse;
-  color: var(--paper);
-  font-family: var(--font-editorial);
-}
-.personas table th, .personas table td {
-  padding: 14px 12px;
-  vertical-align: top;
-  border-bottom: 1px solid rgba(239,228,206,.25);
-  font-size: 1.02rem;
-  line-height: 1.5;
-}
-.personas table thead th {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: .78rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--press-red);
-  border-top: 2px solid var(--press-red);
-  border-bottom: 2px solid var(--press-red);
-}
-.personas table tbody th {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 1.15rem;
-  text-transform: uppercase;
-  letter-spacing: .01em;
-  color: var(--paper);
-  width: 22%;
-}
-.personas table td.ignore {
-  color: rgba(239,228,206,.55);
-  font-style: italic;
-  width: 28%;
-}
+      .personas {
+        background: var(--ink);
+        color: var(--paper);
+        padding: calc(var(--unit) * 8) 0;
+        border-top: var(--rule-weight-3) solid var(--press-red);
+        border-bottom: var(--rule-weight-3) solid var(--press-red);
+      }
+      .personas .wrap {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 calc(var(--unit) * 4);
+      }
+      .personas h2 {
+        color: var(--paper);
+        font-size: 3rem;
+        line-height: 0.95;
+        margin: 0 0 calc(var(--unit) * 2);
+      }
+      .personas h2 .red {
+        color: var(--press-red);
+      }
+      .personas .intro {
+        font-family: var(--font-editorial);
+        font-size: 1.15rem;
+        color: var(--paper);
+        max-width: 60ch;
+        margin-bottom: calc(var(--unit) * 5);
+      }
+      .personas table {
+        width: 100%;
+        border-collapse: collapse;
+        color: var(--paper);
+        font-family: var(--font-editorial);
+      }
+      .personas table th,
+      .personas table td {
+        padding: 14px 12px;
+        vertical-align: top;
+        border-bottom: 1px solid rgba(239, 228, 206, 0.25);
+        font-size: 1.02rem;
+        line-height: 1.5;
+      }
+      .personas table thead th {
+        font-family: var(--font-sans);
+        font-weight: 700;
+        font-size: 0.78rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--press-red);
+        border-top: 2px solid var(--press-red);
+        border-bottom: 2px solid var(--press-red);
+      }
+      .personas table tbody th {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 1.15rem;
+        text-transform: uppercase;
+        letter-spacing: 0.01em;
+        color: var(--paper);
+        width: 22%;
+      }
+      .personas table td.ignore {
+        color: rgba(239, 228, 206, 0.55);
+        font-style: italic;
+        width: 28%;
+      }
 
-.valuesbox {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 8) calc(var(--unit) * 4);
-}
-.valueset {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: calc(var(--unit) * 2);
-  margin-top: calc(var(--unit) * 3);
-}
-.valueset .card {
-  border: var(--rule-weight) solid var(--ink);
-  padding: calc(var(--unit) * 3);
-  background: var(--paper);
-  position: relative;
-  min-height: 180px;
-}
-.valueset .card .vs-num {
-  font-family: var(--font-sans);
-  font-size: .7rem; letter-spacing: .18em;
-  color: var(--press-red); font-weight: 700;
-}
-.valueset .card h4 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: 1.3rem;
-  margin: 6px 0 8px;
-  letter-spacing: 0;
-  line-height: 1.05;
-}
-.valueset .card p {
-  font-family: var(--font-editorial);
-  font-size: .96rem;
-  line-height: 1.45;
-  margin: 0;
-}
+      .valuesbox {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: calc(var(--unit) * 8) calc(var(--unit) * 4);
+      }
+      .valueset {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: calc(var(--unit) * 2);
+        margin-top: calc(var(--unit) * 3);
+      }
+      .valueset .card {
+        border: var(--rule-weight) solid var(--ink);
+        padding: calc(var(--unit) * 3);
+        background: var(--paper);
+        position: relative;
+        min-height: 180px;
+      }
+      .valueset .card .vs-num {
+        font-family: var(--font-sans);
+        font-size: 0.7rem;
+        letter-spacing: 0.18em;
+        color: var(--press-red);
+        font-weight: 700;
+      }
+      .valueset .card h4 {
+        font-family: var(--font-display);
+        font-weight: 900;
+        text-transform: uppercase;
+        font-size: 1.3rem;
+        margin: 6px 0 8px;
+        letter-spacing: 0;
+        line-height: 1.05;
+      }
+      .valueset .card p {
+        font-family: var(--font-editorial);
+        font-size: 0.96rem;
+        line-height: 1.45;
+        margin: 0;
+      }
 
-.weaknesses {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 6) calc(var(--unit) * 4) calc(var(--unit) * 8);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: calc(var(--unit) * 4);
-  align-items: start;
-}
-.weakness-panel {
-  border: var(--rule-weight-2) solid var(--press-red);
-  background: var(--paper-shade);
-  padding: calc(var(--unit) * 4);
-}
-.weakness-panel h3 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  color: var(--press-red);
-  font-size: 1.7rem;
-  margin: 0 0 calc(var(--unit) * 2);
-}
-.weakness-panel ol {
-  font-family: var(--font-editorial);
-  font-size: 1.05rem;
-  line-height: 1.5;
-  padding-left: 1.2em;
-}
-.weakness-panel ol li { margin-bottom: 10px; }
+      .weaknesses {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: calc(var(--unit) * 6) calc(var(--unit) * 4)
+          calc(var(--unit) * 8);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: calc(var(--unit) * 4);
+        align-items: start;
+      }
+      .weakness-panel {
+        border: var(--rule-weight-2) solid var(--press-red);
+        background: var(--paper-shade);
+        padding: calc(var(--unit) * 4);
+      }
+      .weakness-panel h3 {
+        font-family: var(--font-display);
+        font-weight: 900;
+        text-transform: uppercase;
+        color: var(--press-red);
+        font-size: 1.7rem;
+        margin: 0 0 calc(var(--unit) * 2);
+      }
+      .weakness-panel ol {
+        font-family: var(--font-editorial);
+        font-size: 1.05rem;
+        line-height: 1.5;
+        padding-left: 1.2em;
+      }
+      .weakness-panel ol li {
+        margin-bottom: 10px;
+      }
 
-.closing {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 4) calc(var(--unit) * 4) calc(var(--unit) * 10);
-  text-align: center;
-}
-.closing .pullquote {
-  max-width: 34ch; margin: 0 auto;
-  font-size: 2.2rem;
-}
-.closing .next {
-  margin-top: calc(var(--unit) * 4);
-  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
-}
-.closing .next a {
-  font-family: var(--font-sans);
-  font-weight: 700; font-size: .82rem;
-  letter-spacing: .14em; text-transform: uppercase;
-  color: var(--ink); text-decoration: none;
-  border-bottom: 2px solid var(--press-red);
-  padding-bottom: 2px;
-}
-.closing .next a:hover { color: var(--press-red); }
+      .closing {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: calc(var(--unit) * 4) calc(var(--unit) * 4)
+          calc(var(--unit) * 10);
+        text-align: center;
+      }
+      .closing .pullquote {
+        max-width: 34ch;
+        margin: 0 auto;
+        font-size: 2.2rem;
+      }
+      .closing .next {
+        margin-top: calc(var(--unit) * 4);
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .closing .next a {
+        font-family: var(--font-sans);
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink);
+        text-decoration: none;
+        border-bottom: 2px solid var(--press-red);
+        padding-bottom: 2px;
+      }
+      .closing .next a:hover {
+        color: var(--press-red);
+      }
 
-/* Style-hunter illustration */
-.style-hunter-panel {
-  max-width: 1240px; margin: 0 auto;
-  padding: 0 calc(var(--unit) * 4) calc(var(--unit) * 4);
-}
-.style-hunter-panel .inner {
-  border: var(--rule-weight-2) solid var(--ink);
-  background: var(--paper);
-  display: grid;
-  grid-template-columns: auto 1fr;
-  overflow: hidden;
-}
-.style-hunter-panel .inner img {
-  width: 320px;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  border-right: var(--rule-weight-2) solid var(--ink);
-  mix-blend-mode: multiply;
-}
-.style-hunter-panel .inner .text {
-  padding: calc(var(--unit) * 4);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.style-hunter-panel .inner .text h3 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: 2rem;
-  margin: 0 0 calc(var(--unit) * 2);
-  line-height: .95;
-}
-.style-hunter-panel .inner .text h3 .red { color: var(--press-red); }
-.style-hunter-panel .inner .text p {
-  font-family: var(--font-editorial);
-  font-size: 1.1rem;
-  line-height: 1.5;
-  max-width: 48ch;
-}
+      /* Style-hunter illustration */
+      .style-hunter-panel {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 calc(var(--unit) * 4) calc(var(--unit) * 4);
+      }
+      .style-hunter-panel .inner {
+        border: var(--rule-weight-2) solid var(--ink);
+        background: var(--paper);
+        display: grid;
+        grid-template-columns: auto 1fr;
+        overflow: hidden;
+      }
+      .style-hunter-panel .inner img {
+        width: 320px;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-right: var(--rule-weight-2) solid var(--ink);
+        mix-blend-mode: multiply;
+      }
+      .style-hunter-panel .inner .text {
+        padding: calc(var(--unit) * 4);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .style-hunter-panel .inner .text h3 {
+        font-family: var(--font-display);
+        font-weight: 900;
+        text-transform: uppercase;
+        font-size: 2rem;
+        margin: 0 0 calc(var(--unit) * 2);
+        line-height: 0.95;
+      }
+      .style-hunter-panel .inner .text h3 .red {
+        color: var(--press-red);
+      }
+      .style-hunter-panel .inner .text p {
+        font-family: var(--font-editorial);
+        font-size: 1.1rem;
+        line-height: 1.5;
+        max-width: 48ch;
+      }
 
-@media (max-width: 900px) {
-  .camps, .valueset, .weaknesses, .argument { grid-template-columns: 1fr; }
-  .camps .camp { border-right: 0; border-bottom: var(--rule-weight) solid var(--ink); }
-  .argument .margin-note { position: relative; top: 0; }
-  .style-hunter-panel .inner { grid-template-columns: 1fr; }
-  .style-hunter-panel .inner img { width: 100%; height: 200px; border-right: 0; border-bottom: var(--rule-weight-2) solid var(--ink); }
-}
-</style>
-</head>
-<body>
-<div id="root"></div>
+      @media (max-width: 900px) {
+        .camps,
+        .valueset,
+        .weaknesses,
+        .argument {
+          grid-template-columns: 1fr;
+        }
+        .camps .camp {
+          border-right: 0;
+          border-bottom: var(--rule-weight) solid var(--ink);
+        }
+        .argument .margin-note {
+          position: relative;
+          top: 0;
+        }
+        .style-hunter-panel .inner {
+          grid-template-columns: 1fr;
+        }
+        .style-hunter-panel .inner img {
+          width: 100%;
+          height: 200px;
+          border-right: 0;
+          border-bottom: var(--rule-weight-2) solid var(--ink);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script type="text/babel" src="assets/Primitives.jsx"></script>
-<script type="text/babel" src="assets/Chrome.jsx"></script>
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/babel" src="assets/Primitives.jsx?v=20260423a"></script>
+    <script type="text/babel" src="assets/Chrome.jsx?v=20260423a"></script>
 
-<script type="text/babel">
-function PageIntro() {
-  return (
-    <section className="page-intro">
-      <div className="wrap">
-        <div>
-          <div className="folio">§ 01 · The case</div>
-          <h1>Why <span className="accent">Stilyagi</span>.</h1>
-        </div>
-        <p className="lede">
-          Existing prose tools fall into four weak camps. Each solves part of the
-          problem by giving up on another. The document below is an argument
-          for a fifth camp — one that keeps structural awareness, programmability,
-          determinism, and source-fidelity without cheating on any of them.
-        </p>
-      </div>
-    </section>
-  );
-}
+    <script type="text/babel">
+      function PageIntro() {
+        return (
+          <section className="page-intro">
+            <div className="wrap">
+              <div>
+                <div className="folio">§ 01 · The case</div>
+                <h1>
+                  Why <span className="accent">Stilyagi</span>.
+                </h1>
+              </div>
+              <p className="lede">
+                Existing prose tools fall into four weak camps. Each solves part
+                of the problem by giving up on another. The document below is an
+                argument for a fifth camp — one that keeps structural awareness,
+                programmability, determinism, and source-fidelity without
+                cheating on any of them.
+              </p>
+            </div>
+          </section>
+        );
+      }
 
-function FourCamps() {
-  const camps = [
-    { n: "I", title: "Vale-like tools", body: "Understand structure — but the rule model is constrained by declarative YAML, canned check families, and a deliberately limited extension surface.", verdict: "Structural, but capped" },
-    { n: "II", title: "Ad-hoc regex", body: "Cheap to write. Poor structural awareness, poor fix safety, poor false-positive behaviour once text lives inside headings, tables, docstrings, or mixed markup.", verdict: "Dumb in structure" },
-    { n: "III", title: "Formatter-adjacent", body: "Catch layout and syntax-adjacent issues. Not designed to express editorial policy, terminology rules, or documentation structure constraints.", verdict: "Wrong register", red: true },
-    { n: "IV", title: "Broad NLP toolkits", body: "Flexible — but no source-faithful spans, no repository-friendly CLI, no suppression semantics, no stable lint diagnostics out of the box.", verdict: "Too much work", red: true },
-  ];
-  return (
-    <section className="stack-section">
-      <div className="section-head">
-        <div className="num">I-IV</div>
-        <div>
-          <div className="tag">§ The four weak camps</div>
-          <h2>Everything almost works.</h2>
-        </div>
-      </div>
-      <div className="camps">
-        {camps.map((c) => (
-          <div className="camp" key={c.n}>
-            <div className="numeral">{c.n}</div>
-            <h3>{c.title}</h3>
-            <p className="editorial">{c.body}</p>
-            <span className={`verdict-tag ${c.red ? "red" : ""}`}>{c.verdict}</span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
+      function FourCamps() {
+        const camps = [
+          {
+            n: "I",
+            title: "Vale-like tools",
+            body: "Understand structure — but the rule model is constrained by declarative YAML, canned check families, and a deliberately limited extension surface.",
+            verdict: "Structural, but capped",
+          },
+          {
+            n: "II",
+            title: "Ad-hoc regex",
+            body: "Cheap to write. Poor structural awareness, poor fix safety, poor false-positive behaviour once text lives inside headings, tables, docstrings, or mixed markup.",
+            verdict: "Dumb in structure",
+          },
+          {
+            n: "III",
+            title: "Formatter-adjacent",
+            body: "Catch layout and syntax-adjacent issues. Not designed to express editorial policy, terminology rules, or documentation structure constraints.",
+            verdict: "Wrong register",
+            red: true,
+          },
+          {
+            n: "IV",
+            title: "Broad NLP toolkits",
+            body: "Flexible — but no source-faithful spans, no repository-friendly CLI, no suppression semantics, no stable lint diagnostics out of the box.",
+            verdict: "Too much work",
+            red: true,
+          },
+        ];
+        return (
+          <section className="stack-section">
+            <div className="section-head">
+              <div className="num">I-IV</div>
+              <div>
+                <div className="tag">§ The four weak camps</div>
+                <h2>Everything almost works.</h2>
+              </div>
+            </div>
+            <div className="camps">
+              {camps.map((c) => (
+                <div className="camp" key={c.n}>
+                  <div className="numeral">{c.n}</div>
+                  <h3>{c.title}</h3>
+                  <p className="editorial">{c.body}</p>
+                  <span className={`verdict-tag ${c.red ? "red" : ""}`}>
+                    {c.verdict}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
 
-function StyleHunter() {
-  return (
-    <section className="style-hunter-panel">
-      <div className="inner">
-        <img src="assets/images/style-hunter.png" alt="The Style Hunter — a suited figure with magnifying glass inspects prose" />
-        <div className="text">
-          <h3>The <span className="red">style hunters</span>.</h3>
-          <p>
-            Rules are written in expressive Python, operating on typed wrappers,
-            not raw JSON dictionaries. Inspired by astroid for node navigability,
-            enabling parent/child traversal and stable properties. Target explicit
-            descriptors like <code>RegionTarget(kind="heading")</code> rather
-            than relying on abstract string matching.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
+      function StyleHunter() {
+        return (
+          <section className="style-hunter-panel">
+            <div className="inner">
+              <img
+                src="assets/images/style-hunter.png"
+                alt="The Style Hunter — a suited figure with magnifying glass inspects prose"
+              />
+              <div className="text">
+                <h3>
+                  The <span className="red">style hunters</span>.
+                </h3>
+                <p>
+                  Rules are written in expressive Python, operating on typed
+                  wrappers, not raw JSON dictionaries. Inspired by astroid for
+                  node navigability, enabling parent/child traversal and stable
+                  properties. Target explicit descriptors like{" "}
+                  <code>RegionTarget(kind="heading")</code> rather than relying
+                  on abstract string matching.
+                </p>
+              </div>
+            </div>
+          </section>
+        );
+      }
 
-function TheArgument() {
-  return (
-    <section className="argument">
-      <aside className="margin-note">
-        <span className="red">§ 02 · Argument</span>
-        The target user isn't struggling with English.
-        They are struggling with policy, structure, CI, and the current
-        linting surface — which is either too dumb to encode what they
-        want, or too awkward to keep doing so.
-        <br/><br/>
-        <span className="red">☞ Note.</span> This is an engineering
-        problem, not a linguistic one.
-      </aside>
-      <div className="body">
-        <h3>The pain isn't "<span className="red">English is hard</span>."</h3>
-        <p className="editorial">
-          The target users of Stilyagi are engineers and technically literate
-          writers maintaining documentation inside source repositories. Their
-          pain is not that English is hard.
-        </p>
-        <p className="editorial">
-          Their pain is that documentation policy is real, files are
-          structured, CI needs determinism, and the current linting surface is
-          either too dumb to encode the intended policy, or too awkward to
-          continue encoding it.
-        </p>
+      function TheArgument() {
+        return (
+          <section className="argument">
+            <aside className="margin-note">
+              <span className="red">§ 02 · Argument</span>
+              The target user isn't struggling with English. They are struggling
+              with policy, structure, CI, and the current linting surface —
+              which is either too dumb to encode what they want, or too awkward
+              to keep doing so.
+              <br />
+              <br />
+              <span className="red">☞ Note.</span> This is an engineering
+              problem, not a linguistic one.
+            </aside>
+            <div className="body">
+              <h3>
+                The pain isn't "<span className="red">English is hard</span>."
+              </h3>
+              <p className="editorial">
+                The target users of Stilyagi are engineers and technically
+                literate writers maintaining documentation inside source
+                repositories. Their pain is not that English is hard.
+              </p>
+              <p className="editorial">
+                Their pain is that documentation policy is real, files are
+                structured, CI needs determinism, and the current linting
+                surface is either too dumb to encode the intended policy, or too
+                awkward to continue encoding it.
+              </p>
 
-        <h3>The value is <span className="red">precise</span>.</h3>
-        <p className="editorial">
-          Against Vale, Stilyagi offers Python-authored rules over a typed
-          runtime model instead of YAML plus regex plus fixed rule families.
-          Against in-house regex scripts, it provides structural parsing,
-          stable spans, fix planning, suppression semantics, and cacheable
-          behaviour. Against formatter-adjacent tools, it targets prose policy
-          rather than code layout. Against raw spaCy or NLTK, it adds the
-          extraction, diagnostics, configuration, and CLI contracts that fit
-          normal software engineering workflows.
-        </p>
+              <h3>
+                The value is <span className="red">precise</span>.
+              </h3>
+              <p className="editorial">
+                Against Vale, Stilyagi offers Python-authored rules over a typed
+                runtime model instead of YAML plus regex plus fixed rule
+                families. Against in-house regex scripts, it provides structural
+                parsing, stable spans, fix planning, suppression semantics, and
+                cacheable behaviour. Against formatter-adjacent tools, it
+                targets prose policy rather than code layout. Against raw spaCy
+                or NLTK, it adds the extraction, diagnostics, configuration, and
+                CLI contracts that fit normal software engineering workflows.
+              </p>
 
-        <h3>It is weaker, deliberately, in <span className="red">three</span> places.</h3>
-        <p className="editorial">
-          It will never match a Rust-only rule engine for raw execution speed.
-          It deliberately trusts plugin code, and so cannot truthfully promise
-          sandboxing. It inherits Python packaging complexity for third-party
-          rule packs. These are acceptable costs. The product wins or loses on
-          expressiveness, debuggability, and adoption — not on shaving the
-          last few milliseconds off a single regex rule.
-        </p>
-      </div>
-    </section>
-  );
-}
+              <h3>
+                It is weaker, deliberately, in{" "}
+                <span className="red">three</span> places.
+              </h3>
+              <p className="editorial">
+                It will never match a Rust-only rule engine for raw execution
+                speed. It deliberately trusts plugin code, and so cannot
+                truthfully promise sandboxing. It inherits Python packaging
+                complexity for third-party rule packs. These are acceptable
+                costs. The product wins or loses on expressiveness,
+                debuggability, and adoption — not on shaving the last few
+                milliseconds off a single regex rule.
+              </p>
+            </div>
+          </section>
+        );
+      }
 
-function Personas() {
-  const rows = [
-    [
-      "Doc &amp; tooling engineers",
-      "Deterministic CI, rule packs, SARIF, stable spans, repo-wide policy.",
-      "Fancy linguistic research features that slow CI down."
-    ],
-    [
-      "API &amp; SDK docs teams",
-      "Markdown structure, terminology, heading policy, code-adjacent prose, per-file ignores.",
-      "Academic NLP purity."
-    ],
-    [
-      "Python &amp; Rust developers",
-      "Docstring summary rules, comment extraction, source-owner metadata, safe fixes.",
-      "Deep support for every markup dialect on day one."
-    ],
-    [
-      "Technically opinionated solo devs",
-      "Fast CLI, expressive Python rules, debug visibility, local configuration.",
-      "Enterprise plugin governance."
-    ],
-    [
-      "Agentic &amp; CI environments",
-      "JSON output, stdin support, exit-code discipline, predictable cache and suppression behaviour.",
-      "Interactive UI affordances."
-    ],
-  ];
-  return (
-    <section className="personas">
-      <div className="wrap">
-        <div className="folio-sm" style={{color:"var(--press-red)",marginBottom:18}}>§ 03 · Who for</div>
-        <h2>Five <span className="red">personas</span>, one product surface.</h2>
-        <p className="intro">
-          The same tool must feed the CI pipeline, the doc engineer, the
-          polyglot developer, and the agent. Stilyagi defines its contracts so
-          a single machine interface satisfies all of them without growing a
-          second rule engine.
-        </p>
-        <table>
-          <thead>
-            <tr>
-              <th>Persona</th>
-              <th>Cares about</th>
-              <th>Ignores</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r, i) => (
-              <tr key={i}>
-                <th dangerouslySetInnerHTML={{__html: r[0]}} />
-                <td dangerouslySetInnerHTML={{__html: r[1]}} />
-                <td className="ignore" dangerouslySetInnerHTML={{__html: r[2]}} />
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
+      function Personas() {
+        const rows = [
+          [
+            "Doc &amp; tooling engineers",
+            "Deterministic CI, rule packs, SARIF, stable spans, repo-wide policy.",
+            "Fancy linguistic research features that slow CI down.",
+          ],
+          [
+            "API &amp; SDK docs teams",
+            "Markdown structure, terminology, heading policy, code-adjacent prose, per-file ignores.",
+            "Academic NLP purity.",
+          ],
+          [
+            "Python &amp; Rust developers",
+            "Docstring summary rules, comment extraction, source-owner metadata, safe fixes.",
+            "Deep support for every markup dialect on day one.",
+          ],
+          [
+            "Technically opinionated solo devs",
+            "Fast CLI, expressive Python rules, debug visibility, local configuration.",
+            "Enterprise plugin governance.",
+          ],
+          [
+            "Agentic &amp; CI environments",
+            "JSON output, stdin support, exit-code discipline, predictable cache and suppression behaviour.",
+            "Interactive UI affordances.",
+          ],
+        ];
+        return (
+          <section className="personas">
+            <div className="wrap">
+              <div
+                className="folio-sm"
+                style={{ color: "var(--press-red)", marginBottom: 18 }}
+              >
+                § 03 · Who for
+              </div>
+              <h2>
+                Five <span className="red">personas</span>, one product surface.
+              </h2>
+              <p className="intro">
+                The same tool must feed the CI pipeline, the doc engineer, the
+                polyglot developer, and the agent. Stilyagi defines its
+                contracts so a single machine interface satisfies all of them
+                without growing a second rule engine.
+              </p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Persona</th>
+                    <th>Cares about</th>
+                    <th>Ignores</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((r, i) => (
+                    <tr key={i}>
+                      <th dangerouslySetInnerHTML={{ __html: r[0] }} />
+                      <td dangerouslySetInnerHTML={{ __html: r[1] }} />
+                      <td
+                        className="ignore"
+                        dangerouslySetInnerHTML={{ __html: r[2] }}
+                      />
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        );
+      }
 
-function Values() {
-  const items = [
-    { n: "§ 01", h: "Source-faithful", p: "Every diagnostic and every applied edit maps back to original bytes. Synthetic spans cannot be written to." },
-    { n: "§ 02", h: "Deterministic", p: "Rules sort by pack then code. Files sort by normalised path. The same input yields the same diagnostics, always." },
-    { n: "§ 03", h: "Offline", p: "Core functionality never reaches the network. No model auto-downloads. No phone-home. CI works on isolated runners." },
-    { n: "§ 04", h: "Programmable", p: "Rules are real Python. Typed wrappers. Capability declarations. No YAML ceiling, no bespoke DSL, no recompile." },
-    { n: "§ 05", h: "Structural", p: "Regions, not bytes. Owners, not guesses. Headings, tables, docstrings, and comments — each a first-class extraction target." },
-    { n: "§ 06", h: "Conservative fixes", p: "Safe, unsafe, and manual are distinct classes. Safe fixes stay narrow. Overlapping non-identical edits fail loudly." },
-    { n: "§ 07", h: "Honest about trust", p: "Plugins are trusted code. The docs say so. The CLI help says so. No claims of sandboxing we cannot keep." },
-    { n: "§ 08", h: "Debuggable", p: "dump-ir is not an afterthought. Maintainers can always ask, \"what did the extractor see, and what did the rule receive?\"" },
-  ];
-  return (
-    <section className="valuesbox">
-      <div className="section-head">
-        <div className="num">04</div>
-        <div>
-          <div className="tag">§ Non-negotiables</div>
-          <h2>Eight commitments the engine holds.</h2>
-        </div>
-      </div>
-      <div className="valueset">
-        {items.map((v) => (
-          <div className="card" key={v.n}>
-            <div className="vs-num">{v.n}</div>
-            <h4>{v.h}</h4>
-            <p>{v.p}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
+      function Values() {
+        const items = [
+          {
+            n: "§ 01",
+            h: "Source-faithful",
+            p: "Every diagnostic and every applied edit maps back to original bytes. Synthetic spans cannot be written to.",
+          },
+          {
+            n: "§ 02",
+            h: "Deterministic",
+            p: "Rules sort by pack then code. Files sort by normalised path. The same input yields the same diagnostics, always.",
+          },
+          {
+            n: "§ 03",
+            h: "Offline",
+            p: "Core functionality never reaches the network. No model auto-downloads. No phone-home. CI works on isolated runners.",
+          },
+          {
+            n: "§ 04",
+            h: "Programmable",
+            p: "Rules are real Python. Typed wrappers. Capability declarations. No YAML ceiling, no bespoke DSL, no recompile.",
+          },
+          {
+            n: "§ 05",
+            h: "Structural",
+            p: "Regions, not bytes. Owners, not guesses. Headings, tables, docstrings, and comments — each a first-class extraction target.",
+          },
+          {
+            n: "§ 06",
+            h: "Conservative fixes",
+            p: "Safe, unsafe, and manual are distinct classes. Safe fixes stay narrow. Overlapping non-identical edits fail loudly.",
+          },
+          {
+            n: "§ 07",
+            h: "Honest about trust",
+            p: "Plugins are trusted code. The docs say so. The CLI help says so. No claims of sandboxing we cannot keep.",
+          },
+          {
+            n: "§ 08",
+            h: "Debuggable",
+            p: 'dump-ir is not an afterthought. Maintainers can always ask, "what did the extractor see, and what did the rule receive?"',
+          },
+        ];
+        return (
+          <section className="valuesbox">
+            <div className="section-head">
+              <div className="num">04</div>
+              <div>
+                <div className="tag">§ Non-negotiables</div>
+                <h2>Eight commitments the engine holds.</h2>
+              </div>
+            </div>
+            <div className="valueset">
+              {items.map((v) => (
+                <div className="card" key={v.n}>
+                  <div className="vs-num">{v.n}</div>
+                  <h4>{v.h}</h4>
+                  <p>{v.p}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
 
-function Weaknesses() {
-  return (
-    <section className="weaknesses">
-      <div>
-        <div className="folio-sm" style={{marginBottom:14}}>§ 05 · Rejected alternatives</div>
-        <h2 style={{fontSize:"2.4rem",margin:0,lineHeight:.95}}>
-          What we considered, and <span style={{color:"var(--press-red)"}}>retired</span>.
-        </h2>
-        <p className="editorial" style={{marginTop:18, fontSize:"1.1rem"}}>
-          A design document earns its authority by naming the roads it did
-          not take. Each of these was considered at length; each was rejected
-          for reasons recorded below.
-        </p>
-        <div style={{marginTop: 24, display:"flex",gap:10,flexWrap:"wrap"}}>
-          <span className="chip">Pure Python</span>
-          <span className="chip">Rust-only engine</span>
-          <span className="chip">Vale wrapper</span>
-          <span className="chip">Raw-AST rules</span>
-          <span className="chip">LLM assist</span>
-          <span className="chip">No IR</span>
-        </div>
-      </div>
-      <div className="weakness-panel">
-        <h3>☞ Five no's</h3>
-        <ol>
-          <li><strong>Pure Python parsing.</strong> Makes source-fidelity and future editor performance worse at the exact point where Stilyagi must be strongest.</li>
-          <li><strong>Rust-only rule engine.</strong> Cripples the rule-authoring story. The whole point is letting engineers write real rules without a bespoke DSL.</li>
-          <li><strong>Vale-compatible wrapper.</strong> The requirement is wholesale replacement. Carrying Vale packaging would preserve the wrong constraints.</li>
-          <li><strong>Direct raw-AST rule authoring.</strong> Makes simple structural rules possible, but text-oriented rules would repeatedly flatten markup and rebuild context.</li>
-          <li><strong>Heavier LLM-assisted analysis.</strong> Nondeterministic, expensive, hostile to offline CI. Belongs outside the core.</li>
-        </ol>
-      </div>
-    </section>
-  );
-}
+      function Weaknesses() {
+        return (
+          <section className="weaknesses">
+            <div>
+              <div className="folio-sm" style={{ marginBottom: 14 }}>
+                § 05 · Rejected alternatives
+              </div>
+              <h2 style={{ fontSize: "2.4rem", margin: 0, lineHeight: 0.95 }}>
+                What we considered, and{" "}
+                <span style={{ color: "var(--press-red)" }}>retired</span>.
+              </h2>
+              <p
+                className="editorial"
+                style={{ marginTop: 18, fontSize: "1.1rem" }}
+              >
+                A design document earns its authority by naming the roads it did
+                not take. Each of these was considered at length; each was
+                rejected for reasons recorded below.
+              </p>
+              <div
+                style={{
+                  marginTop: 24,
+                  display: "flex",
+                  gap: 10,
+                  flexWrap: "wrap",
+                }}
+              >
+                <span className="chip">Pure Python</span>
+                <span className="chip">Rust-only engine</span>
+                <span className="chip">Vale wrapper</span>
+                <span className="chip">Raw-AST rules</span>
+                <span className="chip">LLM assist</span>
+                <span className="chip">No IR</span>
+              </div>
+            </div>
+            <div className="weakness-panel">
+              <h3>☞ Five no's</h3>
+              <ol>
+                <li>
+                  <strong>Pure Python parsing.</strong> Makes source-fidelity
+                  and future editor performance worse at the exact point where
+                  Stilyagi must be strongest.
+                </li>
+                <li>
+                  <strong>Rust-only rule engine.</strong> Cripples the
+                  rule-authoring story. The whole point is letting engineers
+                  write real rules without a bespoke DSL.
+                </li>
+                <li>
+                  <strong>Vale-compatible wrapper.</strong> The requirement is
+                  wholesale replacement. Carrying Vale packaging would preserve
+                  the wrong constraints.
+                </li>
+                <li>
+                  <strong>Direct raw-AST rule authoring.</strong> Makes simple
+                  structural rules possible, but text-oriented rules would
+                  repeatedly flatten markup and rebuild context.
+                </li>
+                <li>
+                  <strong>Heavier LLM-assisted analysis.</strong>{" "}
+                  Nondeterministic, expensive, hostile to offline CI. Belongs
+                  outside the core.
+                </li>
+              </ol>
+            </div>
+          </section>
+        );
+      }
 
-function Closing() {
-  return (
-    <section className="closing">
-      <div className="pullquote">
-        "Rules govern regions, not raw bytes."
-        <cite>— From the maintainer's rubric</cite>
-      </div>
-      <div className="next">
-        <a href="how.html">☞ See the mechanism</a>
-        <a href="design.html">☞ Open the design notes</a>
-        <a href="roadmap.html">☞ Read the roadmap</a>
-      </div>
-    </section>
-  );
-}
+      function Closing() {
+        return (
+          <section className="closing">
+            <div className="pullquote">
+              "Rules govern regions, not raw bytes."
+              <cite>— From the maintainer's rubric</cite>
+            </div>
+            <div className="next">
+              <a href="how.html">☞ See the mechanism</a>
+              <a href="design.html">☞ Open the design notes</a>
+              <a href="roadmap.html">☞ Read the roadmap</a>
+            </div>
+          </section>
+        );
+      }
 
-function App() {
-  return (
-    <>
-      <SiteMast current="why" />
-      <PageIntro />
-      <FourCamps />
-      <StyleHunter />
-      <TheArgument />
-      <Personas />
-      <Values />
-      <Weaknesses />
-      <Closing />
-      <Colophon />
-      <TweaksDock />
-    </>
-  );
-}
+      function App() {
+        return (
+          <>
+            <SiteMast current="why" />
+            <PageIntro />
+            <FourCamps />
+            <StyleHunter />
+            <TheArgument />
+            <Personas />
+            <Values />
+            <Weaknesses />
+            <Closing />
+            <Colophon />
+            <TweaksDock />
+          </>
+        );
+      }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-</script>
-</body>
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
 </html>

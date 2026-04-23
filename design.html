@@ -1,361 +1,515 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stilyagi · Design — open the hood</title>
-<link rel="stylesheet" href="assets/colors_and_type.css">
-<link rel="stylesheet" href="assets/motifs_and_components.css">
-<link rel="stylesheet" href="assets/site.css">
-<style>
-.ir-inspector {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 4) calc(var(--unit) * 4) calc(var(--unit) * 6);
-}
-.ir-frame {
-  border: var(--rule-weight-2) solid var(--ink);
-  background: var(--paper);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  overflow: hidden;
-}
-.ir-frame .pane {
-  min-width: 0;
-  display: flex; flex-direction: column;
-}
-.ir-frame .pane + .pane { border-left: var(--rule-weight) solid var(--ink); }
-.ir-header {
-  padding: 12px 20px;
-  border-bottom: var(--rule-weight) solid var(--ink);
-  background: var(--paper-shade);
-  font-family: var(--font-sans);
-  font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.ir-header .red { color: var(--press-red); font-weight: 700; }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Stilyagi · Design — open the hood</title>
+    <link rel="stylesheet" href="assets/colors_and_type.css?v=20260423a" />
+    <link
+      rel="stylesheet"
+      href="assets/motifs_and_components.css?v=20260423a"
+    />
+    <link rel="stylesheet" href="assets/site.css?v=20260423a" />
+    <style>
+      .ir-inspector {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: calc(var(--unit) * 4) calc(var(--unit) * 4)
+          calc(var(--unit) * 6);
+      }
+      .ir-frame {
+        border: var(--rule-weight-2) solid var(--ink);
+        background: var(--paper);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        overflow: hidden;
+      }
+      .ir-frame .pane {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .ir-frame .pane + .pane {
+        border-left: var(--rule-weight) solid var(--ink);
+      }
+      .ir-header {
+        padding: 12px 20px;
+        border-bottom: var(--rule-weight) solid var(--ink);
+        background: var(--paper-shade);
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .ir-header .red {
+        color: var(--press-red);
+        font-weight: 700;
+      }
 
-.src-view {
-  font-family: var(--font-mono);
-  font-size: .88rem;
-  line-height: 1.6;
-  padding: 20px 22px 28px;
-  background: var(--paper);
-  overflow-x: auto;
-  flex: 1;
-}
-.src-line { display: flex; gap: 18px; }
-.src-line .gut {
-  color: var(--ink-soft); user-select: none;
-  flex: 0 0 28px; text-align: right;
-  font-size: .78rem; padding-top: 1px;
-}
-.src-line .content { white-space: pre-wrap; word-break: break-word; }
+      .src-view {
+        font-family: var(--font-mono);
+        font-size: 0.88rem;
+        line-height: 1.6;
+        padding: 20px 22px 28px;
+        background: var(--paper);
+        overflow-x: auto;
+        flex: 1;
+      }
+      .src-line {
+        display: flex;
+        gap: 18px;
+      }
+      .src-line .gut {
+        color: var(--ink-soft);
+        user-select: none;
+        flex: 0 0 28px;
+        text-align: right;
+        font-size: 0.78rem;
+        padding-top: 1px;
+      }
+      .src-line .content {
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
 
-.region {
-  display: inline;
-  padding: 1px 2px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: background 80ms, color 80ms, outline 80ms;
-  outline: 1px solid transparent;
-}
-.region:hover { background: rgba(198,40,40,.12); }
-.region.active {
-  background: var(--press-red);
-  color: var(--paper);
-  outline: 1px solid var(--ink);
-}
-.region.type-heading { background: rgba(212,160,23,.18); }
-.region.type-heading.active { background: var(--jazz-ochre); color: var(--ink); }
-.region.type-paragraph { background: transparent; }
-.region.type-code { background: rgba(15,15,15,.08); }
-.region.type-link { background: rgba(46,124,160,.18); color: var(--ink); }
-.region.type-list-item { background: rgba(91,123,97,.15); }
+      .region {
+        display: inline;
+        padding: 1px 2px;
+        border-radius: 2px;
+        cursor: pointer;
+        transition:
+          background 80ms,
+          color 80ms,
+          outline 80ms;
+        outline: 1px solid transparent;
+      }
+      .region:hover {
+        background: rgba(198, 40, 40, 0.12);
+      }
+      .region.active {
+        background: var(--press-red);
+        color: var(--paper);
+        outline: 1px solid var(--ink);
+      }
+      .region.type-heading {
+        background: rgba(212, 160, 23, 0.18);
+      }
+      .region.type-heading.active {
+        background: var(--jazz-ochre);
+        color: var(--ink);
+      }
+      .region.type-paragraph {
+        background: transparent;
+      }
+      .region.type-code {
+        background: rgba(15, 15, 15, 0.08);
+      }
+      .region.type-link {
+        background: rgba(46, 124, 160, 0.18);
+        color: var(--ink);
+      }
+      .region.type-list-item {
+        background: rgba(91, 123, 97, 0.15);
+      }
 
-.ir-tree {
-  padding: 20px 22px;
-  font-family: var(--font-mono);
-  font-size: .85rem;
-  line-height: 1.55;
-  flex: 1;
-  overflow-x: auto;
-  background: var(--paper);
-}
-.tree-node {
-  padding: 3px 6px;
-  border-left: 2px solid transparent;
-  margin-left: 0;
-  cursor: pointer;
-  color: var(--ink);
-}
-.tree-node:hover { background: rgba(198,40,40,.08); }
-.tree-node.active {
-  background: var(--press-red);
-  color: var(--paper);
-  border-left-color: var(--ink);
-}
-.tree-node.active .k { color: var(--paper); }
-.tree-node.active .v { color: var(--paper); }
-.tree-node .k { color: var(--press-red); font-weight: 700; }
-.tree-node .v { color: var(--ink); }
-.tree-node .d { color: var(--ink-soft); }
-.tree-node .indent { display: inline-block; width: 1.6em; }
+      .ir-tree {
+        padding: 20px 22px;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        line-height: 1.55;
+        flex: 1;
+        overflow-x: auto;
+        background: var(--paper);
+      }
+      .tree-node {
+        padding: 3px 6px;
+        border-left: 2px solid transparent;
+        margin-left: 0;
+        cursor: pointer;
+        color: var(--ink);
+      }
+      .tree-node:hover {
+        background: rgba(198, 40, 40, 0.08);
+      }
+      .tree-node.active {
+        background: var(--press-red);
+        color: var(--paper);
+        border-left-color: var(--ink);
+      }
+      .tree-node.active .k {
+        color: var(--paper);
+      }
+      .tree-node.active .v {
+        color: var(--paper);
+      }
+      .tree-node .k {
+        color: var(--press-red);
+        font-weight: 700;
+      }
+      .tree-node .v {
+        color: var(--ink);
+      }
+      .tree-node .d {
+        color: var(--ink-soft);
+      }
+      .tree-node .indent {
+        display: inline-block;
+        width: 1.6em;
+      }
 
-.ir-foot {
-  padding: 14px 20px;
-  border-top: var(--rule-weight) solid var(--ink);
-  background: var(--paper-shade);
-  font-family: var(--font-sans);
-  font-size: .72rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  display: flex; justify-content: space-between; gap: 20px;
-  flex-wrap: wrap;
-}
-.ir-foot .red { color: var(--press-red); font-weight: 700; }
-.ir-foot code {
-  background: none; padding: 0;
-  color: var(--ink); font-family: var(--font-mono);
-  letter-spacing: 0;
-}
+      .ir-foot {
+        padding: 14px 20px;
+        border-top: var(--rule-weight) solid var(--ink);
+        background: var(--paper-shade);
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .ir-foot .red {
+        color: var(--press-red);
+        font-weight: 700;
+      }
+      .ir-foot code {
+        background: none;
+        padding: 0;
+        color: var(--ink);
+        font-family: var(--font-mono);
+        letter-spacing: 0;
+      }
 
-.legend {
-  display: flex; gap: 14px; flex-wrap: wrap;
-  margin-top: 16px;
-  font-family: var(--font-sans);
-  font-size: .72rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-.legend .sw {
-  display: inline-block;
-  width: 14px; height: 14px;
-  margin-right: 6px;
-  vertical-align: middle;
-  border: 1px solid var(--ink);
-}
-.sw-heading { background: var(--jazz-ochre); }
-.sw-para { background: var(--paper); }
-.sw-code { background: rgba(15,15,15,.15); }
-.sw-link { background: rgba(46,124,160,.28); }
-.sw-list { background: rgba(91,123,97,.22); }
+      .legend {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+      .legend .sw {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        margin-right: 6px;
+        vertical-align: middle;
+        border: 1px solid var(--ink);
+      }
+      .sw-heading {
+        background: var(--jazz-ochre);
+      }
+      .sw-para {
+        background: var(--paper);
+      }
+      .sw-code {
+        background: rgba(15, 15, 15, 0.15);
+      }
+      .sw-link {
+        background: rgba(46, 124, 160, 0.28);
+      }
+      .sw-list {
+        background: rgba(91, 123, 97, 0.22);
+      }
 
-.planner {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 6) calc(var(--unit) * 4);
-}
-.plan-frame {
-  border: var(--rule-weight-2) solid var(--ink);
-  background: var(--paper);
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-}
-.plan-left { padding: calc(var(--unit) * 4); border-right: var(--rule-weight) solid var(--ink); }
-.plan-right { padding: calc(var(--unit) * 4); background: var(--paper-shade); }
-.plan-frame h3 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  margin: 0 0 16px;
-  font-size: 1.3rem;
-}
-.rule-toggle {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px dashed rgba(15,15,15,.2);
-  font-family: var(--font-sans);
-  font-size: .85rem;
-  cursor: pointer;
-  user-select: none;
-}
-.rule-toggle:last-child { border-bottom: 0; }
-.rule-toggle .check {
-  width: 18px; height: 18px;
-  border: 1.5px solid var(--ink);
-  display: inline-block;
-  position: relative;
-  flex: 0 0 18px;
-  background: var(--paper);
-}
-.rule-toggle.on .check { background: var(--press-red); border-color: var(--press-red); }
-.rule-toggle.on .check::after {
-  content: "✓"; position: absolute;
-  inset: 0; display: grid; place-items: center;
-  color: var(--paper); font-weight: 900; font-size: .9rem;
-}
-.rule-toggle .code {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  color: var(--ink);
-  flex: 0 0 80px;
-}
-.rule-toggle .desc {
-  font-family: var(--font-editorial);
-  color: var(--ink); font-size: .98rem;
-  flex: 1;
-}
-.rule-toggle .caps {
-  font-family: var(--font-mono);
-  font-size: .72rem;
-  color: var(--ink-soft);
-}
+      .planner {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: calc(var(--unit) * 6) calc(var(--unit) * 4);
+      }
+      .plan-frame {
+        border: var(--rule-weight-2) solid var(--ink);
+        background: var(--paper);
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      }
+      .plan-left {
+        padding: calc(var(--unit) * 4);
+        border-right: var(--rule-weight) solid var(--ink);
+      }
+      .plan-right {
+        padding: calc(var(--unit) * 4);
+        background: var(--paper-shade);
+      }
+      .plan-frame h3 {
+        font-family: var(--font-display);
+        font-weight: 900;
+        text-transform: uppercase;
+        margin: 0 0 16px;
+        font-size: 1.3rem;
+      }
+      .rule-toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px dashed rgba(15, 15, 15, 0.2);
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        cursor: pointer;
+        user-select: none;
+      }
+      .rule-toggle:last-child {
+        border-bottom: 0;
+      }
+      .rule-toggle .check {
+        width: 18px;
+        height: 18px;
+        border: 1.5px solid var(--ink);
+        display: inline-block;
+        position: relative;
+        flex: 0 0 18px;
+        background: var(--paper);
+      }
+      .rule-toggle.on .check {
+        background: var(--press-red);
+        border-color: var(--press-red);
+      }
+      .rule-toggle.on .check::after {
+        content: "✓";
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: var(--paper);
+        font-weight: 900;
+        font-size: 0.9rem;
+      }
+      .rule-toggle .code {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        color: var(--ink);
+        flex: 0 0 80px;
+      }
+      .rule-toggle .desc {
+        font-family: var(--font-editorial);
+        color: var(--ink);
+        font-size: 0.98rem;
+        flex: 1;
+      }
+      .rule-toggle .caps {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--ink-soft);
+      }
 
-.providers { display: flex; flex-direction: column; gap: 12px; }
-.provider {
-  padding: 14px 16px;
-  border: 1.5px solid var(--ink);
-  background: var(--paper);
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 12px;
-  transition: background 120ms, color 120ms, border-color 120ms, opacity 120ms;
-}
-.provider .pname {
-  font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: 1.05rem;
-}
-.provider .ptag {
-  font-family: var(--font-sans);
-  font-size: .7rem;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  font-weight: 700;
-  padding: 3px 8px 2px;
-}
-.provider.loaded {
-  background: var(--press-red); color: var(--paper); border-color: var(--press-red);
-}
-.provider.loaded .ptag { background: var(--ink); color: var(--paper); }
-.provider.skipped {
-  opacity: .55;
-}
-.provider.skipped .ptag { background: var(--paper-shade); color: var(--ink); border: 1px solid var(--ink); }
+      .providers {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .provider {
+        padding: 14px 16px;
+        border: 1.5px solid var(--ink);
+        background: var(--paper);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        transition:
+          background 120ms,
+          color 120ms,
+          border-color 120ms,
+          opacity 120ms;
+      }
+      .provider .pname {
+        font-family: var(--font-display);
+        font-weight: 900;
+        text-transform: uppercase;
+        font-size: 1.05rem;
+      }
+      .provider .ptag {
+        font-family: var(--font-sans);
+        font-size: 0.7rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-weight: 700;
+        padding: 3px 8px 2px;
+      }
+      .provider.loaded {
+        background: var(--press-red);
+        color: var(--paper);
+        border-color: var(--press-red);
+      }
+      .provider.loaded .ptag {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .provider.skipped {
+        opacity: 0.55;
+      }
+      .provider.skipped .ptag {
+        background: var(--paper-shade);
+        color: var(--ink);
+        border: 1px solid var(--ink);
+      }
 
-.plan-sum {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: var(--rule-weight) solid var(--ink);
-  font-family: var(--font-sans);
-  font-size: .72rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-.plan-sum b { color: var(--press-red); }
+      .plan-sum {
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: var(--rule-weight) solid var(--ink);
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+      .plan-sum b {
+        color: var(--press-red);
+      }
 
-.adrs {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 6) calc(var(--unit) * 4);
-}
-.adr-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: calc(var(--unit) * 3);
-}
-.adr-card {
-  border: var(--rule-weight) solid var(--ink);
-  padding: calc(var(--unit) * 3);
-  background: var(--paper);
-}
-.adr-card .adr-num {
-  font-family: var(--font-sans);
-  font-size: .72rem; letter-spacing: .18em;
-  color: var(--press-red); font-weight: 700;
-  margin-bottom: 8px;
-}
-.adr-card h4 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: 1.2rem;
-  margin: 0 0 10px;
-  line-height: 1.05;
-}
-.adr-card .status {
-  font-family: var(--font-sans);
-  font-size: .68rem;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  padding: 2px 6px 1px;
-  background: var(--signal-sage);
-  color: var(--paper);
-  display: inline-block;
-  margin-bottom: 10px;
-}
-.adr-card .status.prov { background: var(--jazz-ochre); color: var(--ink); }
-.adr-card p {
-  font-family: var(--font-editorial);
-  font-size: .98rem;
-  line-height: 1.45;
-  margin: 0;
-}
+      .adrs {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: calc(var(--unit) * 6) calc(var(--unit) * 4);
+      }
+      .adr-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: calc(var(--unit) * 3);
+      }
+      .adr-card {
+        border: var(--rule-weight) solid var(--ink);
+        padding: calc(var(--unit) * 3);
+        background: var(--paper);
+      }
+      .adr-card .adr-num {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        color: var(--press-red);
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .adr-card h4 {
+        font-family: var(--font-display);
+        font-weight: 900;
+        text-transform: uppercase;
+        font-size: 1.2rem;
+        margin: 0 0 10px;
+        line-height: 1.05;
+      }
+      .adr-card .status {
+        font-family: var(--font-sans);
+        font-size: 0.68rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        padding: 2px 6px 1px;
+        background: var(--signal-sage);
+        color: var(--paper);
+        display: inline-block;
+        margin-bottom: 10px;
+      }
+      .adr-card .status.prov {
+        background: var(--jazz-ochre);
+        color: var(--ink);
+      }
+      .adr-card p {
+        font-family: var(--font-editorial);
+        font-size: 0.98rem;
+        line-height: 1.45;
+        margin: 0;
+      }
 
-.grammar-illo {
-  max-width: 1240px; margin: 0 auto;
-  padding: 0 calc(var(--unit) * 4) calc(var(--unit) * 6);
-}
-.grammar-illo .inner {
-  border: var(--rule-weight-2) solid var(--ink);
-  background: var(--paper);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  overflow: hidden;
-}
-.grammar-illo .inner .text-side {
-  padding: calc(var(--unit) * 5);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.grammar-illo .inner .text-side h3 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: 2rem;
-  margin: 0 0 calc(var(--unit) * 2);
-  line-height: .95;
-  color: var(--ink);
-}
-.grammar-illo .inner .text-side h3 .red { color: var(--press-red); }
-.grammar-illo .inner .text-side p {
-  font-family: var(--font-editorial);
-  font-size: 1.08rem;
-  line-height: 1.5;
-  max-width: 48ch;
-}
-.grammar-illo .inner img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  background: var(--paper);
-  padding: calc(var(--unit) * 2);
-}
+      .grammar-illo {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 calc(var(--unit) * 4) calc(var(--unit) * 6);
+      }
+      .grammar-illo .inner {
+        border: var(--rule-weight-2) solid var(--ink);
+        background: var(--paper);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: hidden;
+      }
+      .grammar-illo .inner .text-side {
+        padding: calc(var(--unit) * 5);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .grammar-illo .inner .text-side h3 {
+        font-family: var(--font-display);
+        font-weight: 900;
+        text-transform: uppercase;
+        font-size: 2rem;
+        margin: 0 0 calc(var(--unit) * 2);
+        line-height: 0.95;
+        color: var(--ink);
+      }
+      .grammar-illo .inner .text-side h3 .red {
+        color: var(--press-red);
+      }
+      .grammar-illo .inner .text-side p {
+        font-family: var(--font-editorial);
+        font-size: 1.08rem;
+        line-height: 1.5;
+        max-width: 48ch;
+      }
+      .grammar-illo .inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        background: var(--paper);
+        padding: calc(var(--unit) * 2);
+      }
 
-@media (max-width: 900px) {
-  .ir-frame, .plan-frame, .adr-grid { grid-template-columns: 1fr; }
-  .ir-frame .pane + .pane { border-left: 0; border-top: var(--rule-weight) solid var(--ink); }
-  .plan-left { border-right: 0; border-bottom: var(--rule-weight) solid var(--ink); }
-  .grammar-illo .inner { grid-template-columns: 1fr; }
-}
-</style>
-</head>
-<body>
-<div id="root"></div>
+      @media (max-width: 900px) {
+        .ir-frame,
+        .plan-frame,
+        .adr-grid {
+          grid-template-columns: 1fr;
+        }
+        .ir-frame .pane + .pane {
+          border-left: 0;
+          border-top: var(--rule-weight) solid var(--ink);
+        }
+        .plan-left {
+          border-right: 0;
+          border-bottom: var(--rule-weight) solid var(--ink);
+        }
+        .grammar-illo .inner {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<script type="text/babel" src="assets/Primitives.jsx"></script>
-<script type="text/babel" src="assets/Chrome.jsx"></script>
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/babel" src="assets/Primitives.jsx?v=20260423a"></script>
+    <script type="text/babel" src="assets/Chrome.jsx?v=20260423a"></script>
 
-<script type="text/babel">
-const { useState, useMemo } = React;
+    <script type="text/babel">
+      const { useState, useMemo } = React;
 
-const SAMPLE_SRC = `# Configuring Stilyagi
+      const SAMPLE_SRC = `# Configuring Stilyagi
 
 Stilyagi is configured by \`stilyagi.toml\` or by the \`[tool.stilyagi]\`
 section of your \`pyproject.toml\`. See the [config reference](docs.html#config).
@@ -372,362 +526,660 @@ Use \`select\` and \`ignore\` to scope the active ruleset:
 Install \`stilyagi[grammar]\` to enable the spaCy-backed rule pack.
 `;
 
-// Each region: {id, type, range:[start,end], attrs, label}
-// We authored offsets by counting against SAMPLE_SRC above.
-const REGIONS = [
-  { id: "h1-1",   type: "heading",   range: [0, 23],   label: "Heading depth=1",
-    attrs: { kind: "atx", depth: 1, content_range: [2, 23], marker_range: [0, 1] } },
-  { id: "p-1",    type: "paragraph", range: [25, 142], label: "Paragraph",
-    attrs: { inline_kinds: ["text","code","text","link","text"] } },
-  { id: "cf-1",   type: "code",      range: [55, 69],  label: "Inline code",
-    attrs: { lang: "toml", inline: true } },
-  { id: "cf-2",   type: "code",      range: [74, 95],  label: "Inline code",
-    attrs: { lang: "toml", inline: true } },
-  { id: "link-1", type: "link",      range: [106, 141], label: "Link",
-    attrs: { text_range: [107, 123], href_range: [125, 140], scheme: "relative" } },
-  { id: "h2-1",   type: "heading",   range: [144, 161], label: "Heading depth=2",
-    attrs: { kind: "atx", depth: 2, content_range: [147, 161], marker_range: [144, 146] } },
-  { id: "p-2",    type: "paragraph", range: [163, 219], label: "Paragraph" },
-  { id: "li-1",   type: "list-item", range: [222, 288], label: "List item",
-    attrs: { marker: "-", depth: 0 } },
-  { id: "li-2",   type: "list-item", range: [289, 332], label: "List item",
-    attrs: { marker: "-", depth: 0 } },
-  { id: "h3-1",   type: "heading",   range: [335, 357], label: "Heading depth=3",
-    attrs: { kind: "atx", depth: 3, content_range: [339, 357], marker_range: [335, 338] } },
-  { id: "p-3",    type: "paragraph", range: [359, 421], label: "Paragraph",
-    attrs: { inline_kinds: ["text","code","text"] } },
-  { id: "cf-3",   type: "code",      range: [367, 385], label: "Inline code",
-    attrs: { lang: "python", inline: true } },
-];
+      // Each region: {id, type, range:[start,end], attrs, label}
+      // We authored offsets by counting against SAMPLE_SRC above.
+      const REGIONS = [
+        {
+          id: "h1-1",
+          type: "heading",
+          range: [0, 23],
+          label: "Heading depth=1",
+          attrs: {
+            kind: "atx",
+            depth: 1,
+            content_range: [2, 23],
+            marker_range: [0, 1],
+          },
+        },
+        {
+          id: "p-1",
+          type: "paragraph",
+          range: [25, 142],
+          label: "Paragraph",
+          attrs: { inline_kinds: ["text", "code", "text", "link", "text"] },
+        },
+        {
+          id: "cf-1",
+          type: "code",
+          range: [55, 69],
+          label: "Inline code",
+          attrs: { lang: "toml", inline: true },
+        },
+        {
+          id: "cf-2",
+          type: "code",
+          range: [74, 95],
+          label: "Inline code",
+          attrs: { lang: "toml", inline: true },
+        },
+        {
+          id: "link-1",
+          type: "link",
+          range: [106, 141],
+          label: "Link",
+          attrs: {
+            text_range: [107, 123],
+            href_range: [125, 140],
+            scheme: "relative",
+          },
+        },
+        {
+          id: "h2-1",
+          type: "heading",
+          range: [144, 161],
+          label: "Heading depth=2",
+          attrs: {
+            kind: "atx",
+            depth: 2,
+            content_range: [147, 161],
+            marker_range: [144, 146],
+          },
+        },
+        { id: "p-2", type: "paragraph", range: [163, 219], label: "Paragraph" },
+        {
+          id: "li-1",
+          type: "list-item",
+          range: [222, 288],
+          label: "List item",
+          attrs: { marker: "-", depth: 0 },
+        },
+        {
+          id: "li-2",
+          type: "list-item",
+          range: [289, 332],
+          label: "List item",
+          attrs: { marker: "-", depth: 0 },
+        },
+        {
+          id: "h3-1",
+          type: "heading",
+          range: [335, 357],
+          label: "Heading depth=3",
+          attrs: {
+            kind: "atx",
+            depth: 3,
+            content_range: [339, 357],
+            marker_range: [335, 338],
+          },
+        },
+        {
+          id: "p-3",
+          type: "paragraph",
+          range: [359, 421],
+          label: "Paragraph",
+          attrs: { inline_kinds: ["text", "code", "text"] },
+        },
+        {
+          id: "cf-3",
+          type: "code",
+          range: [367, 385],
+          label: "Inline code",
+          attrs: { lang: "python", inline: true },
+        },
+      ];
 
-// Render the source with region highlights.
-function RenderedSource({ activeId, setActiveId }) {
-  // Build character-level region assignment; last wins for overlapping (inline inside para)
-  const charRegion = new Array(SAMPLE_SRC.length).fill(null);
-  // First assign parent regions, then children — so children (code, link) override paragraph
-  const order = [...REGIONS].sort((a, b) => (b.range[1]-b.range[0]) - (a.range[1]-a.range[0]));
-  order.forEach((r) => {
-    for (let i = r.range[0]; i < r.range[1]; i++) charRegion[i] = r.id;
-  });
-
-  // Split the source into spans per contiguous region id, preserving line structure
-  const lines = SAMPLE_SRC.split("\n");
-  const out = [];
-  let cursor = 0;
-  lines.forEach((ln, li) => {
-    const lineStart = cursor;
-    const lineEnd = cursor + ln.length;
-    const spans = [];
-    let i = lineStart;
-    while (i < lineEnd) {
-      const rid = charRegion[i];
-      let j = i;
-      while (j < lineEnd && charRegion[j] === rid) j++;
-      const text = SAMPLE_SRC.slice(i, j);
-      if (rid) {
-        const type = REGIONS.find((r) => r.id === rid).type;
-        spans.push(
-          <span
-            key={`s${i}`}
-            className={`region type-${type} ${rid === activeId ? "active" : ""}`}
-            onMouseEnter={() => setActiveId(rid)}
-          >{text}</span>
+      // Render the source with region highlights.
+      function RenderedSource({ activeId, setActiveId }) {
+        // Build character-level region assignment; last wins for overlapping (inline inside para)
+        const charRegion = new Array(SAMPLE_SRC.length).fill(null);
+        // First assign parent regions, then children — so children (code, link) override paragraph
+        const order = [...REGIONS].sort(
+          (a, b) => b.range[1] - b.range[0] - (a.range[1] - a.range[0]),
         );
-      } else {
-        spans.push(<span key={`s${i}`}>{text}</span>);
+        order.forEach((r) => {
+          for (let i = r.range[0]; i < r.range[1]; i++) charRegion[i] = r.id;
+        });
+
+        // Split the source into spans per contiguous region id, preserving line structure
+        const lines = SAMPLE_SRC.split("\n");
+        const out = [];
+        let cursor = 0;
+        lines.forEach((ln, li) => {
+          const lineStart = cursor;
+          const lineEnd = cursor + ln.length;
+          const spans = [];
+          let i = lineStart;
+          while (i < lineEnd) {
+            const rid = charRegion[i];
+            let j = i;
+            while (j < lineEnd && charRegion[j] === rid) j++;
+            const text = SAMPLE_SRC.slice(i, j);
+            if (rid) {
+              const type = REGIONS.find((r) => r.id === rid).type;
+              spans.push(
+                <span
+                  key={`s${i}`}
+                  className={`region type-${type} ${rid === activeId ? "active" : ""}`}
+                  onMouseEnter={() => setActiveId(rid)}
+                >
+                  {text}
+                </span>,
+              );
+            } else {
+              spans.push(<span key={`s${i}`}>{text}</span>);
+            }
+            i = j;
+          }
+          out.push(
+            <div className="src-line" key={`l${li}`}>
+              <span className="gut">{li + 1}</span>
+              <span className="content">{spans.length ? spans : "\u00A0"}</span>
+            </div>,
+          );
+          cursor = lineEnd + 1; // +1 for newline
+        });
+        return <div className="src-view">{out}</div>;
       }
-      i = j;
-    }
-    out.push(
-      <div className="src-line" key={`l${li}`}>
-        <span className="gut">{li + 1}</span>
-        <span className="content">{spans.length ? spans : "\u00A0"}</span>
-      </div>
-    );
-    cursor = lineEnd + 1; // +1 for newline
-  });
-  return <div className="src-view">{out}</div>;
-}
 
-function IRTree({ activeId, setActiveId }) {
-  return (
-    <div className="ir-tree">
-      <div><span className="d">Document</span> <span className="v">{"{"}</span></div>
-      <div><span className="indent"/><span className="k">content_hash:</span> <span className="v">"sha256:7a3f…e041"</span></div>
-      <div><span className="indent"/><span className="k">line_index:</span> <span className="v">[0, 24, 25, 143, …, 422]</span></div>
-      <div><span className="indent"/><span className="k">regions:</span> <span className="v">[</span></div>
-      {REGIONS.map((r) => (
-        <div
-          key={r.id}
-          className={`tree-node ${activeId === r.id ? "active" : ""}`}
-          onMouseEnter={() => setActiveId(r.id)}
-        >
-          <span className="indent"/><span className="indent"/>
-          <span className="k">{r.type}</span>
-          <span className="d"> · </span>
-          <span className="v">range=[{r.range[0]},{r.range[1]}]</span>
-          {r.attrs?.depth != null && <span className="v"> depth={r.attrs.depth}</span>}
-          {r.attrs?.lang && <span className="v"> lang="{r.attrs.lang}"</span>}
-          {r.attrs?.marker && <span className="v"> marker="{r.attrs.marker}"</span>}
-          {r.attrs?.scheme && <span className="v"> scheme="{r.attrs.scheme}"</span>}
-        </div>
-      ))}
-      <div><span className="indent"/><span className="v">]</span></div>
-      <div><span className="v">{"}"}</span></div>
-    </div>
-  );
-}
-
-function IRInspector() {
-  const [activeId, setActiveId] = useState("link-1");
-  const active = REGIONS.find((r) => r.id === activeId);
-  return (
-    <section className="ir-inspector">
-      <div className="section-head">
-        <div className="num">D</div>
-        <div>
-          <div className="tag">§ IR inspector · stilyagi dump-ir</div>
-          <h2>Hover a region. Watch the bytes agree.</h2>
-        </div>
-      </div>
-
-      <div className="ir-frame">
-        <div className="pane">
-          <div className="ir-header">
-            <span>docs/<span className="red">configuring.md</span></span>
-            <span className="red">source view</span>
+      function IRTree({ activeId, setActiveId }) {
+        return (
+          <div className="ir-tree">
+            <div>
+              <span className="d">Document</span>{" "}
+              <span className="v">{"{"}</span>
+            </div>
+            <div>
+              <span className="indent" />
+              <span className="k">content_hash:</span>{" "}
+              <span className="v">"sha256:7a3f…e041"</span>
+            </div>
+            <div>
+              <span className="indent" />
+              <span className="k">line_index:</span>{" "}
+              <span className="v">[0, 24, 25, 143, …, 422]</span>
+            </div>
+            <div>
+              <span className="indent" />
+              <span className="k">regions:</span> <span className="v">[</span>
+            </div>
+            {REGIONS.map((r) => (
+              <div
+                key={r.id}
+                className={`tree-node ${activeId === r.id ? "active" : ""}`}
+                onMouseEnter={() => setActiveId(r.id)}
+              >
+                <span className="indent" />
+                <span className="indent" />
+                <span className="k">{r.type}</span>
+                <span className="d"> · </span>
+                <span className="v">
+                  range=[{r.range[0]},{r.range[1]}]
+                </span>
+                {r.attrs?.depth != null && (
+                  <span className="v"> depth={r.attrs.depth}</span>
+                )}
+                {r.attrs?.lang && (
+                  <span className="v"> lang="{r.attrs.lang}"</span>
+                )}
+                {r.attrs?.marker && (
+                  <span className="v"> marker="{r.attrs.marker}"</span>
+                )}
+                {r.attrs?.scheme && (
+                  <span className="v"> scheme="{r.attrs.scheme}"</span>
+                )}
+              </div>
+            ))}
+            <div>
+              <span className="indent" />
+              <span className="v">]</span>
+            </div>
+            <div>
+              <span className="v">{"}"}</span>
+            </div>
           </div>
-          <RenderedSource activeId={activeId} setActiveId={setActiveId} />
-          <div className="ir-foot">
-            <span>{active ? active.label : "hover a region"}</span>
-            <span>range <code>[{active?.range[0]},{active?.range[1]}]</code></span>
-            <span className="red">source-faithful · no rewrites</span>
-          </div>
-        </div>
-        <div className="pane">
-          <div className="ir-header">
-            <span>Document IR <span className="red">· read-only</span></span>
-            <span className="red">dump-ir --pretty</span>
-          </div>
-          <IRTree activeId={activeId} setActiveId={setActiveId} />
-          <div className="ir-foot">
-            <span>regions <code>{REGIONS.length}</code></span>
-            <span>content_hash <code>sha256:7a3f…e041</code></span>
-            <span className="red">deterministic</span>
-          </div>
-        </div>
-      </div>
+        );
+      }
 
-      <div className="legend">
-        <span><span className="sw sw-heading"></span>Heading</span>
-        <span><span className="sw sw-para"></span>Paragraph</span>
-        <span><span className="sw sw-code"></span>Code</span>
-        <span><span className="sw sw-link"></span>Link</span>
-        <span><span className="sw sw-list"></span>List-item</span>
-      </div>
-    </section>
-  );
-}
+      function IRInspector() {
+        const [activeId, setActiveId] = useState("link-1");
+        const active = REGIONS.find((r) => r.id === activeId);
+        return (
+          <section className="ir-inspector">
+            <div className="section-head">
+              <div className="num">D</div>
+              <div>
+                <div className="tag">§ IR inspector · stilyagi dump-ir</div>
+                <h2>Hover a region. Watch the bytes agree.</h2>
+              </div>
+            </div>
 
-// Capability planner
-const RULES = [
-  { code: "MD201", name: "heading-depth",       caps: [],                 desc: "Reject Markdown headings deeper than level 3." },
-  { code: "MD401", name: "link-text",           caps: [],                 desc: "Reject bare URLs and empty link text." },
-  { code: "PUN201", name: "oxford-comma",       caps: [],                 desc: "Require the serial comma in three-item lists." },
-  { code: "PYDOC101", name: "summary-line",     caps: [],                 desc: "Docstrings must start with a single-line summary." },
-  { code: "GRAM301", name: "passive-voice",     caps: ["grammar"],        desc: "Flag passive-voice constructions in prose regions." },
-  { code: "GRAM402", name: "sentence-length",   caps: ["grammar"],        desc: "Warn when a sentence exceeds 40 words." },
-  { code: "SPELL101", name: "common-words",     caps: ["spell"],          desc: "Check common words against the shipped dictionary." },
-  { code: "TERM201", name: "canonical-term",    caps: ["terminology"],    desc: "Enforce the canonical form of a term (e.g. API, not api)." },
-];
+            <div className="ir-frame">
+              <div className="pane">
+                <div className="ir-header">
+                  <span>
+                    docs/<span className="red">configuring.md</span>
+                  </span>
+                  <span className="red">source view</span>
+                </div>
+                <RenderedSource activeId={activeId} setActiveId={setActiveId} />
+                <div className="ir-foot">
+                  <span>{active ? active.label : "hover a region"}</span>
+                  <span>
+                    range{" "}
+                    <code>
+                      [{active?.range[0]},{active?.range[1]}]
+                    </code>
+                  </span>
+                  <span className="red">source-faithful · no rewrites</span>
+                </div>
+              </div>
+              <div className="pane">
+                <div className="ir-header">
+                  <span>
+                    Document IR <span className="red">· read-only</span>
+                  </span>
+                  <span className="red">dump-ir --pretty</span>
+                </div>
+                <IRTree activeId={activeId} setActiveId={setActiveId} />
+                <div className="ir-foot">
+                  <span>
+                    regions <code>{REGIONS.length}</code>
+                  </span>
+                  <span>
+                    content_hash <code>sha256:7a3f…e041</code>
+                  </span>
+                  <span className="red">deterministic</span>
+                </div>
+              </div>
+            </div>
 
-const PROVIDERS = [
-  { id: "core",        label: "Core extractor",  note: "always loaded" },
-  { id: "grammar",     label: "Grammar · spaCy", note: "stilyagi[grammar]" },
-  { id: "spell",       label: "Spellchecker",    note: "stilyagi[spell]" },
-  { id: "terminology", label: "Terminology",     note: "stilyagi[term]" },
-];
-
-function Planner() {
-  const defaults = new Set(["MD201", "MD401", "PUN201", "PYDOC101"]);
-  const [enabled, setEnabled] = useState(defaults);
-  const toggle = (code) => {
-    setEnabled((prev) => {
-      const next = new Set(prev);
-      if (next.has(code)) next.delete(code); else next.add(code);
-      return next;
-    });
-  };
-  const activeCaps = useMemo(() => {
-    const caps = new Set(["core"]);
-    RULES.forEach((r) => { if (enabled.has(r.code)) r.caps.forEach((c) => caps.add(c)); });
-    return caps;
-  }, [enabled]);
-
-  return (
-    <section className="planner">
-      <div className="section-head">
-        <div className="num">E</div>
-        <div>
-          <div className="tag">§ Capability planner</div>
-          <h2>Toggle rules. See which providers load.</h2>
-        </div>
-      </div>
-
-      <div className="plan-frame">
-        <div className="plan-left">
-          <h3>Enabled ruleset</h3>
-          {RULES.map((r) => (
-            <div
-              key={r.code}
-              className={`rule-toggle ${enabled.has(r.code) ? "on" : ""}`}
-              onClick={() => toggle(r.code)}
-            >
-              <span className="check"></span>
-              <span className="code">{r.code}</span>
-              <span className="desc">{r.desc}</span>
-              <span className="caps">
-                {r.caps.length ? r.caps.map((c) => `+${c}`).join(" ") : "—"}
+            <div className="legend">
+              <span>
+                <span className="sw sw-heading"></span>Heading
+              </span>
+              <span>
+                <span className="sw sw-para"></span>Paragraph
+              </span>
+              <span>
+                <span className="sw sw-code"></span>Code
+              </span>
+              <span>
+                <span className="sw sw-link"></span>Link
+              </span>
+              <span>
+                <span className="sw sw-list"></span>List-item
               </span>
             </div>
-          ))}
-        </div>
-        <div className="plan-right">
-          <h3>Planner verdict</h3>
-          <div className="providers">
-            {PROVIDERS.map((p) => {
-              const on = activeCaps.has(p.id);
-              return (
-                <div key={p.id} className={`provider ${on ? "loaded" : "skipped"}`}>
-                  <div>
-                    <div className="pname">{p.label}</div>
-                    <div style={{fontFamily:"var(--font-mono)",fontSize:".78rem",opacity:.8,marginTop:4}}>{p.note}</div>
+          </section>
+        );
+      }
+
+      // Capability planner
+      const RULES = [
+        {
+          code: "MD201",
+          name: "heading-depth",
+          caps: [],
+          desc: "Reject Markdown headings deeper than level 3.",
+        },
+        {
+          code: "MD401",
+          name: "link-text",
+          caps: [],
+          desc: "Reject bare URLs and empty link text.",
+        },
+        {
+          code: "PUN201",
+          name: "oxford-comma",
+          caps: [],
+          desc: "Require the serial comma in three-item lists.",
+        },
+        {
+          code: "PYDOC101",
+          name: "summary-line",
+          caps: [],
+          desc: "Docstrings must start with a single-line summary.",
+        },
+        {
+          code: "GRAM301",
+          name: "passive-voice",
+          caps: ["grammar"],
+          desc: "Flag passive-voice constructions in prose regions.",
+        },
+        {
+          code: "GRAM402",
+          name: "sentence-length",
+          caps: ["grammar"],
+          desc: "Warn when a sentence exceeds 40 words.",
+        },
+        {
+          code: "SPELL101",
+          name: "common-words",
+          caps: ["spell"],
+          desc: "Check common words against the shipped dictionary.",
+        },
+        {
+          code: "TERM201",
+          name: "canonical-term",
+          caps: ["terminology"],
+          desc: "Enforce the canonical form of a term (e.g. API, not api).",
+        },
+      ];
+
+      const PROVIDERS = [
+        { id: "core", label: "Core extractor", note: "always loaded" },
+        { id: "grammar", label: "Grammar · spaCy", note: "stilyagi[grammar]" },
+        { id: "spell", label: "Spellchecker", note: "stilyagi[spell]" },
+        { id: "terminology", label: "Terminology", note: "stilyagi[term]" },
+      ];
+
+      function Planner() {
+        const defaults = new Set(["MD201", "MD401", "PUN201", "PYDOC101"]);
+        const [enabled, setEnabled] = useState(defaults);
+        const toggle = (code) => {
+          setEnabled((prev) => {
+            const next = new Set(prev);
+            if (next.has(code)) next.delete(code);
+            else next.add(code);
+            return next;
+          });
+        };
+        const activeCaps = useMemo(() => {
+          const caps = new Set(["core"]);
+          RULES.forEach((r) => {
+            if (enabled.has(r.code)) r.caps.forEach((c) => caps.add(c));
+          });
+          return caps;
+        }, [enabled]);
+
+        return (
+          <section className="planner">
+            <div className="section-head">
+              <div className="num">E</div>
+              <div>
+                <div className="tag">§ Capability planner</div>
+                <h2>Toggle rules. See which providers load.</h2>
+              </div>
+            </div>
+
+            <div className="plan-frame">
+              <div className="plan-left">
+                <h3>Enabled ruleset</h3>
+                {RULES.map((r) => (
+                  <div
+                    key={r.code}
+                    className={`rule-toggle ${enabled.has(r.code) ? "on" : ""}`}
+                    onClick={() => toggle(r.code)}
+                  >
+                    <span className="check"></span>
+                    <span className="code">{r.code}</span>
+                    <span className="desc">{r.desc}</span>
+                    <span className="caps">
+                      {r.caps.length
+                        ? r.caps.map((c) => `+${c}`).join(" ")
+                        : "—"}
+                    </span>
                   </div>
-                  <span className="ptag">{on ? "Loaded" : "Skipped"}</span>
+                ))}
+              </div>
+              <div className="plan-right">
+                <h3>Planner verdict</h3>
+                <div className="providers">
+                  {PROVIDERS.map((p) => {
+                    const on = activeCaps.has(p.id);
+                    return (
+                      <div
+                        key={p.id}
+                        className={`provider ${on ? "loaded" : "skipped"}`}
+                      >
+                        <div>
+                          <div className="pname">{p.label}</div>
+                          <div
+                            style={{
+                              fontFamily: "var(--font-mono)",
+                              fontSize: ".78rem",
+                              opacity: 0.8,
+                              marginTop: 4,
+                            }}
+                          >
+                            {p.note}
+                          </div>
+                        </div>
+                        <span className="ptag">
+                          {on ? "Loaded" : "Skipped"}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-          <div className="plan-sum">
-            <b>{enabled.size}</b> rules enabled ·
-            <b> {activeCaps.size - 1}</b> linguistic providers required ·
-            estimated cold start <b>{
-              activeCaps.has("grammar") ? "1.4 s"
-              : activeCaps.has("spell") ? "260 ms"
-              : "40 ms"
-            }</b>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+                <div className="plan-sum">
+                  <b>{enabled.size}</b> rules enabled ·
+                  <b> {activeCaps.size - 1}</b> linguistic providers required ·
+                  estimated cold start{" "}
+                  <b>
+                    {activeCaps.has("grammar")
+                      ? "1.4 s"
+                      : activeCaps.has("spell")
+                        ? "260 ms"
+                        : "40 ms"}
+                  </b>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
 
-function PageIntro() {
-  return (
-    <section className="page-intro">
-      <div className="wrap">
-        <div>
-          <div className="folio">§ 03 · Open the hood</div>
-          <h1>Design <span className="accent">notes</span>.</h1>
-        </div>
-        <p className="lede">
-          Two working models — the IR as a contract, and the capability planner
-          as a lazy loader — plus the architecture decisions that pin them in
-          place. Hover below. Toggle. Watch the machine.
-        </p>
-      </div>
-    </section>
-  );
-}
+      function PageIntro() {
+        return (
+          <section className="page-intro">
+            <div className="wrap">
+              <div>
+                <div className="folio">§ 03 · Open the hood</div>
+                <h1>
+                  Design <span className="accent">notes</span>.
+                </h1>
+              </div>
+              <p className="lede">
+                Two working models — the IR as a contract, and the capability
+                planner as a lazy loader — plus the architecture decisions that
+                pin them in place. Hover below. Toggle. Watch the machine.
+              </p>
+            </div>
+          </section>
+        );
+      }
 
-function GrammarLayer() {
-  return (
-    <section className="grammar-illo">
-      <div className="inner">
-        <div className="text-side">
-          <h3>From <span className="red">tokens</span> to clauses</h3>
-          <p>
-            Canonical UPos enums based on Universal Dependencies. Four derived
-            syntactic nodes — TokenNode, SentenceNode, NounPhraseNode, and
-            CoordinationNode — are exposed to rule authors. The Embassy Rule:
-            Python rules talk only to stable Stilyagi grammar nodes, not raw,
-            unstable spaCy classes.
-          </p>
-        </div>
-        <img src="assets/images/pyramid.jpeg" alt="Grammar layer pyramid — tokens, POS/morphology, clauses/coordinations" />
-      </div>
-    </section>
-  );
-}
+      function GrammarLayer() {
+        return (
+          <section className="grammar-illo">
+            <div className="inner">
+              <div className="text-side">
+                <h3>
+                  From <span className="red">tokens</span> to clauses
+                </h3>
+                <p>
+                  Canonical UPos enums based on Universal Dependencies. Four
+                  derived syntactic nodes — TokenNode, SentenceNode,
+                  NounPhraseNode, and CoordinationNode — are exposed to rule
+                  authors. The Embassy Rule: Python rules talk only to stable
+                  Stilyagi grammar nodes, not raw, unstable spaCy classes.
+                </p>
+              </div>
+              <img
+                src="assets/images/pyramid.jpeg"
+                alt="Grammar layer pyramid — tokens, POS/morphology, clauses/coordinations"
+              />
+            </div>
+          </section>
+        );
+      }
 
-function ADRs() {
-  const adrs = [
-    { n: "ADR-001", title: "Python package, Rust extractor", status: "Accepted", body: "Ship one wheel per platform. PyO3 bindings. Pre-built wheels for Linux, macOS, Windows; sdist only if requested." },
-    { n: "ADR-002", title: "No bundled spellchecker in base", status: "Accepted", body: "Spelling is an optional extra. Base install stays small and offline. Network-free by default is a hard contract." },
-    { n: "ADR-003", title: "Rules are trusted code", status: "Accepted", body: "Plugins run as ordinary Python. No sandbox. Documented loudly in the README, CLI help, and the plugin guide." },
-    { n: "ADR-004", title: "Region IR, not raw AST", status: "Accepted", body: "Rules subscribe to typed region classes. Raw AST is an implementation detail of the extractor, not a public surface." },
-    { n: "ADR-005", title: "Capability planner", status: "Accepted", body: "Providers load only when at least one enabled rule declares them. Runtime cost is proportional to the enabled rule set." },
-    { n: "ADR-006", title: "Markdown first; MDX provisional", status: "Provisional", body: "MDX support ships behind a feature flag. Tree-sitter grammar stability is the pacing risk." },
-    { n: "ADR-007", title: "SARIF as primary machine format", status: "Accepted", body: "JSON is the CLI-friendly fallback; SARIF is the CI integration format. One schema for both versions, stable." },
-    { n: "ADR-008", title: "Fix safety is explicit", status: "Accepted", body: "safe / unsafe / manual are first-class. The --fix flag accepts a safety class; unsafe fixes never run without an opt-in." },
-    { n: "ADR-009", title: "Deterministic ordering", status: "Accepted", body: "Normalised path, byte offset, rule code, message hash. The same input yields the same output bytes, always." },
-  ];
-  return (
-    <section className="adrs">
-      <div className="section-head">
-        <div className="num">F</div>
-        <div>
-          <div className="tag">§ Architecture Decision Records</div>
-          <h2>Nine decisions, on the record.</h2>
-        </div>
-      </div>
-      <div className="adr-grid">
-        {adrs.map((a) => (
-          <div className="adr-card" key={a.n}>
-            <div className="adr-num">{a.n}</div>
-            <h4>{a.title}</h4>
-            <span className={`status ${a.status === "Provisional" ? "prov" : ""}`}>{a.status}</span>
-            <p className="editorial">{a.body}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
+      function ADRs() {
+        const adrs = [
+          {
+            n: "ADR-001",
+            title: "Python package, Rust extractor",
+            status: "Accepted",
+            body: "Ship one wheel per platform. PyO3 bindings. Pre-built wheels for Linux, macOS, Windows; sdist only if requested.",
+          },
+          {
+            n: "ADR-002",
+            title: "No bundled spellchecker in base",
+            status: "Accepted",
+            body: "Spelling is an optional extra. Base install stays small and offline. Network-free by default is a hard contract.",
+          },
+          {
+            n: "ADR-003",
+            title: "Rules are trusted code",
+            status: "Accepted",
+            body: "Plugins run as ordinary Python. No sandbox. Documented loudly in the README, CLI help, and the plugin guide.",
+          },
+          {
+            n: "ADR-004",
+            title: "Region IR, not raw AST",
+            status: "Accepted",
+            body: "Rules subscribe to typed region classes. Raw AST is an implementation detail of the extractor, not a public surface.",
+          },
+          {
+            n: "ADR-005",
+            title: "Capability planner",
+            status: "Accepted",
+            body: "Providers load only when at least one enabled rule declares them. Runtime cost is proportional to the enabled rule set.",
+          },
+          {
+            n: "ADR-006",
+            title: "Markdown first; MDX provisional",
+            status: "Provisional",
+            body: "MDX support ships behind a feature flag. Tree-sitter grammar stability is the pacing risk.",
+          },
+          {
+            n: "ADR-007",
+            title: "SARIF as primary machine format",
+            status: "Accepted",
+            body: "JSON is the CLI-friendly fallback; SARIF is the CI integration format. One schema for both versions, stable.",
+          },
+          {
+            n: "ADR-008",
+            title: "Fix safety is explicit",
+            status: "Accepted",
+            body: "safe / unsafe / manual are first-class. The --fix flag accepts a safety class; unsafe fixes never run without an opt-in.",
+          },
+          {
+            n: "ADR-009",
+            title: "Deterministic ordering",
+            status: "Accepted",
+            body: "Normalised path, byte offset, rule code, message hash. The same input yields the same output bytes, always.",
+          },
+        ];
+        return (
+          <section className="adrs">
+            <div className="section-head">
+              <div className="num">F</div>
+              <div>
+                <div className="tag">§ Architecture Decision Records</div>
+                <h2>Nine decisions, on the record.</h2>
+              </div>
+            </div>
+            <div className="adr-grid">
+              {adrs.map((a) => (
+                <div className="adr-card" key={a.n}>
+                  <div className="adr-num">{a.n}</div>
+                  <h4>{a.title}</h4>
+                  <span
+                    className={`status ${a.status === "Provisional" ? "prov" : ""}`}
+                  >
+                    {a.status}
+                  </span>
+                  <p className="editorial">{a.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
 
-function NextLinks() {
-  return (
-    <section style={{maxWidth:"1240px", margin:"0 auto", padding:"0 calc(var(--unit) * 4) calc(var(--unit) * 10)", textAlign:"center"}}>
-      <div className="pullquote" style={{maxWidth:"38ch",margin:"0 auto",fontSize:"2rem"}}>
-        "Runtime cost is proportional to the enabled rule set — and nothing else."
-        <cite>— ADR-005</cite>
-      </div>
-      <div style={{marginTop:"calc(var(--unit) * 4)", display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap"}}>
-        <a href="roadmap.html" style={{fontFamily:"var(--font-sans)",fontWeight:700,fontSize:".82rem",letterSpacing:".14em",textTransform:"uppercase",color:"var(--ink)",textDecoration:"none",borderBottom:"2px solid var(--press-red)",paddingBottom:"2px"}}>☞ See the roadmap</a>
-        <a href="docs.html" style={{fontFamily:"var(--font-sans)",fontWeight:700,fontSize:".82rem",letterSpacing:".14em",textTransform:"uppercase",color:"var(--ink)",textDecoration:"none",borderBottom:"2px solid var(--press-red)",paddingBottom:"2px"}}>☞ Open the docs</a>
-      </div>
-    </section>
-  );
-}
+      function NextLinks() {
+        return (
+          <section
+            style={{
+              maxWidth: "1240px",
+              margin: "0 auto",
+              padding: "0 calc(var(--unit) * 4) calc(var(--unit) * 10)",
+              textAlign: "center",
+            }}
+          >
+            <div
+              className="pullquote"
+              style={{ maxWidth: "38ch", margin: "0 auto", fontSize: "2rem" }}
+            >
+              "Runtime cost is proportional to the enabled rule set — and
+              nothing else."
+              <cite>— ADR-005</cite>
+            </div>
+            <div
+              style={{
+                marginTop: "calc(var(--unit) * 4)",
+                display: "flex",
+                gap: 14,
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <a
+                href="roadmap.html"
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: 700,
+                  fontSize: ".82rem",
+                  letterSpacing: ".14em",
+                  textTransform: "uppercase",
+                  color: "var(--ink)",
+                  textDecoration: "none",
+                  borderBottom: "2px solid var(--press-red)",
+                  paddingBottom: "2px",
+                }}
+              >
+                ☞ See the roadmap
+              </a>
+              <a
+                href="docs.html"
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: 700,
+                  fontSize: ".82rem",
+                  letterSpacing: ".14em",
+                  textTransform: "uppercase",
+                  color: "var(--ink)",
+                  textDecoration: "none",
+                  borderBottom: "2px solid var(--press-red)",
+                  paddingBottom: "2px",
+                }}
+              >
+                ☞ Open the docs
+              </a>
+            </div>
+          </section>
+        );
+      }
 
-function App() {
-  return (
-    <>
-      <SiteMast current="design" />
-      <PageIntro />
-      <IRInspector />
-      <Planner />
-      <GrammarLayer />
-      <ADRs />
-      <NextLinks />
-      <Colophon />
-      <TweaksDock />
-    </>
-  );
-}
+      function App() {
+        return (
+          <>
+            <SiteMast current="design" />
+            <PageIntro />
+            <IRInspector />
+            <Planner />
+            <GrammarLayer />
+            <ADRs />
+            <NextLinks />
+            <Colophon />
+            <TweaksDock />
+          </>
+        );
+      }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-</script>
-</body>
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
 </html>

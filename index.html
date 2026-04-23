@@ -1,661 +1,1156 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stilyagi · a deterministic prose linter</title>
-<link rel="stylesheet" href="assets/colors_and_type.css">
-<link rel="stylesheet" href="assets/motifs_and_components.css">
-<link rel="stylesheet" href="assets/site.css">
-<style>
-/* ---- Home-specific ---- */
-.hero {
-  position: relative;
-  overflow: hidden;
-  border-bottom: var(--rule-weight-3) solid var(--ink);
-  min-height: 88vh;
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-}
-.hero-left {
-  position: relative;
-  padding: calc(var(--unit) * 8) calc(var(--unit) * 6) calc(var(--unit) * 6);
-  background: var(--paper);
-  border-right: var(--rule-weight-3) solid var(--ink);
-  display: flex; flex-direction: column; justify-content: space-between;
-  min-height: 100%;
-}
-.hero-left::before {
-  content: "";
-  position: absolute; right: -6px; top: 0; bottom: 0;
-  width: 14px;
-  background: repeating-linear-gradient(135deg,
-    var(--ink) 0 10px, var(--press-red) 10px 20px);
-  opacity: .9;
-}
-.folio-top {
-  display: flex; justify-content: space-between;
-  align-items: center; gap: 20px;
-  border-bottom: var(--rule-weight) solid var(--ink);
-  padding-bottom: 14px;
-  margin-bottom: calc(var(--unit) * 5);
-  font-family: var(--font-sans);
-  font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
-  color: var(--ink-soft);
-}
-.folio-top .red { color: var(--press-red); font-weight: 700; }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Stilyagi · a deterministic prose linter</title>
+    <link rel="stylesheet" href="assets/colors_and_type.css?v=20260423a" />
+    <link
+      rel="stylesheet"
+      href="assets/motifs_and_components.css?v=20260423a"
+    />
+    <link rel="stylesheet" href="assets/site.css?v=20260423a" />
+    <style>
+      .home-shell {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: calc(var(--unit) * 3) calc(var(--unit) * 4)
+          calc(var(--unit) * 8);
+      }
 
-.wordmark {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(5rem, 14vw, 14rem);
-  line-height: 0.82;
-  letter-spacing: -.01em;
-  text-transform: uppercase;
-  color: var(--ink);
-  margin: 0;
-}
-.wordmark .a { color: var(--press-red); }
-.wordmark .suffix {
-  display: block;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: .18em;
-  letter-spacing: .16em;
-  color: var(--press-red);
-  margin-top: 18px;
-}
+      .poster-board {
+        position: relative;
+        border: var(--rule-weight-2) solid var(--ink);
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.28),
+            rgba(255, 255, 255, 0)
+          ),
+          var(--paper);
+        padding: calc(var(--unit) * 2);
+        box-shadow: inset 0 0 0 1px rgba(15, 15, 15, 0.12);
+      }
 
-.hero-dek {
-  margin-top: calc(var(--unit) * 5);
-  max-width: 36ch;
-  font-family: var(--font-editorial);
-  font-size: 1.35rem;
-  line-height: 1.45;
-  font-style: italic;
-}
-.hero-dek::first-line {
-  font-variant: small-caps;
-  letter-spacing: .06em;
-  font-style: normal;
-}
-.hero-dek .red { color: var(--press-red); font-style: normal; }
+      .poster-board::before,
+      .poster-board::after {
+        content: "";
+        position: absolute;
+        width: 110px;
+        height: 18px;
+        background: repeating-linear-gradient(
+          135deg,
+          var(--ink) 0 10px,
+          var(--press-red) 10px 20px
+        );
+      }
 
-.hero-verdicts {
-  margin-top: calc(var(--unit) * 4);
-  display: flex; flex-wrap: wrap; gap: 10px;
-}
+      .poster-board::before {
+        top: -2px;
+        right: 34px;
+      }
+      .poster-board::after {
+        bottom: -2px;
+        left: 34px;
+      }
 
-.hero-bottom {
-  margin-top: calc(var(--unit) * 5);
-  display: flex; align-items: center; gap: calc(var(--unit) * 3);
-  font-family: var(--font-sans);
-  font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--ink);
-}
-.hero-bottom .pointer {
-  font-size: 1.8rem; color: var(--press-red); line-height: 1;
-}
+      .poster-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+        gap: calc(var(--unit) * 3);
+      }
 
-/* Right column — poster ornament stack */
-.hero-right {
-  position: relative;
-  background: var(--paper-shade);
-  padding: calc(var(--unit) * 6);
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: calc(var(--unit) * 4);
-  overflow: hidden;
-}
-.hero-right::before {
-  content: "";
-  position: absolute; inset: calc(var(--unit) * 3);
-  border: var(--rule-weight) solid var(--ink);
-  pointer-events: none;
-}
-.poster-head {
-  position: relative; z-index: 2;
-  padding: calc(var(--unit) * 2) 0 0;
-  text-align: center;
-}
-.poster-head .kicker {
-  font-family: var(--font-sans);
-  font-size: .72rem; letter-spacing: .24em;
-  text-transform: uppercase; color: var(--press-red);
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-.poster-head h2 {
-  font-size: 2.4rem; line-height: .95;
-  margin: 0 auto 0;
-  max-width: 16ch;
-}
-.poster-head h2 .red { color: var(--press-red); }
-.poster-head .sub {
-  font-family: var(--font-editorial);
-  font-style: italic;
-  font-size: 1.05rem;
-  margin-top: 10px;
-  color: var(--ink-soft);
-}
+      .poster-copy,
+      .poster-art {
+        border: var(--rule-weight) solid var(--ink);
+        background: rgba(255, 255, 255, 0.12);
+        position: relative;
+        overflow: hidden;
+      }
 
-.poster-center {
-  position: relative; z-index: 2;
-  display: grid; place-items: center;
-  padding: 0 calc(var(--unit) * 3);
-}
+      .poster-copy {
+        min-height: 650px;
+        padding: calc(var(--unit) * 5);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background:
+          linear-gradient(145deg, rgba(194, 39, 46, 0.12), transparent 34%),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.26),
+            rgba(255, 255, 255, 0)
+          ),
+          var(--paper);
+      }
 
-.poster-illo {
-  position: relative;
-  width: min(100%, 380px);
-  display: grid;
-  place-items: center;
-}
-.poster-illo img {
-  width: 100%;
-  height: auto;
-  mix-blend-mode: multiply;
-  filter: contrast(1.05);
-}
-.poster-illo .stamp-floater {
-  position: absolute;
-  top: 10px; right: -20px;
-  z-index: 3;
-}
+      .poster-copy::after {
+        content: "";
+        position: absolute;
+        right: -6%;
+        top: 10%;
+        width: 58%;
+        height: 60%;
+        pointer-events: none;
+        opacity: 0.18;
+        background:
+          linear-gradient(
+            120deg,
+            transparent 0 30%,
+            rgba(194, 39, 46, 0.9) 30% 36%,
+            transparent 36% 100%
+          ),
+          radial-gradient(
+            circle at 18% 88%,
+            rgba(194, 39, 46, 0.35) 0 6px,
+            transparent 7px
+          ),
+          radial-gradient(
+            circle at 70% 14%,
+            rgba(214, 159, 46, 0.38) 0 10px,
+            transparent 11px
+          );
+        transform: rotate(-7deg);
+      }
 
-.poster-foot {
-  position: relative; z-index: 2;
-  border-top: var(--rule-weight) solid var(--ink);
-  padding-top: calc(var(--unit) * 2);
-  font-family: var(--font-sans);
-  font-size: .72rem; letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  text-align: center;
-  line-height: 1.6;
-}
-.poster-foot .red { color: var(--press-red); font-weight: 700; }
+      .poster-kicker {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px 20px;
+        flex-wrap: wrap;
+        padding-bottom: 16px;
+        border-bottom: 1px dotted rgba(15, 15, 15, 0.32);
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
 
-/* ---- Below-the-fold ---- */
-.thesis-strip {
-  background: var(--ink);
-  color: var(--paper);
-  border-bottom: var(--rule-weight-3) solid var(--press-red);
-}
-.thesis-strip-inner {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 7) calc(var(--unit) * 4);
-  display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--unit) * 6);
-  align-items: start;
-}
-.thesis-strip h2 {
-  color: var(--paper);
-  font-size: clamp(2rem, 3vw + 1rem, 3.5rem);
-  line-height: .95;
-  margin: 0;
-}
-.thesis-strip h2 .red { color: var(--press-red); }
-.thesis-strip p {
-  font-family: var(--font-editorial);
-  font-size: 1.2rem;
-  line-height: 1.55;
-  color: var(--paper);
-}
-.thesis-strip p + p { text-indent: 1.8em; }
+      .poster-kicker .accent {
+        color: var(--press-red);
+        font-weight: 700;
+      }
 
-.thesis-illo {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: calc(var(--unit) * 3);
-  margin-top: calc(var(--unit) * 4);
-}
-.thesis-illo figure {
-  margin: 0;
-  border: var(--rule-weight) solid rgba(239,228,206,.25);
-  overflow: hidden;
-  position: relative;
-}
-.thesis-illo figure img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.thesis-illo figcaption {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  padding: 6px 10px;
-  background: rgba(15,15,15,.85);
-  font-family: var(--font-sans);
-  font-size: .68rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--paper);
-}
+      .poster-title {
+        margin: calc(var(--unit) * 3) 0 calc(var(--unit) * 2);
+        font-family: var(--font-display);
+        font-size: clamp(5rem, 9vw, 8.8rem);
+        line-height: 0.83;
+        max-width: 5.6ch;
+      }
 
-.three-col {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: calc(var(--unit) * 4);
-}
-.three-col .col h3 {
-  font-family: var(--font-sans);
-  font-size: .9rem;
-  letter-spacing: .14em;
-  color: var(--press-red);
-  margin-bottom: 10px;
-}
-.three-col .col p {
-  font-family: var(--font-editorial);
-  font-size: 1.05rem;
-  line-height: 1.55;
-}
+      .poster-title .red {
+        color: var(--press-red);
+      }
 
-.pull-home {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 8) calc(var(--unit) * 4);
-}
-.pull-home .pullquote {
-  font-size: 2.2rem;
-  font-style: italic;
-  max-width: 28ch;
-  margin: 0 auto;
-  text-align: center;
-}
+      .poster-dek {
+        margin: 0;
+        max-width: 15ch;
+        font-family: var(--font-editorial);
+        font-size: clamp(1.6rem, 1.3vw + 1rem, 2.2rem);
+        line-height: 1.18;
+      }
 
-/* not/is cards */
-.isnot-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  border: var(--rule-weight-2) solid var(--ink);
-  background: var(--paper);
-}
-.isnot-grid > div {
-  padding: calc(var(--unit) * 4);
-}
-.isnot-grid .col-is {
-  border-right: var(--rule-weight) solid var(--ink);
-}
-.isnot-grid .col-isnot {
-  background: var(--paper-shade);
-}
-.isnot-grid h3 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 2.2rem;
-  text-transform: uppercase;
-  margin: 0 0 14px;
-  letter-spacing: .02em;
-}
-.isnot-grid .col-is h3 { color: var(--ink); }
-.isnot-grid .col-isnot h3 { color: var(--press-red); }
-.isnot-grid ul { list-style: none; padding: 0; margin: 0; }
-.isnot-grid li {
-  padding: 10px 0 10px 1.8em;
-  border-bottom: 1px dashed rgba(15,15,15,.2);
-  font-family: var(--font-editorial);
-  font-size: 1.08rem;
-  position: relative;
-  line-height: 1.4;
-}
-.isnot-grid li:last-child { border-bottom: 0; }
-.isnot-grid .col-is li::before {
-  content: "✓"; position: absolute; left: 0; top: 10px;
-  color: var(--signal-sage); font-family: var(--font-sans); font-weight: 700;
-}
-.isnot-grid .col-isnot li::before {
-  content: "✗"; position: absolute; left: 0; top: 10px;
-  color: var(--press-red); font-family: var(--font-sans); font-weight: 700;
-}
+      .poster-dek .red {
+        color: var(--press-red);
+      }
 
-.contd {
-  max-width: 1240px; margin: 0 auto;
-  padding: calc(var(--unit) * 6) calc(var(--unit) * 4) calc(var(--unit) * 10);
-  display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: calc(var(--unit) * 4);
-  align-items: start;
-}
-.contd h3 {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 2.2rem;
-  text-transform: uppercase;
-  margin: 0 0 .3em;
-}
-.contd h3 .red { color: var(--press-red); }
-.contd .row p { font-family: var(--font-editorial); font-size: 1.05rem; line-height: 1.5; }
-.contd .row .tag {
-  font-family: var(--font-sans);
-  font-size: .72rem; letter-spacing: .18em;
-  text-transform: uppercase; color: var(--press-red);
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-.contd .row a.go {
-  display: inline-block;
-  margin-top: 10px;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: .78rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink);
-  text-decoration: none;
-  border-bottom: 2px solid var(--press-red);
-  padding-bottom: 2px;
-}
-.contd .row a.go:hover { color: var(--press-red); }
+      .poster-lede {
+        max-width: 34ch;
+        margin-top: calc(var(--unit) * 3);
+        font-family: var(--font-editorial);
+        font-size: 1.14rem;
+        line-height: 1.55;
+      }
 
-/* Paint splash behind hero left */
-.hero-splash {
-  position: absolute;
-  right: -5%;
-  top: 8%;
-  width: 55%;
-  pointer-events: none;
-  opacity: .18;
-  mix-blend-mode: multiply;
-  transform: rotate(-5deg);
-}
+      .poster-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: calc(var(--unit) * 4);
+      }
 
-/* Overview image strip */
-.overview-strip {
-  max-width: 1240px; margin: 0 auto;
-  padding: 0 calc(var(--unit) * 4);
-}
-.overview-strip img {
-  width: 100%;
-  height: auto;
-  border: var(--rule-weight-2) solid var(--ink);
-  display: block;
-}
-.overview-strip .caption {
-  margin-top: 8px;
-}
+      .cli-ribbon {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: calc(var(--unit) * 2);
+        align-items: center;
+        margin-top: calc(var(--unit) * 4);
+      }
 
-@media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; }
-  .hero-left { border-right: 0; border-bottom: var(--rule-weight-3) solid var(--ink); }
-  .hero-left::before { display: none; }
-  .thesis-strip-inner, .three-col, .contd, .isnot-grid { grid-template-columns: 1fr; }
-  .thesis-illo { grid-template-columns: 1fr; }
-  .isnot-grid .col-is { border-right: 0; border-bottom: var(--rule-weight) solid var(--ink); }
-  .hero-splash { display: none; }
-}
-</style>
-</head>
-<body>
-<div id="root"></div>
+      .cli-pointer {
+        font-size: 3rem;
+        line-height: 1;
+        color: var(--ink);
+      }
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+      .cli-card {
+        border: var(--rule-weight) solid var(--ink);
+        background: rgba(255, 255, 255, 0.46);
+        padding: 14px 18px;
+        font-family: var(--font-mono);
+        font-size: 1.15rem;
+        letter-spacing: 0.01em;
+      }
 
-<script type="text/babel" src="assets/Primitives.jsx"></script>
-<script type="text/babel" src="assets/Chrome.jsx"></script>
-<script type="text/babel">
-const { useState, useEffect } = React;
+      .cli-card .prompt {
+        color: var(--press-red);
+      }
 
-function Hero() {
-  const [stamp, setStamp] = useState((window.__stilyagiTweaks?.stamp) || "Draft");
-  useEffect(() => {
-    const h = (e) => setStamp(e.detail.stamp || "Draft");
-    window.addEventListener("stilyagi:tweaks", h);
-    return () => window.removeEventListener("stilyagi:tweaks", h);
-  }, []);
+      .poster-note {
+        margin-top: 12px;
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
 
-  return (
-    <section className="hero">
-      <div className="hero-left">
-        <img className="hero-splash" src="assets/images/red-paint-splash.jpeg" alt="" aria-hidden="true" />
-        <div>
-          <div className="folio-top">
-            <span>№ 001 · Edition of Record</span>
-            <span className="red">☞ A deterministic prose linter</span>
-            <span>April 26 · Draft</span>
+      .poster-art {
+        min-height: 650px;
+        padding: calc(var(--unit) * 3);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: calc(var(--unit) * 2);
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.24),
+            rgba(255, 255, 255, 0)
+          ),
+          var(--paper-shade);
+      }
+
+      .poster-art::before {
+        content: "";
+        position: absolute;
+        inset: 18px;
+        border: var(--rule-weight) solid rgba(15, 15, 15, 0.3);
+        pointer-events: none;
+      }
+
+      .poster-art-header {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 8px calc(var(--unit) * 3) 16px;
+        border-bottom: var(--rule-weight) solid var(--ink);
+      }
+
+      .poster-art-header .eyebrow {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--press-red);
+      }
+
+      .poster-art-header h2 {
+        margin: 10px auto 0;
+        max-width: 14ch;
+        font-size: clamp(2.4rem, 2vw + 1.4rem, 3.4rem);
+        line-height: 0.9;
+      }
+
+      .poster-art-header p {
+        margin: 10px auto 0;
+        max-width: 30ch;
+        font-family: var(--font-editorial);
+        font-size: 1rem;
+        font-style: italic;
+        color: var(--ink-soft);
+      }
+
+      .poster-art-frame {
+        position: relative;
+        z-index: 1;
+        min-height: 0;
+        border: var(--rule-weight-2) solid var(--ink);
+        background: var(--paper);
+        padding: 12px;
+        overflow: hidden;
+      }
+
+      .poster-art-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        mix-blend-mode: multiply;
+      }
+
+      .stamp-pocket {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        z-index: 2;
+      }
+
+      .poster-tiles {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .poster-tile {
+        border: var(--rule-weight) solid var(--ink);
+        padding: 12px 10px;
+        text-align: center;
+        font-family: var(--font-sans);
+        font-size: 0.74rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 700;
+        background: var(--paper);
+      }
+
+      .poster-tile.red {
+        background: rgba(194, 39, 46, 0.14);
+      }
+      .poster-tile.cyan {
+        background: rgba(41, 180, 196, 0.16);
+      }
+      .poster-tile.ochre {
+        background: rgba(214, 159, 46, 0.18);
+      }
+      .poster-tile.magenta {
+        background: rgba(216, 30, 121, 0.16);
+      }
+
+      .section-flag {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 18px;
+        align-items: center;
+        margin: calc(var(--unit) * 7) 0 calc(var(--unit) * 4);
+      }
+
+      .section-flag::before,
+      .section-flag::after {
+        content: "";
+        height: 2px;
+        background: var(--ink);
+      }
+
+      .section-flag h2 {
+        margin: 0;
+        font-size: clamp(2.4rem, 3vw, 4rem);
+        text-align: center;
+      }
+
+      .section-flag h2 .red {
+        color: var(--press-red);
+      }
+
+      .explore-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: calc(var(--unit) * 3);
+      }
+
+      .tool-card {
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 14px;
+        min-height: 320px;
+        padding: calc(var(--unit) * 2);
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.22),
+            rgba(255, 255, 255, 0)
+          ),
+          var(--paper);
+        border: var(--rule-weight) solid var(--ink);
+        position: relative;
+      }
+
+      .tool-card::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        height: 4px;
+        background: var(--accent-color, var(--press-red));
+      }
+
+      .tool-card .eyebrow {
+        font-family: var(--font-sans);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent-color, var(--press-red));
+      }
+
+      .tool-art {
+        min-height: 108px;
+        border: var(--rule-weight) solid var(--ink);
+        background:
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.18),
+            rgba(255, 255, 255, 0)
+          ),
+          var(--paper-shade);
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+      }
+
+      .tool-art img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        mix-blend-mode: multiply;
+      }
+
+      .tool-emblem {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        align-content: center;
+        gap: 8px;
+        padding: 14px;
+        text-align: center;
+      }
+
+      .tool-emblem .big {
+        font-family: var(--font-display);
+        font-size: 2.05rem;
+        line-height: 0.88;
+      }
+
+      .tool-emblem .small {
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .tool-emblem .rule {
+        height: 2px;
+        background: var(--ink);
+      }
+
+      .tool-card h3 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: 2rem;
+        line-height: 0.9;
+      }
+
+      .tool-card p {
+        margin: 0;
+        font-family: var(--font-editorial);
+        line-height: 1.45;
+      }
+
+      .tool-card a {
+        font-family: var(--font-sans);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: var(--accent-color, var(--press-red));
+      }
+
+      .tool-card a:hover {
+        color: var(--ink);
+      }
+
+      .value-band {
+        margin-top: calc(var(--unit) * 7);
+        background: var(--paper-shade);
+        border-top: var(--rule-weight-2) solid var(--ink);
+        border-bottom: var(--rule-weight-2) solid var(--ink);
+      }
+
+      .value-grid {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: calc(var(--unit) * 4);
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .value-card {
+        padding: calc(var(--unit) * 4);
+        border-right: var(--rule-weight) solid var(--ink);
+      }
+
+      .value-card:last-child {
+        border-right: 0;
+      }
+
+      .value-card .eyebrow {
+        font-family: var(--font-sans);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--press-red);
+      }
+
+      .value-card h3 {
+        margin: 12px 0 10px;
+        font-family: var(--font-display);
+        font-size: 2rem;
+        line-height: 0.9;
+      }
+
+      .value-card p {
+        margin: 0;
+        font-family: var(--font-editorial);
+        line-height: 1.5;
+      }
+
+      .pipeline-poster {
+        margin-top: calc(var(--unit) * 7);
+      }
+
+      .pipeline-frame {
+        border: var(--rule-weight-2) solid var(--ink);
+        background: var(--paper);
+        padding: calc(var(--unit) * 2);
+      }
+
+      .pipeline-frame img {
+        width: 100%;
+        border: var(--rule-weight) solid var(--ink);
+        display: block;
+      }
+
+      .pipeline-caption {
+        margin-top: 10px;
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+
+      .command-rail {
+        margin-top: calc(var(--unit) * 7);
+        border: var(--rule-weight-2) solid var(--ink);
+        background:
+          linear-gradient(90deg, rgba(15, 15, 15, 0.06), transparent 28%),
+          var(--paper);
+        padding: calc(var(--unit) * 4);
+        display: grid;
+        grid-template-columns: minmax(220px, 0.9fr) minmax(0, 1.1fr);
+        gap: calc(var(--unit) * 4);
+        align-items: center;
+      }
+
+      .command-label {
+        font-family: var(--font-display);
+        font-size: clamp(2.6rem, 4vw, 4.5rem);
+        line-height: 0.86;
+      }
+
+      .command-label .red {
+        color: var(--press-red);
+      }
+
+      .command-steps {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: calc(var(--unit) * 2);
+      }
+
+      .command-step {
+        border: var(--rule-weight) solid var(--ink);
+        background: rgba(255, 255, 255, 0.36);
+        padding: calc(var(--unit) * 2);
+      }
+
+      .command-step code {
+        display: block;
+        margin-bottom: 10px;
+        font-family: var(--font-mono);
+        font-size: 0.95rem;
+        color: var(--press-red);
+      }
+
+      .command-step p {
+        margin: 0;
+        font-family: var(--font-editorial);
+        line-height: 1.45;
+      }
+
+      .reading-grid {
+        margin-top: calc(var(--unit) * 7);
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: calc(var(--unit) * 3);
+      }
+
+      .reading-room {
+        display: grid;
+        gap: 12px;
+        padding: calc(var(--unit) * 2);
+        border: var(--rule-weight) solid var(--ink);
+        background: var(--paper);
+      }
+
+      .reading-room .eyebrow {
+        font-family: var(--font-sans);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--press-red);
+      }
+
+      .reading-room h3 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: 2rem;
+        line-height: 0.9;
+      }
+
+      .reading-room p {
+        margin: 0;
+        font-family: var(--font-editorial);
+        line-height: 1.45;
+      }
+
+      .reading-room a {
+        font-family: var(--font-sans);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: var(--ink);
+      }
+
+      .reading-room a:hover {
+        color: var(--press-red);
+      }
+
+      @media (max-width: 1180px) {
+        .explore-grid,
+        .reading-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 980px) {
+        .poster-grid,
+        .command-rail {
+          grid-template-columns: 1fr;
+        }
+
+        .poster-copy,
+        .poster-art {
+          min-height: auto;
+        }
+
+        .value-grid {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+
+        .value-card {
+          border-right: 0;
+          border-bottom: var(--rule-weight) solid var(--ink);
+        }
+
+        .value-card:last-child {
+          border-bottom: 0;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .home-shell {
+          padding-inline: calc(var(--unit) * 2);
+        }
+
+        .poster-title {
+          max-width: none;
+          font-size: clamp(4rem, 16vw, 6.2rem);
+        }
+
+        .poster-copy,
+        .poster-art {
+          padding: calc(var(--unit) * 3);
+        }
+
+        .poster-tiles,
+        .command-steps,
+        .explore-grid,
+        .reading-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-flag {
+          grid-template-columns: 1fr;
+        }
+
+        .section-flag::before,
+        .section-flag::after {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
+
+    <script type="text/babel" src="assets/Primitives.jsx?v=20260423a"></script>
+    <script type="text/babel" src="assets/Chrome.jsx?v=20260423a"></script>
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      const toolCards = [
+        {
+          eyebrow: "Foundation",
+          title: "Architecture",
+          description:
+            "Separate the iron from the jazz: Rust extraction up front, Python rule execution behind a stable contract.",
+          href: "design.html",
+          cta: "Read more →",
+          accent: "var(--press-red)",
+          art: {
+            type: "image",
+            src: "assets/stilyagi-presentation-reduced/stilyagi-004.jpg",
+            alt: "Split between Rust extraction and Python rule execution",
+          },
+        },
+        {
+          eyebrow: "Contract",
+          title: "IR Contract",
+          description:
+            "A deterministic schema between parsing and analysis so rules operate on regions, spans, and capability-planned detail.",
+          href: "design.html",
+          cta: "Read more →",
+          accent: "var(--signal-sage)",
+          art: {
+            type: "image",
+            src: "assets/images/graph.png",
+            alt: "Structured graph and intermediate representation visual",
+          },
+        },
+        {
+          eyebrow: "Rules",
+          title: "Rule Engine",
+          description:
+            "Typed Python rules with direct navigability, explicit capabilities, and diagnostics rendered without guesswork.",
+          href: "docs.html",
+          cta: "Read more →",
+          accent: "var(--jazz-cyan)",
+          art: {
+            type: "image",
+            src: "assets/images/jazz.png",
+            alt: "Bright jazz-inspired poster art for the rule engine",
+          },
+        },
+        {
+          eyebrow: "Grammar",
+          title: "Grammar Layer",
+          description:
+            "From tokens to clauses only when capability planning requires it. Syntax stays subordinate to fidelity.",
+          href: "how.html",
+          cta: "Read more →",
+          accent: "var(--jazz-ochre)",
+          art: {
+            type: "emblem",
+            lines: ["Tokens", "Clauses", "Coordination"],
+            note: "Only when asked",
+          },
+        },
+        {
+          eyebrow: "CLI",
+          title: "CLI & UX",
+          description:
+            "Ruff-inspired commands, legible configuration, and safe fixes that never lose track of the underlying source.",
+          href: "how.html",
+          cta: "Read more →",
+          accent: "var(--ink)",
+          art: {
+            type: "emblem",
+            lines: ["$", "check", "dump-ir"],
+            note: "Legible commands",
+          },
+        },
+        {
+          eyebrow: "Testing",
+          title: "Testing Sandbox",
+          description:
+            "Hermetic fixtures, isolated runs, and typed outputs so rule development behaves like software engineering, not divination.",
+          href: "docs.html",
+          cta: "Read more →",
+          accent: "var(--jazz-magenta)",
+          art: {
+            type: "emblem",
+            lines: ["Fixture", "Run", "Assert"],
+            note: "Hermetic by default",
+          },
+        },
+        {
+          eyebrow: "Diagnostics",
+          title: "Diagnostic Matrix",
+          description:
+            "Readable verdicts with span truth, provenance, and byte-level evidence instead of flattened guesswork.",
+          href: "why.html",
+          cta: "Read more →",
+          accent: "var(--press-red)",
+          art: {
+            type: "image",
+            src: "assets/stilyagi-presentation-reduced/stilyagi-018.jpg",
+            alt: "Diagnostic matrix poster comparing pipeline approaches",
+          },
+        },
+        {
+          eyebrow: "Plan",
+          title: "Roadmap",
+          description:
+            "Vertical slices from Markdown core to rule packs, richer editors, and sharper contracts at each phase boundary.",
+          href: "roadmap.html",
+          cta: "Read more →",
+          accent: "var(--jazz-ochre)",
+          art: {
+            type: "emblem",
+            lines: ["Phase I", "Phase II", "Phase III"],
+            note: "Usable after every slice",
+          },
+        },
+      ];
+
+      const readingRooms = [
+        {
+          eyebrow: "Manifesto",
+          title: "Why",
+          description:
+            "The case against the weak camps and the argument for source-faithful documentation analysis.",
+          href: "why.html",
+          cta: "Read the manifesto →",
+        },
+        {
+          eyebrow: "Mechanics",
+          title: "How",
+          description:
+            "Architecture, CLI shape, capability planning, and the line between extraction and rule execution.",
+          href: "how.html",
+          cta: "Inspect the mechanics →",
+        },
+        {
+          eyebrow: "Reference",
+          title: "Docs",
+          description:
+            "Rules catalogue, configuration shape, suppressions, and the growing manual for the tool itself.",
+          href: "docs.html",
+          cta: "Open the docs →",
+        },
+        {
+          eyebrow: "Planning",
+          title: "Roadmap",
+          description:
+            "The phase plan from markdown core through plugins, diagnostics, and richer editor integrations.",
+          href: "roadmap.html",
+          cta: "See the roadmap →",
+        },
+      ];
+
+      function ToolVisual({ art, title }) {
+        if (art.type === "image") {
+          return (
+            <div className="tool-art">
+              <img src={art.src} alt={art.alt} />
+            </div>
+          );
+        }
+
+        return (
+          <div className="tool-art">
+            <div className="tool-emblem" aria-hidden="true">
+              <div className="big">{art.lines[0]}</div>
+              <div className="rule" />
+              <div className="small">{art.lines.slice(1).join(" · ")}</div>
+              <div className="small" style={{ color: "var(--press-red)" }}>
+                {art.note}
+              </div>
+            </div>
           </div>
-          <h1 className="wordmark">
-            Stil<span className="a">y</span>agi
-            <span className="suffix">§ a df12 project · rust + python · offline · deterministic</span>
-          </h1>
-          <p className="hero-dek">
-            A programmable static-analysis tool for the human-facing text
-            embedded in source repositories. <span className="red">Rust
-            extracts. Python rules.</span> No LLM, no sandbox, no sermon.
-          </p>
-          <div className="hero-verdicts">
-            <span className="verdict red">Press-red verdicts</span>
-            <span className="verdict ink">Safe fixes only</span>
-            <span className="verdict sage">Offline CI</span>
-            <span className="verdict ochre">Preview · MDX</span>
-          </div>
-        </div>
+        );
+      }
 
-        <div className="hero-bottom">
-          <span className="pointer">☞</span>
-          <span>Read the case <span style={{color:"var(--press-red)"}}>·</span> <a href="why.html" style={{color:"var(--ink)",textDecoration:"none",borderBottom:"2px solid var(--press-red)"}}>Why Stilyagi</a></span>
-          <span style={{color:"var(--ink-soft)"}}>— or skip to</span>
-          <a href="how.html" style={{color:"var(--ink)",textDecoration:"none",borderBottom:"2px solid var(--ink)"}}>The mechanism</a>
-        </div>
-      </div>
+      function HeroPoster() {
+        const [stamp, setStamp] = useState(
+          window.__stilyagiTweaks?.stamp || "Draft",
+        );
 
-      <div className="hero-right">
-        <div className="poster-head">
-          <div className="kicker">An Agitprop Pamphlet · Edition № 001</div>
-          <h2>Prose, under the <span className="red">red pencil</span>.</h2>
-          <div className="sub">A linter for documentation policy, not for English.</div>
-        </div>
-        <div className="poster-center">
-          <div className="poster-illo">
-            <img src="assets/images/saxophonist.jpeg" alt="Stilyagi saxophonist — jazz-age swagger meets agitprop rigour" />
-            <span className="stamp-floater">
-              <Stamp>{stamp}</Stamp>
-            </span>
-          </div>
-        </div>
-        <div className="poster-foot">
-          <span className="red">Warning.</span> Rules govern regions, not raw bytes. ·
-          Text is structured. Files are structured. CI should know.
-        </div>
-      </div>
-    </section>
-  );
-}
+        useEffect(() => {
+          const handleTweaks = (event) =>
+            setStamp(event.detail.stamp || "Draft");
+          window.addEventListener("stilyagi:tweaks", handleTweaks);
+          return () =>
+            window.removeEventListener("stilyagi:tweaks", handleTweaks);
+        }, []);
 
-function ThesisStrip() {
-  return (
-    <section className="thesis-strip">
-      <div className="thesis-strip-inner">
-        <div>
-          <h2>Separate the <span className="red">iron</span> from the ink.</h2>
-          <div style={{marginTop: 20, display:"flex",gap:10,flexWrap:"wrap"}}>
-            <span className="chip red">§ Thesis</span>
-            <span className="chip" style={{background:"var(--paper)",color:"var(--ink)"}}>v1 architecture</span>
-          </div>
-          <div className="thesis-illo">
-            <figure>
-              <img src="assets/images/iron.png" alt="The Iron — Rust extraction layer" />
-              <figcaption>The Iron (Rust)</figcaption>
-            </figure>
-            <figure>
-              <img src="assets/images/jazz.png" alt="The Jazz — Python analysis layer" />
-              <figcaption>The Jazz (Python)</figcaption>
-            </figure>
-          </div>
-        </div>
-        <div>
-          <p className="editorial">
-            The key design decision is to separate <em>extraction</em> from
-            <em> analysis</em>. Rules must not parse Markdown, walk tree-sitter
-            nodes, or boot spaCy independently.
-          </p>
-          <p className="editorial">
-            They must receive a stable region-oriented model plus selectively
-            materialised linguistic annotations. That gives Stilyagi Vale's
-            structural awareness without Vale's YAML rule ceiling, and keeps
-            the tool deterministic enough for CI, editors, and agentic
-            workflows.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
+        return (
+          <section className="poster-board" aria-labelledby="home-title">
+            <div className="poster-grid">
+              <div className="poster-copy">
+                <div>
+                  <div className="poster-kicker">
+                    <span>Overview</span>
+                    <span className="accent">Edition № 001</span>
+                    <span>Rust + Python static analysis</span>
+                  </div>
+                  <h1 id="home-title" className="poster-title">
+                    A Compiler
+                    <br />
+                    for <span className="red">Prose</span>
+                  </h1>
+                  <p className="poster-dek">
+                    Deterministic documentation linting with{" "}
+                    <span className="red">absolute source fidelity</span>.
+                  </p>
+                  <p className="poster-lede">
+                    Stilyagi parses repository text, applies typed policies, and
+                    reports precise findings down to exact byte segments.
+                  </p>
+                  <div className="poster-actions">
+                    <a className="btn red" href="docs.html">
+                      Get Started
+                    </a>
+                    <a className="btn ghost" href="design.html">
+                      View Architecture
+                    </a>
+                  </div>
+                </div>
 
-function ThreeColumns() {
-  return (
-    <section className="stack-section">
-      <div className="section-head">
-        <div className="num">01</div>
-        <div>
-          <div className="tag">§ The shape of the problem</div>
-          <h2>Three audiences, one tool.</h2>
-        </div>
-      </div>
-      <div className="three-col">
-        <div className="col">
-          <h3>☞ The Skeptic</h3>
-          <p className="editorial">
-            "Why not just Vale?" Because Vale's rules live inside declarative
-            YAML, canned check families, and a deliberately limited extension
-            surface. Stilyagi lets you author rules in real Python against a
-            typed runtime model. <a href="why.html">Read the case →</a>
-          </p>
-        </div>
-        <div className="col">
-          <h3>☞ The Doc Engineer</h3>
-          <p className="editorial">
-            Stable spans, deterministic CI, rule packs, SARIF, suppressions
-            that survive Markdown flattening. Docstrings extracted with owner
-            metadata. <a href="how.html">See the mechanism →</a>
-          </p>
-        </div>
-        <div className="col">
-          <h3>☞ The Compiler Nerd</h3>
-          <p className="editorial">
-            A region-oriented IR with <code>line_index</code>,
-            <code> content_hash</code>, <code>segments</code>, and explicit
-            synthetic spans. A capability planner. A narrow FFI boundary.
-            <a href="design.html"> Open the hood →</a>
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
+                <div>
+                  <div className="cli-ribbon">
+                    <div className="cli-pointer" aria-hidden="true">
+                      ☞
+                    </div>
+                    <div className="cli-card">
+                      <span className="prompt">$</span> stilyagi check
+                    </div>
+                  </div>
+                  <div className="poster-note">
+                    Parse · analyse · diagnose · fix
+                  </div>
+                </div>
+              </div>
 
-function IsIsNot() {
-  return (
-    <section className="stack-section">
-      <div className="section-head">
-        <div className="num">02</div>
-        <div>
-          <div className="tag">§ Verdicts</div>
-          <h2>What Stilyagi is, and is not.</h2>
-        </div>
-      </div>
+              <div className="poster-art">
+                <div className="poster-art-header">
+                  <div className="eyebrow">Press Room · Poster Plate</div>
+                  <h2>Industrial parsing meets jazz-age rulecraft.</h2>
+                  <p>
+                    The visual language stays bold, printed, and slightly unruly
+                    while the analysis stays deterministic.
+                  </p>
+                </div>
 
-      <div className="isnot-grid">
-        <div className="col-is">
-          <h3>Stilyagi <span style={{color:"var(--press-red)"}}>is</span></h3>
-          <ul>
-            <li>A programmable static-analysis tool for human-facing text.</li>
-            <li>A Python-distributed package with an embedded Rust extractor.</li>
-            <li>Region-oriented, source-faithful, byte-accurate.</li>
-            <li>Deterministic by default; sorted, ordered, reproducible.</li>
-            <li>Offline after install — no network, no model downloads.</li>
-            <li>Honest about trust: plugins are code you invited in.</li>
-          </ul>
-        </div>
-        <div className="col-isnot">
-          <h3>Stilyagi <span style={{color:"var(--press-red)"}}>is not</span></h3>
-          <ul>
-            <li>A Vale wrapper, and does not preserve Vale packaging.</li>
-            <li>A general-purpose grammar checker.</li>
-            <li>An LLM writing assistant. No model calls in the core.</li>
-            <li>A sandbox for untrusted plugins. Plugins are trusted code.</li>
-            <li>A cross-file semantic engine. Not yet — maybe never.</li>
-            <li>A SaaS. It runs on your laptop, your CI, your terms.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-  );
-}
+                <div className="poster-art-frame">
+                  <img
+                    src="assets/images/hero-collage-generated.png"
+                    alt="Poster collage of a typewriter, gears, and a saxophonist beside a conveyor of analysis tiles"
+                  />
+                  <div className="stamp-pocket">
+                    <Stamp>{stamp}</Stamp>
+                  </div>
+                </div>
 
-function PullHome() {
-  return (
-    <section className="pull-home">
-      <div className="pullquote">
-        "Their pain is not that English is hard. Their pain is that
-        documentation policy is real."
-        <cite>— From the design document, § 2</cite>
-      </div>
-    </section>
-  );
-}
+                <div className="poster-tiles" aria-hidden="true">
+                  <div className="poster-tile red">Parse</div>
+                  <div className="poster-tile cyan">Analyse</div>
+                  <div className="poster-tile ochre">Diagnose</div>
+                  <div className="poster-tile magenta">Fix</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
 
-function OverviewImage() {
-  return (
-    <section className="overview-strip" style={{paddingTop:"calc(var(--unit) * 2)",paddingBottom:"calc(var(--unit) * 6)"}}>
-      <img src="assets/images/flow.png" alt="A Compiler for Prose — Rust parsing to IR schema to Python rules" />
-      <p className="caption" style={{marginTop: 8}}>Fig. 01 · The Stilyagi pipeline: source files enter Rust extraction, cross the IR boundary, and emerge as deterministic diagnostics via Python rules.</p>
-    </section>
-  );
-}
+      function ExploreGrid() {
+        return (
+          <section>
+            <div className="section-flag">
+              <h2>
+                Explore the <span className="red">tool</span>
+              </h2>
+            </div>
+            <div className="explore-grid">
+              {toolCards.map((card) => (
+                <article
+                  className="tool-card"
+                  key={card.title}
+                  style={{ "--accent-color": card.accent }}
+                >
+                  <div className="eyebrow">{card.eyebrow}</div>
+                  <ToolVisual art={card.art} title={card.title} />
+                  <div>
+                    <h3>{card.title}</h3>
+                    <p>{card.description}</p>
+                  </div>
+                  <a href={card.href}>{card.cta}</a>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      }
 
-function ContinueReading() {
-  return (
-    <section className="contd">
-      <div className="row" style={{gridColumn:"span 1"}}>
-        <div className="tag">☞ Continue reading</div>
-        <h3>The <span className="red">dossier</span>.</h3>
-        <p>The rest of this edition is organised by concern. Start with
-           the motivation; drop into the mechanism; inspect the design; check
-           the roadmap. The docs index ships whatever the first release gets.
-        </p>
-      </div>
-      <div className="row">
-        <div className="tag">§ Why · How</div>
-        <p><strong>Why.</strong> The four weak camps of the prose-linter world
-           and where Stilyagi fits between them.</p>
-        <a className="go" href="why.html">Read Why →</a>
-        <p style={{marginTop:18}}><strong>How.</strong> Architecture, a live
-           rule example, CLI contract, and the capability planner.</p>
-        <a className="go" href="how.html">Read How →</a>
-      </div>
-      <div className="row">
-        <div className="tag">§ Design · Roadmap · Docs</div>
-        <p><strong>Design.</strong> IR inspector, grammar layer, and the
-           engineering trade-offs behind v1.</p>
-        <a className="go" href="design.html">Open design →</a>
-        <p style={{marginTop:18}}><strong>Roadmap.</strong> Six phases, each
-           leaving a usable product behind.</p>
-        <a className="go" href="roadmap.html">See the plan →</a>
-        <p style={{marginTop:18}}><strong>Docs.</strong> Rules, config, ADRs.</p>
-        <a className="go" href="docs.html">Open the manual →</a>
-      </div>
-    </section>
-  );
-}
+      function ValueBand() {
+        return (
+          <section className="value-band" aria-labelledby="why-stilyagi">
+            <div className="value-grid">
+              <article className="value-card">
+                <div className="eyebrow">Why Stilyagi</div>
+                <h3 id="why-stilyagi">Absolute Source Fidelity</h3>
+                <p>
+                  Findings map to exact byte spans. No lossy transforms, no
+                  invented context, no flattened approximation.
+                </p>
+              </article>
+              <article className="value-card">
+                <div className="eyebrow">Policy</div>
+                <h3>Programmable Policy</h3>
+                <p>
+                  Typed Python rules over a rich IR let teams encode house
+                  style, compliance, and taste without falling back to regex
+                  folklore.
+                </p>
+              </article>
+              <article className="value-card">
+                <div className="eyebrow">Planning</div>
+                <h3>Capability-Planned Analysis</h3>
+                <p>
+                  Run only the analysis you need. Fast by default, deeper when
+                  requested, always explicit about the cost.
+                </p>
+              </article>
+            </div>
+          </section>
+        );
+      }
 
-function App() {
-  return (
-    <>
-      <SiteMast current="home" />
-      <Hero />
-      <ThesisStrip />
-      <ThreeColumns />
-      <IsIsNot />
-      <PullHome />
-      <OverviewImage />
-      <ContinueReading />
-      <Colophon />
-      <TweaksDock />
-    </>
-  );
-}
+      function PipelinePoster() {
+        return (
+          <section className="pipeline-poster">
+            <div className="section-flag">
+              <h2>
+                The pipeline, <span className="red">as printed</span>
+              </h2>
+            </div>
+            <div className="pipeline-frame">
+              <img
+                src="assets/stilyagi-presentation-reduced/stilyagi-026.jpg"
+                alt="Poster showing the Stilyagi pipeline from Rust parsing through IR schema to Python rules and final diagnostics"
+              />
+            </div>
+            <div className="pipeline-caption">
+              Figure 01 · Presentation board from the Stilyagi deck, reused here
+              as the canonical overview of the processing chain.
+            </div>
+          </section>
+        );
+      }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-</script>
-</body>
+      function CommandRail() {
+        return (
+          <section className="command-rail" aria-labelledby="three-commands">
+            <div className="command-label" id="three-commands">
+              Start in <span className="red">three commands</span>
+            </div>
+            <div className="command-steps">
+              <article className="command-step">
+                <code>$ stilyagi check</code>
+                <p>
+                  Run analysis and print diagnostics with source-backed spans
+                  and stable ordering.
+                </p>
+              </article>
+              <article className="command-step">
+                <code>$ stilyagi dump-ir</code>
+                <p>
+                  Inspect the intermediate representation so rules can reason
+                  about the same contract the extractor emitted.
+                </p>
+              </article>
+              <article className="command-step">
+                <code>$ stilyagi clean</code>
+                <p>
+                  Remove caches and temporary artefacts when you want a fresh
+                  run or a tidier working tree.
+                </p>
+              </article>
+            </div>
+          </section>
+        );
+      }
+
+      function ReadingRooms() {
+        return (
+          <section>
+            <div className="section-flag">
+              <h2>
+                Choose your <span className="red">briefing room</span>
+              </h2>
+            </div>
+            <div className="reading-grid">
+              {readingRooms.map((room) => (
+                <article className="reading-room" key={room.title}>
+                  <div className="eyebrow">{room.eyebrow}</div>
+                  <h3>{room.title}</h3>
+                  <p>{room.description}</p>
+                  <a href={room.href}>{room.cta}</a>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      function App() {
+        return (
+          <>
+            <SiteMast current="home" />
+            <main className="home-shell">
+              <HeroPoster />
+              <ExploreGrid />
+              <ValueBand />
+              <PipelinePoster />
+              <CommandRail />
+              <ReadingRooms />
+            </main>
+            <Colophon />
+            <TweaksDock />
+          </>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
 </html>

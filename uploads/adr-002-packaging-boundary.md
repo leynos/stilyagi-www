@@ -25,9 +25,8 @@ module.[^2][^3]
 What the repository lacks is an accepted decision record that says this
 boundary is not merely a recommendation. That gap matters because later roadmap
 steps depend on one stable answer to the build and runtime boundary question:
-should Stilyagi v1 run as one Python package with an in-process PyO3
-extension, or should Python cross the boundary by invoking a separate Rust
-helper binary?
+should Stilyagi v1 run as one Python package with an in-process PyO3 extension,
+or should Python cross the boundary by invoking a separate Rust helper binary?
 
 The main question is therefore:
 
@@ -102,14 +101,14 @@ tool with Python-authored rules and plugins. It would make plugin discovery,
 virtual-environment alignment, and Python packaging materially harder for v1,
 which is why the design already rejects it.[^1]
 
-| Topic | Option A: PyO3 plus `maturin` | Option B: helper binary | Option C: Rust executable embedding Python |
-| --- | --- | --- | --- |
-| Matches current repository workflow | Yes | No | No |
-| Keeps one Python package install surface | Yes | Partial | No |
-| Keeps plugin discovery in the active Python environment | Yes | Partial | Weak |
-| Requires runtime helper-process management | No | Yes | No |
-| Keeps JSON as canonical debug form rather than mandatory hot path | Yes | Weak | Partial |
-| Fits the current design recommendation | Yes | No | No |
+| Topic                                                             | Option A: PyO3 plus `maturin` | Option B: helper binary | Option C: Rust executable embedding Python |
+| ----------------------------------------------------------------- | ----------------------------- | ----------------------- | ------------------------------------------ |
+| Matches current repository workflow                               | Yes                           | No                      | No                                         |
+| Keeps one Python package install surface                          | Yes                           | Partial                 | No                                         |
+| Keeps plugin discovery in the active Python environment           | Yes                           | Partial                 | Weak                                       |
+| Requires runtime helper-process management                        | No                            | Yes                     | No                                         |
+| Keeps JSON as canonical debug form rather than mandatory hot path | Yes                           | Weak                    | Partial                                    |
+| Fits the current design recommendation                            | Yes                           | No                      | No                                         |
 
 _Table 1: Packaging-boundary trade-offs for Stilyagi v1._
 
@@ -202,9 +201,9 @@ Second, it matches the already-adopted build spine. The repository is not
 choosing a new path here; it is ratifying the path already encoded in
 `make build`, `make release`, and the developer guide.[^2][^3]
 
-Third, it keeps JSON in the right place. Stilyagi still needs canonical JSON
-for `dump-ir`, contract review, and regression fixtures, but it does not need
-to pay serialization costs for every ordinary Rust-to-Python call merely to
+Third, it keeps JSON in the right place. Stilyagi still needs canonical JSON for
+`dump-ir`, contract review, and regression fixtures, but it does not need to
+pay serialization costs for every ordinary Rust-to-Python call merely to
 preserve a subprocess boundary.[^1]
 
 Fourth, it keeps the user-facing story simple. Stilyagi installs as one Python
